@@ -1,0 +1,14 @@
+{
+  "name": "rms-unreleased",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch server/server.mjs",
+    "start": "node server/server.mjs",
+    "build": "node server/build.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

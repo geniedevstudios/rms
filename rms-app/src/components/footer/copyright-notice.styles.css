@@ -1,0 +1,24 @@
+.copyright-notice {
+  padding: 37px 28px;
+}
+.copyright-notice p {
+  font-size: 12px;
+  line-height: 2;
+  color: var(--muted);
+  margin: 0 0 22px;
+}
+.copyright-notice strong {
+  font-weight: 500;
+  color: var(--ink);
+}
+.copyright-notice a {
+  display: inline-block;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.copyright-notice a:hover {
+  opacity: 0.65;
+}

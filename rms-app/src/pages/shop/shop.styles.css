@@ -1,0 +1,115 @@
+.shop-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 20px 0;
+  gap: 15px;
+}
+.category-tabs {
+  display: flex;
+  gap: 25px;
+}
+.category-tabs button {
+  font-size: 11px;
+  color: var(--muted);
+  padding: 6px 0;
+  border-bottom: 1px solid transparent;
+}
+.category-tabs button.selected {
+  color: var(--ink);
+  border-bottom-color: var(--ink);
+}
+.filter-controls {
+  display: flex;
+  gap: 28px;
+  align-items: center;
+}
+.filter-controls > button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  padding: 6px 0;
+}
+.filter-controls .select-menu {
+  display: flex;
+  align-items: center;
+}
+.filter-panel {
+  display: flex;
+  gap: 25px;
+  align-items: flex-end;
+  padding: 22px 0;
+  border-bottom: 1px solid var(--line);
+}
+.filter-panel .filter-field {
+  font-size: 9px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 165px;
+}
+.filter-panel .text-link {
+  font-size: 10px;
+  align-self: center;
+  margin-left: auto;
+}
+.filter-dot {
+  background: #8c655e;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+}
+.results-count {
+  font-size: 9px;
+  color: var(--muted);
+  padding: 23px 0;
+}
+.shop-grid {
+  row-gap: 45px;
+}
+@media (max-width: 760px) {
+  .shop-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+    padding: 13px 0;
+    gap: 14px;
+  }
+  .category-tabs {
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .category-tabs button {
+    font-size: 10px;
+    padding: 8px 0;
+  }
+  .filter-controls {
+    justify-content: space-between;
+  }
+  .filter-controls > button {
+    font-size: 10px;
+  }
+  .filter-panel {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 15px;
+    padding: 20px 0;
+  }
+  .filter-panel .filter-field {
+    min-width: 0;
+  }
+  .filter-panel .text-link {
+    margin: 0;
+    justify-self: start;
+    font-size: 9px;
+  }
+  .results-count {
+    font-size: 8px;
+    padding: 20px 0;
+  }
+  .shop-grid {
+    row-gap: 30px;
+  }
+}

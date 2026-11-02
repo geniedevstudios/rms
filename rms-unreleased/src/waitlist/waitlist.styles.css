@@ -1,0 +1,225 @@
+.invitation {
+  padding: 8px 0;
+  max-width: 360px;
+  scroll-margin-top: 40px;
+}
+.invitation .eyebrow {
+  color: #8a8069;
+  font-size: 8px;
+  letter-spacing: 1.8px;
+}
+h2 {
+  font-size: 40px;
+  line-height: 1.12;
+  letter-spacing: -1.5px;
+  font-weight: 400;
+  margin: 17px 0;
+}
+.form-intro {
+  font-size: 12px;
+  line-height: 1.8;
+  color: #85857b;
+  margin: 18px 0 27px;
+}
+form label {
+  display: block;
+  font-size: 8px;
+  letter-spacing: 1.5px;
+  margin: 23px 0 10px;
+  color: #62645a;
+}
+form input {
+  display: block;
+  border: 0;
+  border-bottom: 1px solid #cccac1;
+  background: transparent;
+  width: 100%;
+  padding: 4px 0 13px;
+  font-size: 12px;
+  border-radius: 0;
+  outline-offset: 5px;
+  color: #30332a;
+  transition: border-color 0.2s;
+}
+form input:focus {
+  outline: 0;
+  border-color: #62573d;
+}
+form input::placeholder {
+  color: #9b9b91;
+  font-size: 11px;
+}
+.submit-button {
+  width: 100%;
+  background: #292c25;
+  color: #f1f0e8;
+  padding: 18px 21px;
+  border: 1px solid #292c25;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition:
+    background 0.2s,
+    transform 0.2s;
+}
+.submit-button:hover {
+  background: #454a3d;
+  transform: translateY(-1px);
+}
+.submit-button > span:last-child {
+  font-size: 18px;
+  line-height: 1;
+}
+.consent {
+  font-size: 8px;
+  line-height: 1.9;
+  color: #929389;
+  margin-top: 14px;
+}
+.consent button {
+  background: none;
+  border: 0;
+  padding: 0;
+  font-size: inherit;
+  color: inherit;
+  text-decoration: underline;
+  margin-left: 7px;
+}
+.form-error {
+  font-size: 11px;
+  color: #8c3e30;
+  line-height: 1.5;
+  min-height: 14px;
+  margin: 12px 0;
+}
+.honey {
+  position: absolute;
+  left: -9999px;
+}
+.success-mark {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid #b0b69f;
+  border-radius: 50%;
+  color: #67744d;
+  margin-bottom: 28px;
+}
+#success-panel {
+  outline: none;
+  animation: reveal 0.7s ease both;
+}
+#success-panel h2 em {
+  color: #7a806e;
+}
+#success-message,
+.success-note {
+  font-size: 12px;
+  color: #7b7f71;
+  line-height: 1.9;
+}
+.receipt {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  border-top: 1px solid #d3d4c9;
+  border-bottom: 1px solid #d3d4c9;
+  padding: 23px 0;
+  margin: 25px 0;
+  font-size: 8px;
+  letter-spacing: 1px;
+}
+.receipt span {
+  color: #8b8e80;
+}
+.receipt strong {
+  text-align: right;
+  font-weight: 400;
+}
+.confirmed {
+  color: #637347;
+}
+.text-button {
+  border: 0;
+  border-bottom: 1px solid #a7ab9b;
+  padding: 6px 0;
+  background: none;
+  font-size: 10px;
+  margin-top: 15px;
+}
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (max-width: 680px) {
+  .invitation {
+    max-width: none;
+    padding: 22px 12px 0;
+    border-top: 1px solid #d7d7cd;
+  }
+  h2 {
+    font-size: 38px;
+  }
+  .form-intro {
+    font-size: 12px;
+  }
+  form input {
+    font-size: 16px;
+    padding: 8px 0 14px;
+  }
+  .submit-button {
+    padding: 20px;
+  }
+  .consent {
+    font-size: 9px;
+  }
+}
+
+/* Save the current detail without leaving its input row. */
+.entry-input-row {
+  position: relative;
+}
+.card-editor .entry-input-row input {
+  padding-right: 54px;
+}
+.input-save {
+  position: absolute;
+  right: 0;
+  bottom: 4px;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  transition:
+    background 0.2s,
+    transform 0.2s;
+}
+.input-save:hover {
+  background: #d8d0ac18;
+  transform: scale(1.06);
+}
+.input-save:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: 1px;
+}
+.pearl-finish .input-save:hover {
+  background: #46443512;
+}
+@media (max-width: 680px) {
+  .input-save {
+    bottom: 0;
+  }
+}

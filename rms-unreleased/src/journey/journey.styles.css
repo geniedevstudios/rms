@@ -1,0 +1,602 @@
+.journey {
+  height: 235svh;
+  position: relative;
+  margin-top: 35px;
+}
+.journey-sticky {
+  position: sticky;
+  top: 0;
+  min-height: 760px;
+  height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 25px 20px;
+  overflow: clip;
+}
+.journey-heading {
+  text-align: center;
+  flex: none;
+  z-index: 2;
+}
+.journey-heading h2 {
+  font-size: 46px;
+  margin: 15px 0 12px;
+}
+.journey-heading p {
+  font-size: 12px;
+  color: #7e7e73;
+  margin: 0;
+}
+.journey-card {
+  width: min(680px, 100%);
+  margin: 15px auto 0;
+  flex: none;
+}
+.journey .card-stage {
+  height: 390px;
+}
+.journey .card-position {
+  width: 560px;
+  max-width: 94%;
+  animation: none;
+  transform-origin: center;
+  will-change: transform;
+}
+.journey .membership-card {
+  transform: rotateX(8deg) rotateY(-9deg);
+}
+.journey.is-ready .membership-card {
+  transform: none !important;
+}
+.journey .card-face {
+  padding: 32px 37px;
+}
+.journey .card-front {
+  container-type: inline-size;
+}
+.journey .card-shadow {
+  bottom: 14px;
+  left: 15%;
+  right: 15%;
+}
+.journey-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 132px;
+  justify-content: start;
+  gap: 19px;
+  text-align: center;
+}
+.journey-start {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.scroll-cue {
+  font-size: 8px;
+  letter-spacing: 2px;
+}
+.journey .text-button {
+  margin: 0;
+}
+.journey .finish-picker {
+  font-size: 10px;
+  color: #838477;
+}
+.journey .swatch {
+  width: 21px;
+  height: 21px;
+}
+.steps {
+  display: flex;
+  gap: 32px;
+  list-style: none;
+  padding: 0;
+  margin: 3px 0 15px;
+  font-size: 8px;
+  letter-spacing: 1.5px;
+  color: #9d9e92;
+}
+.steps [aria-current] {
+  color: #373c2e;
+}
+.steps .complete {
+  color: #737f60;
+}
+.consent {
+  font-size: 9px;
+  margin: 12px 0 0;
+  max-width: 440px;
+}
+.is-ready .chip-row,
+.is-ready .card-number,
+.is-ready .card-bottom {
+  display: none;
+}
+.is-ready .card-brand {
+  font-size: 34px;
+}
+.is-ready .card-brand > span {
+  font-size: 5px;
+  margin-top: 8px;
+}
+.card-editor {
+  position: relative;
+  z-index: 3;
+  margin-top: 22px;
+  flex: 1;
+  min-height: 0;
+  color: inherit;
+}
+.card-editor label {
+  font-size: 8px;
+  letter-spacing: 2px;
+  color: inherit;
+  opacity: 0.65;
+  margin: 0 0 12px;
+}
+.card-editor input {
+  color: inherit;
+  font-family: Playfair, Georgia, serif;
+  font-size: 29px;
+  border-bottom: 1px solid #b3ad8d55;
+  padding: 5px 0 10px;
+  background: transparent;
+}
+.card-editor input::placeholder {
+  font-size: 29px;
+  color: inherit;
+  opacity: 0.4;
+}
+.card-editor input:focus {
+  border-color: currentColor;
+}
+.editor-note {
+  font-size: 9px;
+  opacity: 0.55;
+  margin: 12px 0 20px;
+}
+.card-action {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 12px 0;
+  border: 0;
+  border-top: 1px solid #b3ad8d55;
+  background: none;
+  color: inherit;
+  font-size: 11px;
+}
+.card-action > span {
+  font-size: 18px;
+}
+.card-editor .form-error {
+  color: #f8b4a8;
+  font-size: 10px;
+  margin: 6px 0 0;
+  min-height: 0;
+}
+.pearl-finish .form-error {
+  color: #8c3023;
+}
+#review-name {
+  display: block;
+  font-family: Playfair;
+  font-size: 25px;
+  font-weight: 400;
+  margin-top: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#review-email {
+  display: block;
+  font-size: 11px;
+  margin-top: 5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.review-total {
+  display: flex;
+  justify-content: space-between;
+  font-size: 7px;
+  letter-spacing: 1.3px;
+  margin: 22px 0 16px;
+  opacity: 0.7;
+}
+#result-panel {
+  outline: 0;
+  position: relative;
+}
+#result-icon {
+  position: absolute;
+  right: 0;
+  top: -6px;
+  font-size: 26px;
+  color: #cbd7ae;
+}
+#result-panel h3 {
+  font-family: Playfair;
+  font-size: 32px;
+  font-weight: 400;
+  margin: 12px 0 7px;
+  letter-spacing: -1px;
+}
+#result-description {
+  font-size: 11px;
+  line-height: 1.6;
+  margin: 0 0 9px;
+  max-width: 90%;
+}
+#receipt-id {
+  font-size: 8px;
+  letter-spacing: 1.3px;
+  opacity: 0.6;
+  display: block;
+  margin-bottom: 12px;
+}
+.card-declined #result-icon {
+  color: #e9aa99;
+}
+.card-declined .card-face {
+  border-color: #a96d5f;
+}
+.card-processing .card-shine {
+  animation: processing 1.4s infinite linear;
+  opacity: 0.7;
+}
+#result-panel .card-action {
+  font-size: 10px;
+  padding: 8px 0;
+}
+.card-back {
+  visibility: hidden;
+}
+.journey .card-shine {
+  pointer-events: none;
+}
+@keyframes processing {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+@media (max-width: 680px) {
+  .journey {
+    height: 210svh;
+    margin-top: 20px;
+  }
+  .journey-sticky {
+    min-height: 620px;
+    padding: 20px 14px;
+    height: 100svh;
+  }
+  .journey-heading h2 {
+    font-size: 32px;
+  }
+  .journey-heading .eyebrow {
+    font-size: 7px;
+  }
+  .journey-heading p {
+    font-size: 11px;
+  }
+  .journey .card-stage {
+    height: 290px;
+  }
+  .journey-card {
+    margin-top: 10px;
+  }
+  .journey .card-position {
+    width: 400px;
+    max-width: 96%;
+    aspect-ratio: 1.45;
+  }
+  .journey .card-face {
+    padding: 22px 24px;
+  }
+  .journey .card-brand {
+    font-size: 31px;
+  }
+  .journey.is-ready .card-brand {
+    font-size: 25px;
+  }
+  .journey .card-edition {
+    font-size: 6px;
+    letter-spacing: 1px;
+  }
+  .card-editor {
+    margin-top: 17px;
+  }
+  .card-editor label {
+    font-size: 6px;
+    margin-bottom: 7px;
+  }
+  .card-editor input,
+  .card-editor input::placeholder {
+    font-size: 23px;
+  }
+  .card-editor input {
+    padding: 3px 0 6px;
+  }
+  .editor-note {
+    font-size: 8px;
+    margin: 8px 0 12px;
+  }
+  .card-action {
+    padding: 9px 0;
+    font-size: 10px;
+  }
+  .steps {
+    gap: 25px;
+    font-size: 7px;
+  }
+  .journey-bottom {
+    gap: 18px;
+  }
+  .consent {
+    font-size: 8px;
+    max-width: 330px;
+  }
+  .journey-start {
+    gap: 16px;
+  }
+  .scroll-cue {
+    font-size: 7px;
+  }
+  #review-name {
+    font-size: 21px;
+    margin-top: 5px;
+  }
+  #review-email {
+    font-size: 10px;
+  }
+  .review-total {
+    margin: 13px 0 10px;
+    font-size: 6px;
+  }
+  #result-panel h3 {
+    font-size: 26px;
+    margin: 7px 0;
+  }
+  #result-description {
+    font-size: 9px;
+    margin-bottom: 7px;
+  }
+  #receipt-id {
+    font-size: 7px;
+    margin-bottom: 8px;
+  }
+  #result-icon {
+    font-size: 20px;
+  }
+  .card-editor .form-error {
+    font-size: 8px;
+    margin-top: 4px;
+  }
+}
+@media (max-width: 370px) {
+  .journey .card-face {
+    padding: 18px;
+  }
+  .journey .card-position {
+    aspect-ratio: 1.3;
+  }
+  .journey .card-stage {
+    height: 265px;
+  }
+  .journey-heading h2 {
+    font-size: 29px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .journey {
+    height: auto;
+  }
+  .journey-sticky {
+    position: relative;
+  }
+  .journey .card-position {
+    will-change: auto;
+  }
+}
+/* The front stays a complete card. The form lives on its reverse. */
+.journey {
+  margin-top: 0;
+}
+.journey .introduction {
+  padding: 0 15px;
+  margin-bottom: 8px;
+}
+.journey .introduction h1 {
+  font-size: 58px;
+  letter-spacing: -3px;
+  margin: 16px 0;
+}
+.journey .introduction p {
+  font-size: 11px;
+  line-height: 1.6;
+}
+.journey-heading {
+  display: none;
+}
+.journey.is-ready .introduction {
+  display: none;
+}
+.journey.is-ready .journey-heading {
+  display: block;
+}
+.journey .card-stage {
+  height: 350px;
+}
+.journey .membership-card {
+  transition: transform 0.12s linear;
+}
+.journey.is-ready .membership-card {
+  transform: rotateY(180deg) !important;
+}
+.journey .card-back {
+  visibility: visible;
+  display: flex;
+  flex-direction: column;
+  padding-top: 23px;
+}
+.journey .magnetic-strip {
+  height: 34px;
+  flex: none;
+  margin: 0 -37px 14px;
+}
+.back-brand {
+  display: flex;
+  justify-content: space-between;
+  font-size: 7px;
+  letter-spacing: 1.8px;
+  opacity: 0.55;
+}
+.journey .card-editor {
+  margin-top: 20px;
+}
+.is-ready .chip-row {
+  display: flex;
+}
+.is-ready .card-number {
+  display: flex;
+}
+.is-ready .card-bottom {
+  display: flex;
+}
+.journey .card-front .card-brand {
+  font-size: 47px;
+}
+.journey .card-front .card-brand > span {
+  font-size: 6px;
+  margin-top: 12px;
+}
+.journey:not(.is-ready) #wizard-controls {
+  display: none;
+}
+.journey:not(.is-ready) .journey-start[hidden] {
+  display: flex !important;
+}
+.journey.is-ready .journey-start {
+  display: none;
+}
+@media (max-width: 680px) {
+  .journey .introduction h1 {
+    font-size: 40px;
+    letter-spacing: -2px;
+  }
+  .journey .introduction .eyebrow {
+    font-size: 7px;
+  }
+  .journey .introduction p {
+    font-size: 10px;
+  }
+  .journey .card-stage {
+    height: 290px;
+  }
+  .journey .card-front .card-brand {
+    font-size: 32px;
+  }
+  .journey .card-front .card-brand > span {
+    font-size: 5px;
+    margin-top: 8px;
+  }
+  .journey .card-back {
+    padding-top: 16px;
+  }
+  .journey .magnetic-strip {
+    height: 24px;
+    margin: 0 -24px 10px;
+  }
+  .back-brand {
+    font-size: 5px;
+  }
+  .journey .card-editor {
+    margin-top: 13px;
+  }
+  .journey .card-front .card-bottom {
+    padding-top: 15px;
+  }
+  .journey .card-front #cardholder {
+    max-width: 150px;
+  }
+  .journey .card-front .card-number {
+    margin-top: 14px;
+  }
+}
+@media (max-width: 370px) {
+  .journey .introduction h1 {
+    font-size: 34px;
+  }
+  .journey .card-front .card-brand {
+    font-size: 28px;
+  }
+  .journey .card-front #cardholder {
+    max-width: 115px;
+  }
+  .journey .card-stage {
+    height: 265px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .journey .introduction {
+    display: none;
+  }
+}
+.journey-bottom {
+  margin-top: 24px;
+}
+@media (max-width: 680px) {
+  .journey-bottom {
+    margin-top: 12px;
+  }
+}
+
+/* A completed invitation keeps its personalised front visible while scrolling. */
+.journey.is-reserved .membership-card {
+  transform: rotateY(0deg) !important;
+  transition: transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.journey.is-reserved .card-position {
+  aspect-ratio: 1.586;
+}
+.journey.is-reserved .card-number {
+  width: 100%;
+}
+.journey.is-reserved .finish-picker {
+  display: none;
+}
+.reservation-summary {
+  text-align: center;
+}
+.reservation-edition {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 0 0 22px;
+  color: #858477;
+  font-size: 9px;
+  line-height: 1.7;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+@media (max-width: 680px) {
+  .reservation-edition {
+    gap: 8px;
+    font-size: 7px;
+    letter-spacing: 1.3px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .journey.is-reserved .membership-card {
+    transition: none;
+  }
+}

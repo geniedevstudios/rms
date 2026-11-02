@@ -1,0 +1,102 @@
+.bag-items {
+  padding: 0 28px;
+  flex: 1;
+}
+.bag-item {
+  display: flex;
+  position: relative;
+  gap: 21px;
+  padding: 25px 0;
+  border-bottom: 1px solid var(--line);
+}
+.bag-item > a {
+  width: 98px;
+  flex-shrink: 0;
+}
+.bag-item > a > img {
+  height: 137px;
+  object-position: center 25%;
+}
+.bag-item-info {
+  padding: 6px 22px 0 0;
+}
+.bag-item-info > a {
+  font-size: 12px;
+}
+.bag-item-info > p {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 8px;
+}
+.bag-item-info > span {
+  font-size: 11px;
+  display: block;
+  margin-top: 14px;
+}
+.remove-item {
+  position: absolute;
+  right: -8px;
+  top: 22px;
+}
+.quantity {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--line);
+  margin-top: 17px;
+  height: 29px;
+  font-size: 10px;
+}
+.quantity button {
+  height: 28px;
+  width: 29px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.quantity span {
+  min-width: 22px;
+  text-align: center;
+}
+.bag-summary {
+  padding: 26px 28px;
+}
+.bag-summary > div {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+}
+.bag-summary > div strong {
+  font-weight: 500;
+}
+.bag-summary > p {
+  font-size: 9px;
+  color: var(--muted);
+  margin: 12px 0 23px;
+}
+.bag-summary .demo-caption {
+  margin: 14px 0;
+  text-align: center;
+  font-size: 9px;
+}
+.bag-summary > .text-link {
+  display: flex;
+  justify-content: center;
+  border-bottom: 0;
+}
+@media (max-width: 760px) {
+  .bag-items {
+    padding: 0 23px;
+  }
+  .bag-item {
+    gap: 17px;
+  }
+  .bag-item > a {
+    width: 85px;
+  }
+  .bag-item > a > img {
+    height: 125px;
+  }
+  .bag-summary {
+    padding: 25px 23px;
+  }
+}

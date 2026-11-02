@@ -1,0 +1,58 @@
+.journal-image {
+  aspect-ratio: 1.65;
+  overflow: hidden;
+  background: #e4e3de;
+}
+.journal-image > img {
+  height: 100%;
+  object-position: center 30%;
+  transition: transform 0.7s;
+}
+.journal-card:hover img {
+  transform: scale(1.025);
+}
+.journal-card-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 22px;
+  color: #777970;
+  align-items: center;
+}
+.journal-card-meta .eyebrow {
+  font-size: 7px;
+  letter-spacing: 1.6px;
+}
+.journal-card-meta > span:last-child {
+  font-size: 7px;
+  letter-spacing: 1px;
+}
+.journal-card-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+}
+.journal-card-heading h3 {
+  font-size: 29px;
+  letter-spacing: -0.6px;
+}
+@media (max-width: 760px) {
+  .journal-image {
+    aspect-ratio: 1.4;
+  }
+  .journal-card-meta {
+    margin-top: 18px;
+  }
+  .journal-card-heading {
+    margin-top: 9px;
+  }
+  .journal-card-heading h3 {
+    font-size: 27px;
+  }
+  .journal-card-meta .eyebrow {
+    font-size: 7px;
+  }
+  .journal-card-meta > span:last-child {
+    font-size: 6px;
+  }
+}

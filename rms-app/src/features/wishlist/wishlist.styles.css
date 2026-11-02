@@ -1,0 +1,18 @@
+.saved-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px 15px;
+  padding: 27px;
+}
+.saved-grid .product-details {
+  flex-direction: column;
+}
+.saved-grid .product-tag {
+  display: none;
+}
+.saved-grid .quick-view {
+  display: flex;
+  position: static;
+  transform: none;
+  width: 100%;
+}

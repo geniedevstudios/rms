@@ -1,0 +1,355 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#eeede9" />
+    <meta
+      name="description"
+      content="A new chapter of RivermindStyle is coming. Make your introduction and join the list for our launch."
+    />
+    <title>RivermindStyle — An invitation to what's next</title>
+    <link rel="icon" href="/public/favicon.png" type="image/png" />
+    <link rel="stylesheet" href="/src/styles.css" />
+    <link rel="stylesheet" href="/src/card/card.styles.css" />
+    <link rel="stylesheet" href="/src/waitlist/waitlist.styles.css" />
+    <link rel="stylesheet" href="/src/journey/journey.styles.css" />
+    <link rel="stylesheet" href="/src/notifications/notifications.styles.css" />
+    <script type="module" src="/src/main.js"></script>
+  </head>
+  <body>
+    <a class="skip" href="#invitation">Skip to invitation</a>
+    <header class="header">
+      <a class="wordmark" href="/" aria-label="RivermindStyle home"
+        >RIVERMINDSTYLE</a
+      >
+      <button type="button" class="header-link" id="early-access">
+        Get early access <span aria-hidden="true">↓</span>
+      </button>
+    </header>
+    <main>
+      <section
+        class="journey"
+        id="invitation"
+        aria-label="Create your RMS invitation"
+      >
+        <div class="journey-sticky">
+          <section class="introduction" aria-labelledby="headline">
+            <div class="eyebrow">
+              <span class="line"></span> THE INVITATION · NO. 001
+            </div>
+            <h1 id="headline">
+              Some things are<br />worth <em>waiting for.</em>
+            </h1>
+            <p>
+              A new expression of RivermindStyle.<br />Considered pieces. A
+              world of your own.
+            </p>
+          </section>
+          <div class="journey-heading">
+            <div class="eyebrow" id="journey-eyebrow">
+              A LITTLE CLOSER. A LITTLE MORE YOU.
+            </div>
+            <h2 id="journey-title">Your world. <em>Within reach.</em></h2>
+            <p id="journey-description">Scroll to make your introduction.</p>
+          </div>
+          <div class="journey-card">
+            <div class="card-stage" id="card-stage">
+              <div class="card-orbit"></div>
+              <div class="card-position">
+                <div class="membership-card" id="membership-card">
+                  <div class="card-face card-front">
+                    <div class="card-grain"></div>
+                    <div class="card-top">
+                      <span class="card-brand"
+                        >RMS<span>RIVERMINDSTYLE</span></span
+                      ><span class="card-edition"
+                        >THE INNER CIRCLE<br /><b>ACCESS CARD</b></span
+                      >
+                    </div>
+                    <div class="chip-row">
+                      <svg class="chip" viewBox="0 0 54 42" aria-hidden="true">
+                        <rect x="1" y="1" width="52" height="40" rx="8" />
+                        <path
+                          d="M18 1v12L9 21l9 8v12M36 1v12l9 8-9 8v12M18 13h18v16H18M1 13h17M1 29h17M36 13h17M36 29h17"
+                        /></svg
+                      ><svg
+                        class="contactless"
+                        viewBox="0 0 24 30"
+                        aria-hidden="true"
+                      >
+                        <path
+                          d="M5 10q5 5 0 10M10 6q9 9 0 18M15 2q13 13 0 26"
+                        />
+                      </svg>
+                    </div>
+                    <div class="card-number">
+                      <span class="access-type">PRIVATE ACCESS</span
+                      ><span>RMS / 001</span>
+                    </div>
+                    <div class="card-bottom">
+                      <div>
+                        <span class="card-label">RESERVED FOR</span
+                        ><span id="cardholder">YOUR NEXT CHAPTER</span>
+                      </div>
+                      <div class="access-mark" aria-label="RMS member access">
+                        <span class="access-symbol">R</span
+                        ><span>MEMBER<br />ACCESS</span>
+                      </div>
+                    </div>
+
+                    <div class="card-shine"></div>
+                  </div>
+                  <div class="card-face card-back" aria-hidden="true" inert>
+                    <div class="magnetic-strip"></div>
+                    <div class="back-brand">
+                      <span>RMS / PRIVATE INVITATION</span><span>001</span>
+                    </div>
+                    <span id="card-email" hidden></span>
+                    <form
+                      id="waitlist-form"
+                      class="card-editor"
+                      hidden
+                      novalidate
+                    >
+                      <div id="entry-panel">
+                        <label id="entry-label" for="name"
+                          >01 / MAKE IT YOURS</label
+                        >
+                        <div class="entry-input-row">
+                          <input
+                            id="name"
+                            name="name"
+                            autocomplete="name"
+                            placeholder="Your full name"
+                            maxlength="80"
+                            required
+                            aria-describedby="form-error"
+                          />
+                          <input
+                            id="email"
+                            name="email"
+                            type="email"
+                            autocomplete="email"
+                            placeholder="Your email address"
+                            maxlength="254"
+                            required
+                            hidden
+                            disabled
+                            aria-describedby="form-error"
+                          />
+                          <button
+                            type="submit"
+                            id="save-step"
+                            class="input-save"
+                            aria-label="Save name"
+                            title="Save name"
+                          >
+                            <svg
+                              viewBox="0 0 24 24"
+                              width="21"
+                              height="21"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="1.5"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                              aria-hidden="true"
+                            >
+                              <path d="m5 12 4 4L19 6" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                      <div id="review-panel" hidden>
+                        <span class="card-label">YOUR INVITATION</span
+                        ><strong id="review-name"></strong
+                        ><span id="review-email"></span>
+                        <div class="review-total">
+                          <span>EARLY ACCESS</span><span>COMPLIMENTARY</span>
+                        </div>
+                      </div>
+                      <div class="honey" aria-hidden="true">
+                        <input
+                          name="website"
+                          tabindex="-1"
+                          autocomplete="off"
+                          aria-label="Leave this empty"
+                        />
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+              <div class="card-shadow"></div>
+            </div>
+          </div>
+          <div class="journey-bottom">
+            <div id="reservation-summary" class="reservation-summary" hidden>
+              <p class="reservation-edition">
+                <span id="reserved-finish"></span> EDITION
+                <span aria-hidden="true">/</span>
+                <span id="reserved-reference"></span>
+              </p>
+              <button id="another-invitation" class="text-button" type="button">
+                Create another invitation ↗
+              </button>
+            </div>
+            <div class="journey-start" id="journey-start">
+              <span class="scroll-cue">SCROLL TO PERSONALISE ↓</span
+              ><button id="begin-invitation" class="text-button">
+                Or begin here ↗
+              </button>
+            </div>
+            <div id="wizard-controls" hidden>
+              <p id="step-status" class="step-status" role="status"></p>
+              <p id="entry-note" class="editor-note">
+                Every invitation begins with a name.
+              </p>
+              <div class="wizard-actions">
+                <button
+                  class="submit-button"
+                  type="submit"
+                  form="waitlist-form"
+                  id="reserve-button"
+                  hidden
+                >
+                  Reserve invitation <span>↗</span>
+                </button>
+              </div>
+              <p class="form-error" id="form-error" role="alert"></p>
+              <ol class="steps" aria-label="Invitation progress">
+                <li data-step="name" aria-current="step">01 NAME</li>
+                <li data-step="email">02 EMAIL</li>
+                <li data-step="review">03 RESERVE</li>
+              </ol>
+              <button
+                type="button"
+                id="previous-step"
+                class="text-button"
+                hidden
+              >
+                ← Back
+              </button>
+              <p class="consent">
+                By reserving, you agree to RMS launch updates.
+                <button type="button" id="privacy-open">Privacy</button>
+              </p>
+            </div>
+            <div
+              class="finish-picker"
+              role="group"
+              aria-label="Choose your card finish"
+            >
+              <button
+                class="swatch obsidian active"
+                data-finish="obsidian"
+                aria-label="Obsidian finish"
+                aria-pressed="true"
+              ></button
+              ><button
+                class="swatch pearl"
+                data-finish="pearl"
+                aria-label="Pearl finish"
+                aria-pressed="false"
+              ></button
+              ><span id="finish-label">Obsidian</span>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="closing">
+        <span>01 / A NEW PERSPECTIVE</span>
+        <p>Not just something to wear.<br /><em>Something to become.</em></p>
+        <span>ROOTED IN IDENTITY.<br />OPEN TO THE WORLD.</span>
+      </section>
+    </main>
+    <footer>
+      <a class="footer-logo" href="/" aria-label="RivermindStyle home"
+        >RIVERMINDSTYLE</a
+      >
+      <div class="footer-meta">
+        <button type="button" id="privacy-footer">Privacy</button>
+        <button type="button" class="text-link back-to-top" id="back-to-top">
+          Back to top
+          <svg
+            viewBox="0 0 24 24"
+            width="14"
+            height="14"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.4"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M12 19V5" />
+            <path d="m5 12 7-7 7 7" />
+          </svg>
+        </button>
+        <div>
+          <a
+            class="curated-pill"
+            href="https://geniedevstudios.com/services"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Developer portfolio — curated by"
+          >
+            <span class="curated-label">Curated by</span>
+            <img
+              class="curated-logo"
+              src="/public/genie-logo.png"
+              alt=""
+              width="24"
+              height="24"
+            />
+            <span class="curated-sep">|</span>
+            <span class="curated-dev">dev</span>
+          </a>
+        </div>
+      </div>
+    </footer>
+    <dialog
+      id="reservation-dialog"
+      class="reservation-notice"
+      aria-labelledby="result-title"
+      aria-describedby="result-description"
+    >
+      <button
+        class="dialog-close"
+        id="notice-close"
+        aria-label="Close notification"
+      >
+        ×
+      </button>
+      <div id="result-panel">
+        <span id="result-icon" aria-hidden="true">✓</span
+        ><span class="eyebrow" id="result-label">ACCESS CONFIRMED</span>
+        <h2 id="result-title">Invitation reserved.</h2>
+        <p id="result-description"></p>
+        <span id="receipt-id"></span
+        ><button type="button" class="submit-button" id="notice-done">
+          Back to my card <span>↗</span></button
+        ><button type="button" class="text-button" id="reset-form">
+          Create another invitation ↗
+        </button>
+      </div>
+    </dialog>
+    <dialog id="privacy-dialog">
+      <button class="dialog-close" aria-label="Close privacy information">
+        ×
+      </button>
+      <div class="eyebrow">YOUR DETAILS, CONSIDERED</div>
+      <h2>A note on privacy.</h2>
+      <p>
+        We collect your name, email, and card finish to keep your place on the
+        RMS launch list and to send your confirmation. We’ll write again when
+        RivermindStyle is live. There’s no payment information to enter and no
+        payment is processed.
+      </p>
+      <button class="submit-button dialog-done">
+        Understood <span>↗</span>
+      </button>
+    </dialog>
+  </body>
+</html>

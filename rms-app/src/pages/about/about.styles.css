@@ -1,0 +1,97 @@
+.about-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+.about-hero > div {
+  padding: 70px 15%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.about-hero h1 {
+  font-size: 64px;
+  letter-spacing: -2px;
+  margin: 30px 0;
+}
+.about-hero p {
+  font-size: 12px;
+  line-height: 2;
+  color: var(--muted);
+}
+.about-hero > img {
+  height: 650px;
+  object-position: center 25%;
+}
+.about-film {
+  margin-bottom: 0;
+}
+.founder {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 8%;
+  align-items: center;
+  margin: 0 4.5% 110px;
+}
+.founder img {
+  height: 620px;
+  object-position: center 32%;
+  background: #8a8a8a;
+}
+.founder h2 {
+  font-size: clamp(52px, 5vw, 76px);
+  letter-spacing: -2px;
+  line-height: 0.95;
+  margin: 16px 0 14px;
+}
+.founder-story .founder-role {
+  font-size: 11px;
+  letter-spacing: 0.4px;
+  line-height: 1.5;
+  margin-bottom: 28px;
+}
+.founder-story p {
+  font-size: 14px;
+  line-height: 1.95;
+  color: var(--muted);
+  max-width: 480px;
+}
+.founder-story p + p {
+  margin-top: 18px;
+}
+@media (max-width: 760px) {
+  .about-hero {
+    grid-template-columns: 1fr;
+  }
+  .about-hero > div {
+    padding: 45px 7%;
+  }
+  .about-hero .eyebrow {
+    font-size: 7px;
+  }
+  .about-hero h1 {
+    font-size: 50px;
+    line-height: 1.2;
+    margin: 25px 0;
+  }
+  .about-hero p {
+    font-size: 12px;
+  }
+  .about-hero > img {
+    height: 470px;
+  }
+  .founder {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    margin: 0 5% 72px;
+  }
+  .founder img {
+    height: 480px;
+  }
+  .founder h2 {
+    font-size: 56px;
+    margin: 14px 0 12px;
+  }
+  .founder-story p {
+    font-size: 13px;
+  }
+}

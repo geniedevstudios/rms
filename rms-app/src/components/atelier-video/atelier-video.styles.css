@@ -1,0 +1,60 @@
+.atelier-video {
+  position: relative;
+  overflow: hidden;
+  min-height: 540px;
+  background: #c2c0b7;
+}
+.atelier-video > video {
+  height: 100%;
+  position: absolute;
+  inset: 0;
+  object-position: center 40%;
+}
+.film-play {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  color: white;
+  background: #28261e4d;
+  border: 1px solid #fff9;
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.film-play:hover {
+  background: #28261e99;
+}
+.film-play.playing {
+  top: auto;
+  left: auto;
+  right: 22px;
+  bottom: 22px;
+  transform: none;
+  width: 42px;
+  height: 42px;
+}
+.video-caption {
+  position: absolute;
+  bottom: 35px;
+  left: 30px;
+  font-size: 8px;
+  letter-spacing: 1.7px;
+  color: white;
+  text-shadow: 0 1px 8px #000a;
+}
+@media (max-width: 760px) {
+  .atelier-video {
+    height: 420px;
+    min-height: 0;
+  }
+  .video-caption {
+    font-size: 7px;
+    left: 22px;
+    bottom: 27px;
+  }
+}

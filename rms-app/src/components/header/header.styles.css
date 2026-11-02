@@ -1,0 +1,159 @@
+.announcement {
+  height: 30px;
+  background: #ebe7e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 21px;
+  font-size: 9px;
+  letter-spacing: 0.35px;
+}
+.announcement a {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(249, 248, 245, 0.97);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line);
+}
+.header-main {
+  height: 92px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4.5%;
+  position: relative;
+}
+.wordmark {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 27px;
+  letter-spacing: 2.1px;
+  text-align: center;
+  white-space: nowrap;
+}
+.wordmark span {
+  display: block;
+  font-family: Inter, sans-serif;
+  font-weight: 400;
+  font-size: 6.5px;
+  letter-spacing: 2px;
+  margin-top: 7px;
+}
+.header-actions {
+  display: flex;
+  gap: 11px;
+  align-items: center;
+  margin-left: auto;
+}
+.bag-button {
+  width: 47px;
+  gap: 7px;
+}
+.bag-button span {
+  font-size: 10px;
+}
+.dot {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #8e665d;
+  right: 6px;
+  top: 7px;
+}
+.desktop-nav {
+  height: 41px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 4px;
+  gap: 35px;
+}
+.desktop-nav a {
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.9px;
+  padding: 5px 0;
+  position: relative;
+}
+.desktop-nav a:after {
+  position: absolute;
+  content: "";
+  height: 1px;
+  background: var(--ink);
+  width: 0;
+  left: 0;
+  bottom: 0;
+  transition: width 0.2s;
+}
+.desktop-nav a:hover:after,
+.desktop-nav a.active:after {
+  width: 100%;
+}
+.mobile-menu {
+  display: none;
+}
+@media (max-width: 760px) {
+  .announcement {
+    height: 28px;
+    font-size: 8px;
+    gap: 8px;
+  }
+  .announcement > a {
+    font-size: 0;
+    gap: 0;
+  }
+  .announcement > a svg {
+    width: 12px;
+  }
+  .header-main {
+    height: 76px;
+    padding: 0 16px;
+  }
+  .desktop-nav {
+    display: none;
+  }
+  .mobile-menu {
+    display: flex;
+    padding-left: 0;
+    width: 28px;
+  }
+  .wordmark {
+    font-size: 21px;
+    letter-spacing: 1px;
+  }
+  .wordmark span {
+    font-size: 5.3px;
+    letter-spacing: 1.2px;
+    margin-top: 6px;
+  }
+  .header-actions {
+    gap: 0;
+  }
+  .header-actions .icon-button {
+    width: 28px;
+    padding: 5px;
+  }
+  .header-actions .bag-button {
+    width: 38px;
+    gap: 4px;
+  }
+  .header-actions > button:first-child {
+    display: none;
+  }
+}
+@media (max-width: 380px) {
+  .wordmark {
+    font-size: 18px;
+    letter-spacing: 0.8px;
+  }
+}

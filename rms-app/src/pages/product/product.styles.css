@@ -1,0 +1,137 @@
+.breadcrumbs {
+  display: flex;
+  gap: 14px;
+  font-size: 9px;
+  padding: 27px 4.5%;
+  color: var(--muted);
+}
+.breadcrumbs span:last-child {
+  color: var(--ink);
+}
+.product-page {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 7%;
+  padding: 0 7% 80px 4.5%;
+  align-items: start;
+}
+.product-gallery {
+  position: relative;
+  background: #e7e5e0;
+}
+.product-gallery > img {
+  aspect-ratio: 3/4;
+  object-position: center 30%;
+}
+.product-gallery > span {
+  position: absolute;
+  bottom: 20px;
+  left: 22px;
+  font-size: 7px;
+  color: white;
+  letter-spacing: 1.5px;
+  text-shadow: 0 1px 6px #000;
+}
+.product-info {
+  padding-top: 32px;
+  max-width: 465px;
+}
+.product-info > .eyebrow {
+  font-size: 8px;
+  color: var(--muted);
+}
+.product-info h1 {
+  font-size: 43px;
+  letter-spacing: -1px;
+  margin-top: 18px;
+}
+.product-price {
+  font-size: 14px;
+  margin-top: 20px;
+}
+.product-description {
+  font-size: 12px;
+  line-height: 1.95;
+  color: var(--muted);
+  margin-top: 28px;
+}
+.product-accordions {
+  margin-top: 30px;
+}
+.product-accordions details {
+  border-top: 1px solid var(--line);
+  padding: 17px 0;
+}
+.product-accordions details:last-child {
+  border-bottom: 1px solid var(--line);
+}
+.product-accordions summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  font-size: 11px;
+  list-style: none;
+}
+.product-accordions summary::-webkit-details-marker {
+  display: none;
+}
+.product-accordions details[open] summary > svg {
+  transform: rotate(45deg);
+}
+.product-accordions details > p {
+  font-size: 10px;
+  line-height: 1.9;
+  color: var(--muted);
+  margin-top: 16px;
+}
+.product-accordions details > .text-link {
+  font-size: 10px;
+  margin-top: 12px;
+}
+.related {
+  padding-top: 30px;
+}
+@media (max-width: 760px) {
+  .breadcrumbs {
+    padding: 22px 5%;
+    font-size: 8px;
+    gap: 9px;
+    flex-wrap: wrap;
+  }
+  .product-page {
+    grid-template-columns: 1fr;
+    gap: 0;
+    padding: 0 5% 45px;
+  }
+  .product-gallery > img {
+    aspect-ratio: 3/3.8;
+  }
+  .product-gallery > span {
+    font-size: 6px;
+    left: 16px;
+    bottom: 17px;
+  }
+  .product-info {
+    max-width: none;
+    padding-top: 30px;
+  }
+  .product-info > .eyebrow {
+    font-size: 7px;
+  }
+  .product-info h1 {
+    font-size: 35px;
+    margin-top: 16px;
+  }
+  .product-price {
+    font-size: 13px;
+    margin-top: 15px;
+  }
+  .product-description {
+    font-size: 12px;
+    margin-top: 23px;
+  }
+  .related {
+    padding-top: 15px;
+  }
+}

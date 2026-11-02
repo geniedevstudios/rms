@@ -1,0 +1,45 @@
+.size-guide {
+  padding: 32px 28px;
+}
+.size-guide > p {
+  font-size: 12px;
+  line-height: 1.9;
+  color: var(--muted);
+  margin: 20px 0;
+}
+.size-guide table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  text-align: left;
+  margin: 30px 0;
+}
+.size-guide caption {
+  font-size: 9px;
+  text-align: left;
+  color: var(--muted);
+  margin-bottom: 15px;
+}
+.size-guide th {
+  font-weight: 500;
+}
+.size-guide th,
+.size-guide td {
+  padding: 16px 10px;
+  border-bottom: 1px solid var(--line);
+}
+.size-guide thead {
+  background: #eeede7;
+}
+.size-guide .demo-caption {
+  font-size: 10px;
+}
+@media (max-width: 380px) {
+  .size-guide {
+    padding: 25px 20px;
+  }
+  .size-guide th,
+  .size-guide td {
+    padding: 15px 6px;
+  }
+}

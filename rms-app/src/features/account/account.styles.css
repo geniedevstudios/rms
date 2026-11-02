@@ -1,0 +1,129 @@
+.account-panel {
+  padding: 35px 28px;
+}
+.account-panel.is-auth:not(.is-revealed) {
+  width: 480px;
+  max-width: 100%;
+  margin-left: auto;
+}
+.account-panel.is-revealed {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+.account-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 28px;
+}
+.account-actions .button {
+  flex: 1;
+  gap: 12px;
+  padding: 16px 14px;
+  min-width: 0;
+}
+.account-auth {
+  width: min(420px, 100%);
+  animation: fade-in 0.4s ease;
+}
+.account-back {
+  gap: 8px;
+  border: 0;
+  padding: 0;
+  margin-bottom: 28px;
+}
+.account-form h3 {
+  font-size: 36px;
+  margin: 0 0 12px;
+}
+.account-form > p,
+.account-done {
+  font-size: 12px;
+  line-height: 1.8;
+  color: var(--muted);
+  margin-bottom: 28px;
+}
+.account-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 10px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.account-form input {
+  border: 1px solid var(--line);
+  background: transparent;
+  padding: 14px;
+  font-size: 13px;
+  letter-spacing: 0;
+  text-transform: none;
+  width: 100%;
+  min-height: 46px;
+  color: var(--ink);
+}
+.account-form .form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.account-switch {
+  margin-top: 22px;
+  border-bottom: 0;
+  padding: 0;
+  gap: 10px;
+}
+@media (max-width: 760px) {
+  .account-form .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+.account-panel > .eyebrow {
+  font-size: 8px;
+  color: var(--muted);
+}
+.account-panel h3 {
+  font-size: 32px;
+  margin: 17px 0;
+}
+.account-panel > p {
+  font-size: 12px;
+  line-height: 1.9;
+  color: var(--muted);
+  margin-bottom: 26px;
+}
+.account-panel h4 {
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-weight: 500;
+  margin: 42px 0 20px;
+}
+.account-panel .empty-orders {
+  padding: 20px;
+  background: #efeee8;
+  font-size: 11px;
+}
+.order-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--line);
+}
+.order-row > div {
+  flex: 1;
+}
+.order-row strong {
+  font-size: 10px;
+  font-weight: 500;
+}
+.order-row span {
+  display: block;
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 8px;
+}

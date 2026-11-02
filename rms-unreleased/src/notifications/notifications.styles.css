@@ -1,0 +1,170 @@
+.reservation-notice {
+  padding: 48px;
+  max-width: 480px;
+  text-align: center;
+  border-radius: 3px;
+  box-shadow: 0 30px 100px #171b2433;
+}
+.reservation-notice::backdrop {
+  background: #171d2366;
+  backdrop-filter: blur(12px);
+}
+.reservation-notice #result-icon {
+  position: static;
+  display: grid;
+  place-items: center;
+  width: 55px;
+  height: 55px;
+  border: 1px solid #a5af93;
+  border-radius: 50%;
+  color: #63734e;
+  margin: 0 auto 25px;
+  font-size: 24px;
+}
+.reservation-notice #result-label {
+  font-size: 8px;
+  letter-spacing: 2px;
+  color: #7f8773;
+}
+.reservation-notice #result-title {
+  font-family: Playfair, Georgia, serif;
+  font-size: 37px;
+  line-height: 1.15;
+  letter-spacing: -1px;
+  font-weight: 400;
+  margin: 18px 0;
+}
+.reservation-notice #result-description {
+  font-size: 12px;
+  line-height: 1.8;
+  margin: 0 auto 20px;
+  max-width: 100%;
+  color: #74776d;
+}
+.reservation-notice #receipt-id {
+  display: block;
+  font-size: 8px;
+  letter-spacing: 1.5px;
+  margin: 0 0 28px;
+  color: #7e826f;
+}
+.reservation-notice .text-button {
+  margin-top: 20px;
+  font-size: 10px;
+}
+.reservation-notice.already-reserved #result-icon {
+  border-color: #b9aa8b;
+  color: #8a7753;
+}
+.step-status {
+  font-size: 10px;
+  color: #677253;
+  min-height: 14px;
+  margin: 0 0 10px;
+  letter-spacing: 0.3px;
+}
+#wizard-controls {
+  width: min(360px, calc(100vw - 40px));
+}
+.wizard-actions .submit-button {
+  padding: 15px 20px;
+  font-size: 11px;
+}
+#wizard-controls .steps {
+  justify-content: center;
+  margin-top: 18px;
+}
+#wizard-controls .form-error {
+  color: #8c3e30;
+  min-height: 0;
+  margin: 9px 0;
+  font-size: 11px;
+}
+#wizard-controls .form-error:empty {
+  display: none;
+}
+#wizard-controls .editor-note {
+  margin: 0 0 12px;
+  font-size: 10px;
+  color: #838579;
+}
+.access-mark {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.access-symbol {
+  font-family: Playfair, Georgia, serif;
+  display: grid;
+  place-items: center;
+  border: 1px solid #c3bca080;
+  border-radius: 50%;
+  width: 33px;
+  height: 33px;
+  font-size: 20px;
+}
+.access-mark > span:last-child {
+  font-size: 6px;
+  letter-spacing: 1.5px;
+  line-height: 1.8;
+}
+.card-number .access-type {
+  font-size: 14px;
+  letter-spacing: 3px;
+  opacity: 0.8;
+}
+.journey .card-back .card-editor {
+  margin-top: 35px;
+}
+.journey .card-back #entry-panel {
+  padding-top: 12px;
+}
+.journey-bottom {
+  min-height: 170px;
+}
+@media (max-width: 680px) {
+  .reservation-notice {
+    padding: 38px 26px;
+  }
+  .reservation-notice #result-title {
+    font-size: 31px;
+  }
+  .journey .card-back .card-editor {
+    margin-top: 25px;
+  }
+  .journey .card-back #entry-panel {
+    padding-top: 5px;
+  }
+  .card-number .access-type {
+    font-size: 10px;
+    letter-spacing: 2px;
+  }
+  .access-symbol {
+    height: 25px;
+    width: 25px;
+    font-size: 16px;
+  }
+  .access-mark > span:last-child {
+    font-size: 5px;
+    letter-spacing: 1px;
+  }
+  .journey-bottom {
+    min-height: 170px;
+    gap: 12px;
+  }
+  .journey .card-stage {
+    height: 260px;
+  }
+  .journey-sticky {
+    min-height: 690px;
+  }
+  .journey-heading h2 {
+    font-size: 29px;
+  }
+  .step-status {
+    font-size: 9px;
+  }
+  .wizard-actions .submit-button {
+    padding: 12px 18px;
+  }
+}

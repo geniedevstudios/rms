@@ -1,0 +1,18 @@
+.help-content {
+  padding: 37px 28px;
+}
+.help-content > .eyebrow {
+  font-size: 8px;
+  color: var(--muted);
+}
+.help-content h3 {
+  font-size: 32px;
+  line-height: 1.4;
+  margin: 20px 0 30px;
+}
+.help-content > p {
+  font-size: 12px;
+  line-height: 2;
+  color: var(--muted);
+  margin-bottom: 22px;
+}
