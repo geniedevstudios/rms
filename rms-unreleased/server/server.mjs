@@ -24,7 +24,7 @@ const reserve = supabaseUrl
       url: supabaseUrl,
       apiKey: supabaseKey,
       resendKey,
-      from: process.env.RESEND_FROM || "RivermindStyle <onboarding@resend.dev>",
+      from: process.env.RESEND_FROM || "RIVERMINDSTYLE <onboarding@resend.dev>",
     })
   : createWaitlistStore(
       process.env.WAITLIST_FILE || resolve(root, "data/waitlist.jsonl"),

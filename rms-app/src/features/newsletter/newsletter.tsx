@@ -40,7 +40,7 @@ export function Newsletter() {
               </button>
             </label>
             <p className="newsletter-note">
-              By joining, you agree to hear from RivermindStyle. Unsubscribe
+              By joining, you agree to hear from RIVERMINDSTYLE. Unsubscribe
               anytime.
               <br />
               Preview only — subscriptions are not sent yet.

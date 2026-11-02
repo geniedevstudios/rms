@@ -1,4 +1,4 @@
-# RivermindStyle storefront
+# RIVERMINDSTYLE storefront
 
 A responsive, local storefront prototype based on `../RMS-WEBSITE-BRIEF.md`. Built with React, TypeScript and Vite. Fonts, stock photographs and the atelier film are served locally.
 

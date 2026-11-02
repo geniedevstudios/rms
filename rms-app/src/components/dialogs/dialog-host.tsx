@@ -38,7 +38,7 @@ export function DialogHost() {
       content = <Account />;
       break;
     case "menu":
-      title = "RivermindStyle";
+      title = "RIVERMINDSTYLE";
       content = <MobileMenu />;
       break;
     case "size-guide":

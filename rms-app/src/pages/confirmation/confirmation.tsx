@@ -16,7 +16,7 @@ export function Confirmation({ order }: { order?: Order }) {
       <h1>{order ? "A beautiful choice." : "Let’s find your next piece."}</h1>
       <p>
         {order
-          ? "Thank you for exploring RivermindStyle. This is a preview confirmation; no payment was taken and nothing will be shipped."
+          ? "Thank you for exploring RIVERMINDSTYLE. This is a preview confirmation; no payment was taken and nothing will be shipped."
           : "This sample order is not available in this browser."}
       </p>
       {order && (

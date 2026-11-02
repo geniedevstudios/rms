@@ -59,7 +59,7 @@ export default async function handler(req, res) {
       url,
       apiKey,
       resendKey,
-      from: process.env.RESEND_FROM || "RivermindStyle <hello@rivermindstyle.com>",
+      from: process.env.RESEND_FROM || "RIVERMINDSTYLE <hello@rivermindstyle.com>",
     })(entry);
     if (saved.emailed === false)
       console.error("Invitation saved, but the confirmation email was not accepted.");

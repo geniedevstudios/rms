@@ -36,7 +36,7 @@ export function Header() {
           >
             <Menu />
           </button>
-          <Link to="/" className="wordmark" aria-label="RivermindStyle home">
+          <Link to="/" className="wordmark" aria-label="RIVERMINDSTYLE home">
             RIVERMINDSTYLE<span>CONSIDERED. EXPRESSED. WORN.</span>
           </Link>
           <div className="header-actions">

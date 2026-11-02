@@ -50,7 +50,7 @@ export function setupCard() {
       document.querySelector("#cardholder").textContent =
         name.trim() || "YOUR NEXT CHAPTER";
       document.querySelector("#card-email").textContent =
-        email.trim() || "A little closer to RivermindStyle.";
+        email.trim() || "A little closer to RIVERMINDSTYLE.";
     },
   };
 }

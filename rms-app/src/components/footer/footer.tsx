@@ -65,7 +65,7 @@ export function Footer() {
             className="footer-copy"
             onClick={() => openDialog({ type: "copyright" })}
           >
-            © {new Date().getFullYear()} RivermindStyle
+            © {new Date().getFullYear()} RIVERMINDSTYLE
           </button>
           <button
             type="button"

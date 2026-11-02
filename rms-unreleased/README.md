@@ -1,6 +1,6 @@
 # RMS — The invitation
 
-A separate coming-soon experience for RivermindStyle. Dependency-free HTML, CSS and JavaScript, with a small Node.js waitlist service.
+A separate coming-soon experience for RIVERMINDSTYLE. Dependency-free HTML, CSS and JavaScript, with a small Node.js waitlist service.
 
 ## Run
 

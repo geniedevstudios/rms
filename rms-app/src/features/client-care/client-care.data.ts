@@ -34,7 +34,7 @@ export const clientCareContent: Record<
   Terms: {
     title: "About this preview.",
     paragraphs: [
-      "This is a demonstration of the RivermindStyle shopping experience. Product names, prices, sizes, descriptions and collection stories are sample content; photographs and video are temporary stock references.",
+      "This is a demonstration of the RIVERMINDSTYLE shopping experience. Product names, prices, sizes, descriptions and collection stories are sample content; photographs and video are temporary stock references.",
       "No live sale, payment or delivery is available. Final terms of sale will be added before launch.",
     ],
   },

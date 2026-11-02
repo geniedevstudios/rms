@@ -47,7 +47,7 @@ export function AppRoutes() {
                 : pathname.startsWith("/confirmation/")
                   ? "Demo order confirmation"
                   : "A wardrobe for becoming");
-    document.title = `RivermindStyle — ${pageTitle}`;
+    document.title = `RIVERMINDSTYLE — ${pageTitle}`;
   }, [pathname, product, customDesign]);
 
   if (pathname === "/") return <Home />;

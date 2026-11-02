@@ -35,7 +35,7 @@ export function About() {
           <em>Open to the world.</em>
         </h2>
         <p className="manifesto-body">
-          RivermindStyle explores the meeting of strength and softness. An
+          RIVERMINDSTYLE explores the meeting of strength and softness. An
           African perspective, expressed through considered silhouettes,
           thoughtful detail and a contemporary eye. A wardrobe that leaves room
           for the individual.
@@ -67,7 +67,7 @@ export function About() {
           <em>A whole wardrobe.</em>
         </h2>
         <p className="manifesto-body">
-          The clothes begin with a person. RivermindStyle is shaped by the
+          The clothes begin with a person. RIVERMINDSTYLE is shaped by the
           woman who founded it, from the first line of a silhouette to the
           quiet left for the wearer.
         </p>
@@ -75,14 +75,14 @@ export function About() {
       <section className="founder">
         <img
           src="/images/mimi.jpg"
-          alt="Mirriam Elsa, owner of RivermindStyle"
+          alt="Mirriam Elsa, owner of RIVERMINDSTYLE"
         />
         <div className="founder-story">
           <span className="eyebrow">THE FOUNDER</span>
           <h2>Mirriam Elsa</h2>
-          <p className="founder-role">Owner of RivermindStyle</p>
+          <p className="founder-role">Owner of RIVERMINDSTYLE</p>
           <p>
-            RivermindStyle began with Mirriam Elsa. She wanted clothes that hold a
+            RIVERMINDSTYLE began with Mirriam Elsa. She wanted clothes that hold a
             woman’s own presence, not a borrowed one. Strength and softness, in
             the same line. An African way of seeing, made quietly and worn in
             the world.

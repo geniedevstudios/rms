@@ -1,4 +1,4 @@
-# RivermindStyle website design reference
+# RIVERMINDSTYLE website design reference
 
 Recovered on 31 October 2026 from the ChatGPT conversation **Proposal for Joey’s Website Management**:
 chatgpt-conversation://6ad0a8b0-cb64-83e9-8c79-2f37b9336912
@@ -67,4 +67,4 @@ Prioritise ease of use for Mimi. The recap lists products, variants, inventory, 
 
 ## Working design statement
 
-RivermindStyle should feel like a refined international fashion house: editorial photography, architectural whitespace, Playfair Display typography, restrained off-white/pink/black branding, and a confident feminine identity with the clothing at the centre of attention.
+RIVERMINDSTYLE should feel like a refined international fashion house: editorial photography, architectural whitespace, Playfair Display typography, restrained off-white/pink/black branding, and a confident feminine identity with the clothing at the centre of attention.

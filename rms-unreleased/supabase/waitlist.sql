@@ -1,4 +1,4 @@
--- Run this in the RivermindStyle project: dlxtdthicumafphnduwe
+-- Run this in the RIVERMINDSTYLE project: dlxtdthicumafphnduwe
 -- Dashboard → SQL Editor → New query → Run.
 -- Linking Resend under Authentication → SMTP does not create this table.
 
