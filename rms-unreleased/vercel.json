@@ -1,0 +1,11 @@
+{
+  "framework": null,
+  "buildCommand": "",
+  "outputDirectory": ".",
+  "functions": {
+    "api/waitlist.mjs": {
+      "maxDuration": 15,
+      "includeFiles": "public/**"
+    }
+  }
+}

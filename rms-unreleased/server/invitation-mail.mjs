@@ -1,4 +1,5 @@
 import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { accessCard, finishes } from "./invitation-card.mjs";
@@ -132,6 +133,15 @@ export function invitationMessage({ name, reference, finish = "obsidian" }) {
   };
 }
 
+async function readProjectFile(relativeToThisFile) {
+  try {
+    return await readFile(fileURLToPath(new URL(relativeToThisFile, import.meta.url)));
+  } catch (error) {
+    if (error.code !== "ENOENT") throw error;
+    return readFile(join(process.cwd(), relativeToThisFile.replace(/^\.\.\//, "")));
+  }
+}
+
 export async function sendInvitation({
   fetchImpl = fetch,
   apiKey,
@@ -145,9 +155,7 @@ export async function sendInvitation({
   const attachments = await Promise.all(
     inlineAssets.map(async (asset) => ({
       filename: asset.filename,
-      content: (
-        await readFile(fileURLToPath(new URL(asset.path, import.meta.url)))
-      ).toString("base64"),
+      content: (await readProjectFile(asset.path)).toString("base64"),
       content_type: asset.type,
       content_id: asset.id,
     })),
