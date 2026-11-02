@@ -1,6 +1,8 @@
+import { playIntro } from "./intro.js";
 import { setupJourney } from "./journey/journey.js";
 import { setupCard } from "./card/card.js";
 import { setupWaitlist } from "./waitlist/waitlist.js";
+playIntro();
 const waitlist = setupWaitlist(setupCard(), {
   onReserved: () => journey.complete(),
   onReset: () => journey.edit(),

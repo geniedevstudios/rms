@@ -56,6 +56,37 @@ button:disabled {
   cursor: wait;
   opacity: 0.7;
 }
+html.intro-on,
+html.intro-on body {
+  overflow: hidden;
+}
+.intro {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  background: #ecd8d7;
+  animation: intro-leave 0.9s cubic-bezier(0.76, 0, 0.24, 1) 1.45s forwards;
+}
+.intro img {
+  width: min(520px, 78vw);
+  height: auto;
+  animation: intro-rise 1.05s cubic-bezier(0.16, 1, 0.36, 1) both;
+}
+@keyframes intro-rise {
+  from {
+    transform: translateY(100vh);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes intro-leave {
+  to {
+    transform: translateY(-100%);
+  }
+}
 .header {
   max-width: 1600px;
   margin: auto;
@@ -70,23 +101,11 @@ button:disabled {
   justify-self: center;
   font-family: Playfair, Georgia, serif;
   font-weight: 600;
-  font-size: 27px;
+  font-size: 34px;
   letter-spacing: 2.1px;
   text-align: center;
   text-transform: uppercase;
   white-space: nowrap;
-}
-.header-link {
-  grid-column: 3;
-  justify-self: end;
-  font-size: 11px;
-  border: 0;
-  border-bottom: 1px solid #7c7c7350;
-  background: none;
-  padding: 0 0 8px;
-}
-.header-link span {
-  margin-left: 28px;
 }
 .introduction {
   text-align: center;
@@ -393,14 +412,8 @@ dialog p {
     min-height: 72px;
   }
   .wordmark {
-    font-size: 16px;
-    letter-spacing: 0.6px;
-  }
-  .header-link {
-    font-size: 10px;
-  }
-  .header-link span {
-    margin-left: 10px;
+    font-size: 22px;
+    letter-spacing: 1px;
   }
   .introduction {
     padding-top: 40px;

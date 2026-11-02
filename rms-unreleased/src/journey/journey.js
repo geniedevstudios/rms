@@ -74,21 +74,6 @@ export function setupJourney(onReady) {
   document
     .querySelector("#begin-invitation")
     .addEventListener("click", revealName);
-  document.querySelector("#early-access").addEventListener("click", () => {
-    if (reserved) {
-      document.querySelector("#reservation-summary").scrollIntoView({
-        behavior: motion.matches ? "instant" : "smooth",
-        block: "center",
-      });
-      return;
-    }
-    skip = true;
-    render();
-    document.getElementById("name").scrollIntoView({
-      behavior: motion.matches ? "instant" : "smooth",
-      block: "center",
-    });
-  });
   render();
   return {
     complete() {
