@@ -4,12 +4,23 @@ export function setupJourney(onReady) {
   const card = document.querySelector("#membership-card");
   const front = document.querySelector(".card-front");
   const back = document.querySelector(".card-back");
+  const introduction = document.querySelector(".introduction");
+  const heading = document.querySelector(".journey-heading");
   const motion = matchMedia("(prefers-reduced-motion: reduce)");
   let frame = 0;
   let started = false;
   let skip = false;
   let editing = false;
   let reserved = false;
+  let headingReady;
+  function updateHeading(ready) {
+    if (headingReady === ready) return;
+    headingReady = ready;
+    introduction.inert = ready;
+    introduction.setAttribute("aria-hidden", String(ready));
+    heading.inert = !ready;
+    heading.setAttribute("aria-hidden", String(!ready));
+  }
   function start() {
     if (started) return;
     started = true;
@@ -18,6 +29,7 @@ export function setupJourney(onReady) {
   function render() {
     frame = 0;
     if (reserved) {
+      updateHeading(true);
       journey.classList.add("is-ready", "is-reserved");
       position.style.transform = "none";
       card.style.transform = "rotateY(0deg)";
@@ -38,6 +50,7 @@ export function setupJourney(onReady) {
     const rotation = turn * turn * (3 - 2 * turn) * 180;
     const ready = progress >= 0.85 || skip || editing || motion.matches;
     journey.classList.toggle("is-ready", ready);
+    updateHeading(ready);
     if (!motion.matches && !skip && !editing) {
       position.style.transform = `translateX(${(1 - eased) * -10}%) translateY(${(1 - eased) * 12}px) rotate(${(1 - eased) * -13}deg) scale(${0.78 + eased * 0.22})`;
       card.style.transform = `rotateX(${(1 - turn) * 10}deg) rotateY(${rotation}deg)`;

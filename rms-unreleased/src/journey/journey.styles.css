@@ -422,20 +422,48 @@
   font-size: 11px;
   line-height: 1.6;
 }
-.journey-heading {
-  display: none;
+/* Both headings occupy one grid cell, preserving its height during the fade. */
+.journey-titles {
+  display: grid;
+  width: 100%;
+  flex: none;
+  align-items: center;
+}
+.journey-titles > .introduction,
+.journey-titles > .journey-heading {
+  grid-area: 1 / 1;
+  min-width: 0;
+  transition:
+    opacity 420ms ease,
+    transform 420ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    visibility 0s linear 420ms;
+}
+.journey-titles > .journey-heading {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  pointer-events: none;
 }
 .journey.is-ready .introduction {
-  display: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  pointer-events: none;
 }
+.journey:not(.is-ready) .introduction,
 .journey.is-ready .journey-heading {
-  display: block;
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+  transition-delay: 0s;
 }
 .journey .card-stage {
   height: 350px;
 }
 .journey .membership-card {
-  transition: transform 0.12s linear;
+  /* Scroll already updates the rotation each frame; avoid chasing each update. */
+  transition: none;
 }
 .journey.is-ready .membership-card {
   transform: rotateY(180deg) !important;
@@ -545,8 +573,10 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .journey .introduction {
-    display: none;
+  .journey-titles > .introduction,
+  .journey-titles > .journey-heading {
+    transition: none;
+    transform: none;
   }
 }
 .journey-bottom {
