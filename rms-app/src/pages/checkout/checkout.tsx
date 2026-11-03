@@ -1,4 +1,5 @@
 import "./checkout.styles.css";
+import { useEffect, useState } from "react";
 import { useCart } from "../../features/cart/cart.context";
 import { useOrders } from "../../features/orders/orders.context";
 import { go } from "../../routing/navigation";
@@ -7,14 +8,51 @@ import { ArrowRight, ArrowLeft, Check } from "lucide-react";
 import { SelectMenu } from "../../components/select-menu/select-menu";
 import { findPiece } from "../../data/catalog";
 import { money } from "../../lib/format-currency";
+import {
+  paymentReference,
+  preparePaystack,
+  startPaystack,
+  verifyPaystack,
+} from "../../features/payments/paystack";
 export function Checkout() {
+  useEffect(() => {
+    void preparePaystack().catch(() => undefined);
+  }, []);
   const { items: bag, subtotal, clearCart } = useCart();
-  const { placeDemoOrder } = useOrders();
-  const complete = () => {
-    const order = placeDemoOrder(bag);
-    if (!order) return;
-    clearCart();
-    go(`/confirmation/${order.id}`);
+  const { placeOrder } = useOrders();
+  const [paying, setPaying] = useState(false);
+  const [error, setError] = useState("");
+  const complete = async (form: HTMLFormElement) => {
+    const data = new FormData(form);
+    const email = String(data.get("email") || "");
+    const name = `${data.get("given-name") || ""} ${data.get("family-name") || ""}`.trim();
+    const phone = String(data.get("tel") || "");
+    const items = bag.map((item) => ({ ...item }));
+    const reference = paymentReference();
+    setPaying(true);
+    setError("");
+    try {
+      const paidReference = await startPaystack({
+        email,
+        name,
+        phone,
+        items,
+        reference,
+      });
+      const confirmed = await verifyPaystack(paidReference);
+      const order = placeOrder(items, confirmed.reference, confirmed.email);
+      if (!order) throw new Error("The order could not be saved.");
+      clearCart();
+      go(`/confirmation/${order.id}`);
+    } catch (reason) {
+      setError(
+        reason instanceof Error
+          ? reason.message
+          : "The payment could not be completed.",
+      );
+    } finally {
+      setPaying(false);
+    }
   };
   if (!bag.length)
     return (
@@ -39,17 +77,9 @@ export function Checkout() {
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            complete();
+            void complete(e.currentTarget);
           }}
         >
-          <div className="demo-banner">
-            <span>PREVIEW CHECKOUT</span>
-            <p>
-              Try the experience with sample details. No payment is collected
-              and no order is sent. Your contact and address details are not
-              saved.
-            </p>
-          </div>
           <h2>01 / Contact</h2>
           <label>
             Email address
@@ -116,18 +146,15 @@ export function Checkout() {
           <div className="demo-delivery">
             <Check size={18} />
             <div>
-              <strong>Sample delivery · Complimentary</strong>
-              <p>
-                Delivery fees and payment methods will be available at launch.
-              </p>
+              <strong>Delivery · Complimentary</strong>
+              <p>Pay the order total with Paystack.</p>
             </div>
           </div>
-          <button type="submit" className="button dark full">
-            Place demo order <ArrowRight size={17} />
+          {error && <p className="form-error">{error}</p>}
+          <button type="submit" className="button dark full" disabled={paying}>
+            {paying ? "Waiting for Paystack" : `Pay ${money(subtotal)}`}{" "}
+            <ArrowRight size={17} />
           </button>
-          <p className="demo-caption">
-            This creates a sample order in this browser only.
-          </p>
         </form>
         <aside className="checkout-summary">
           <h2>Your selection</h2>
@@ -152,7 +179,7 @@ export function Checkout() {
               <span>{money(subtotal)}</span>
             </div>
             <div>
-              <span>Demo delivery</span>
+              <span>Delivery</span>
               <span>Complimentary</span>
             </div>
             <div className="checkout-total">

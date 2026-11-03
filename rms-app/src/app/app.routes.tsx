@@ -11,6 +11,7 @@ import { Shop } from "../pages/shop/shop";
 import { ProductPage } from "../pages/product/product";
 import { Checkout } from "../pages/checkout/checkout";
 import { Confirmation } from "../pages/confirmation/confirmation";
+import { Orders } from "../pages/orders/orders";
 import { Collection } from "../pages/collection/collection";
 import { Custom } from "../pages/custom/custom";
 import { CustomDesignPage } from "../pages/custom/custom-design";
@@ -44,8 +45,10 @@ export function AppRoutes() {
               ? "The journal"
               : pathname === "/checkout"
                 ? "Checkout"
-                : pathname.startsWith("/confirmation/")
-                  ? "Demo order confirmation"
+                : pathname === "/orders"
+                  ? "Your orders"
+                  : pathname.startsWith("/confirmation/")
+                    ? "Order confirmation"
                   : "A wardrobe for becoming");
     document.title = `RIVERMINDSTYLE — ${pageTitle}`;
   }, [pathname, product, customDesign]);
@@ -61,6 +64,7 @@ export function AppRoutes() {
     );
   if (product) return <ProductPage key={product.id} product={product} />;
   if (pathname === "/checkout") return <Checkout />;
+  if (pathname === "/orders") return <Orders />;
   if (pathname.startsWith("/confirmation/"))
     return (
       <Confirmation

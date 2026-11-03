@@ -41,8 +41,7 @@ export function ProductPage({ product }: { product: Product }) {
                 Details & care <Plus size={14} />
               </summary>
               <p>
-                {product.fabric}. Sample composition and care information; final
-                garment details will be provided with the RMS collection.
+                {product.fabric}.
               </p>
             </details>
             <details>
@@ -50,9 +49,8 @@ export function ProductPage({ product }: { product: Product }) {
                 Fit & sizing <Plus size={14} />
               </summary>
               <p>
-                Choose your usual size using the indicative guide. These
-                photographs are styling references; model measurements and final
-                garment measurements are not yet available.
+                Choose your usual size. If you are between sizes, take the
+                larger one.
               </p>
               <button className="text-link" onClick={onSize}>
                 View size guide <ArrowUpRight size={13} />
@@ -63,9 +61,7 @@ export function ProductPage({ product }: { product: Product }) {
                 Delivery & returns <Plus size={14} />
               </summary>
               <p>
-                This is a storefront preview. Live delivery options, lead times
-                and the returns policy will be confirmed before launch. No
-                payment is taken.
+                Delivery is complimentary. Payment is taken through Paystack.
               </p>
             </details>
           </div>

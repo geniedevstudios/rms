@@ -7,7 +7,6 @@ import { ProductCard } from "../products/product-card/product-card";
 import { CustomDesignCard } from "../../pages/custom/custom-design-card";
 import { EmptyState } from "../../components/empty-state/empty-state";
 import { Heart } from "lucide-react";
-import { go } from "../../routing/navigation";
 export function Wishlist() {
   const { saved } = useWishlist();
   const { closeDialog } = useDialogs();
@@ -31,10 +30,7 @@ export function Wishlist() {
       icon={<Heart />}
       title="Keep what speaks to you."
       text="Tap the heart on a piece to save it here for another moment."
-      action={() => {
-        closeDialog();
-        go("/shop");
-      }}
+      action={() => closeDialog("#/shop")}
     />
   );
 }

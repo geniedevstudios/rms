@@ -1,24 +1,32 @@
 import "./atelier-video.styles.css";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Play, Pause } from "lucide-react";
+import { atelierPreview } from "../../features/film/film-source";
 export function AtelierVideo({ openFilm }: { openFilm: () => void }) {
   const ref = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
   const [failed, setFailed] = useState(false);
+  useEffect(() => {
+    const video = ref.current;
+    if (!video) return;
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    void video.play().catch(() => setFailed(true));
+  }, []);
   return (
     <div className="atelier-video">
       <video
         ref={ref}
-        src="/videos/atelier.mp4"
+        src={atelierPreview}
         poster="/images/suit.jpg"
+        autoPlay
         muted
         loop
         playsInline
-        preload="metadata"
+        preload="auto"
         onError={() => setFailed(true)}
         onPlay={() => setPlaying(true)}
         onPause={() => setPlaying(false)}
-        aria-label="Preview film of a seamstress shaping fabric on a mannequin"
+        aria-label="Atelier film of a seamstress shaping fabric on a mannequin"
       />
       {failed ? (
         <button className="film-play" onClick={openFilm}>

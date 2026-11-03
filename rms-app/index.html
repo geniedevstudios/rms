@@ -1,9 +1,42 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="intro-on">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#f7f6f2" />
+    <style>
+      html.intro-on,
+      html.intro-on body {
+        overflow: hidden;
+      }
+      .intro {
+        position: fixed;
+        inset: 0;
+        z-index: 300;
+        display: grid;
+        place-items: center;
+        background: #ecd8d7;
+        animation: intro-leave 0.9s cubic-bezier(0.76, 0, 0.24, 1) 1.45s forwards;
+      }
+      .intro img {
+        width: min(520px, 78vw);
+        height: auto;
+        animation: intro-rise 1.05s cubic-bezier(0.16, 1, 0.36, 1) both;
+      }
+      @keyframes intro-rise {
+        from {
+          transform: translateY(100vh);
+        }
+        to {
+          transform: translateY(0);
+        }
+      }
+      @keyframes intro-leave {
+        to {
+          transform: translateY(-100%);
+        }
+      }
+    </style>
     <meta
       name="description"
       content="RIVERMINDSTYLE. Considered silhouettes, expressive femininity. Discover a wardrobe for becoming."
@@ -12,6 +45,14 @@
     <title>RIVERMINDSTYLE — A wardrobe for becoming</title>
   </head>
   <body>
+    <div class="intro" id="intro">
+      <img
+        src="/intro-logo.jpg"
+        alt="RIVERMINDSTYLE"
+        width="606"
+        height="372"
+      />
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

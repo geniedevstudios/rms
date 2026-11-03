@@ -41,8 +41,7 @@ export function SizeGuide() {
         </tbody>
       </table>
       <p className="demo-caption">
-        Preview guide. RMS’s final garment measurements and fit recommendations
-        will replace these sample values.
+        Choose the size closest to your measurements.
       </p>
     </div>
   );

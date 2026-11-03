@@ -1,7 +1,7 @@
 import { filterProducts } from "../../features/products/product-selectors";
 import "./shop.styles.css";
 import { useState } from "react";
-import { products } from "../../data/products";
+import { products, shopCategories } from "../../data/products";
 import { SlidersHorizontal, X } from "lucide-react";
 import { ProductCard } from "../../features/products/product-card/product-card";
 import { SelectMenu } from "../../components/select-menu/select-menu";
@@ -40,7 +40,7 @@ export function Shop({
       </div>
       <div className="shop-toolbar">
         <div className="category-tabs" aria-label="Product categories">
-          {["All pieces", "Dresses", "Tailoring", "Outerwear"].map((value) => (
+          {["All pieces", ...shopCategories].map((value) => (
             <button
               key={value}
               aria-pressed={category === value}

@@ -16,12 +16,14 @@ export function Journal({ pathname }: { pathname: string }) {
             title="The beauty of becoming"
             label="THE POINT OF VIEW"
             image="/images/hero.jpg"
+            hover="/images/portrait.jpg"
             to="/journal/becoming"
           />
           <JournalCard
             title="A study in soft structure"
             label="THE WARDROBE"
             image="/images/cream.jpg"
+            hover="/images/suit.jpg"
             to="/journal/structure"
           />
         </div>
@@ -78,7 +80,7 @@ export function Journal({ pathname }: { pathname: string }) {
             : "The most lasting style is personal. It is not about arriving at a finished version of yourself. It is about enjoying the becoming."}
         </p>
         <Link
-          to={structure ? "/shop?category=Tailoring" : "/collection"}
+          to={structure ? "/shop?category=Two%20piece" : "/collection"}
           className="text-link"
         >
           Explore the edit <ArrowRight size={15} />

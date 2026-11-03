@@ -40,8 +40,7 @@ export function CustomDesignPage({ design }: { design: CustomDesign }) {
               </summary>
               <p>
                 {design.fabric}. Cut to your measurements once the size is
-                confirmed. Sample composition and care information; final
-                garment details will be provided with the RMS collection.
+                confirmed.
               </p>
             </details>
             <details>
@@ -65,8 +64,7 @@ export function CustomDesignPage({ design }: { design: CustomDesign }) {
               </summary>
               <p>
                 This design is ready in {design.leadDays} days once your
-                measurements are confirmed. This is a storefront preview. No
-                payment is taken.
+                measurements are confirmed.
               </p>
             </details>
           </div>

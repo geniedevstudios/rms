@@ -55,9 +55,6 @@ export function ProductPurchase({ product }: { product: Product }) {
           <Heart size={19} fill={isSaved ? "currentColor" : "none"} />
         </button>
       </div>
-      <p className="product-preview-note">
-        Sample piece · Preview pricing and sizing
-      </p>
       {showSizeGuide && (
         <div className="inline-size-guide">
           <SizeGuide />

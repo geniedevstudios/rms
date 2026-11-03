@@ -11,13 +11,13 @@ export function Confirmation({ order }: { order?: Order }) {
         <Check size={26} />
       </div>
       <span className="eyebrow">
-        {order ? "YOUR DEMO ORDER IS COMPLETE" : "ORDER NOT FOUND"}
+        {order ? "YOUR ORDER IS CONFIRMED" : "ORDER NOT FOUND"}
       </span>
       <h1>{order ? "A beautiful choice." : "Let’s find your next piece."}</h1>
       <p>
         {order
-          ? "Thank you for exploring RIVERMINDSTYLE. This is a preview confirmation; no payment was taken and nothing will be shipped."
-          : "This sample order is not available in this browser."}
+          ? "Thank you. Your payment is confirmed."
+          : "This order could not be found."}
       </p>
       {order && (
         <div className="confirmation-details">
@@ -27,18 +27,29 @@ export function Confirmation({ order }: { order?: Order }) {
             const p = findPiece(item.productId)!;
             return (
               <div className="confirmation-item" key={`${p.id}-${item.size}`}>
-                <span>
-                  {p.name} · {item.size} × {item.quantity}
-                </span>
+                <img src={p.image} alt={p.name} />
+                <div>
+                  <strong>{p.name}</strong>
+                  <span>
+                    {p.color} / {item.size} / Qty {item.quantity}
+                  </span>
+                </div>
                 <span>{money(p.price * item.quantity)}</span>
               </div>
             );
           })}
         </div>
       )}
-      <Link to="/shop" className="button dark">
-        Continue exploring <ArrowRight size={16} />
-      </Link>
+      <div className="confirmation-actions">
+        {order && (
+          <Link to="/orders" className="text-link">
+            Your orders
+          </Link>
+        )}
+        <Link to="/shop" className="button dark">
+          Continue exploring <ArrowRight size={16} />
+        </Link>
+      </div>
     </section>
   );
 }

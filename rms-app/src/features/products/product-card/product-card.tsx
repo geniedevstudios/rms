@@ -6,6 +6,7 @@ import { Link } from "../../../routing/link";
 import { piecePath } from "../../../routing/navigation";
 import { Heart, ArrowUpRight } from "lucide-react";
 import { money } from "../../../lib/format-currency";
+import { HoverImage } from "../../../components/hover-image/hover-image";
 export function ProductCard({ product }: { product: Product }) {
   const { openDialog } = useDialogs();
   const { isSaved, toggleSavedProduct: onSave } = useSavedProduct(product.id);
@@ -13,10 +14,10 @@ export function ProductCard({ product }: { product: Product }) {
     <article className="product-card">
       <div className="product-image-wrap">
         <Link to={piecePath(product)} className="product-image">
-          <img
+          <HoverImage
             src={product.image}
+            hover={product.hoverImage}
             alt={`${product.name} in ${product.color}`}
-            loading="lazy"
           />
         </Link>
         {product.tag && <span className="product-tag">{product.tag}</span>}

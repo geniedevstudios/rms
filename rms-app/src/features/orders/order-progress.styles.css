@@ -1,0 +1,117 @@
+.order-progress {
+  padding: 26px 28px 32px;
+}
+.order-progress-missing {
+  padding: 28px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.order-progress-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+.order-progress-meta .eyebrow {
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.order-progress-meta strong {
+  font-size: 13px;
+  font-weight: 500;
+}
+.order-progress-meta > span {
+  font-size: 13px;
+}
+.order-progress-pieces {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 22px 0;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--line);
+}
+.order-progress-pieces > div {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.order-progress-pieces img {
+  width: 48px;
+  height: 64px;
+  flex: none;
+  object-position: center 25%;
+}
+.order-progress-pieces span {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+}
+.order-progress-pieces small {
+  font-size: 10px;
+  color: var(--muted);
+}
+.order-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.order-steps li {
+  display: grid;
+  grid-template-columns: 18px 1fr;
+  column-gap: 14px;
+  position: relative;
+  padding-bottom: 22px;
+  color: var(--muted);
+}
+.order-steps li:last-child {
+  padding-bottom: 0;
+}
+.order-steps li::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 16px;
+  bottom: 0;
+  width: 1px;
+  background: var(--line);
+}
+.order-steps li:last-child::before {
+  display: none;
+}
+.order-steps .mark {
+  width: 17px;
+  height: 17px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  background: var(--paper);
+  position: relative;
+  z-index: 1;
+}
+.order-steps li.is-done,
+.order-steps li.is-current {
+  color: var(--ink);
+}
+.order-steps li.is-done .mark,
+.order-steps li.is-current .mark {
+  background: var(--ink);
+  border-color: var(--ink);
+}
+.order-steps li.is-current .mark {
+  box-shadow: 0 0 0 4px #e5d5cf;
+}
+.order-steps strong {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+}
+.order-steps p {
+  margin-top: 6px;
+  font-size: 11px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+.overlay-popup .drawer:has(.order-progress) {
+  width: min(520px, 100%);
+}

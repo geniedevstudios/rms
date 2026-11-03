@@ -2,11 +2,11 @@ import { createContext, useContext, type ReactNode } from "react";
 import { usePersistentState } from "../../hooks/use-persistent-state";
 import type { Order } from "../../types/order";
 import type { CartItem } from "../../types/cart";
-import { createDemoOrder, isOrders } from "./orders.logic";
+import { createOrder, isOrders } from "./orders.logic";
 
 type OrdersContextValue = {
   orders: Order[];
-  placeDemoOrder: (items: CartItem[]) => Order | null;
+  placeOrder: (items: CartItem[], id: string, email: string) => Order | null;
 };
 const OrdersContext = createContext<OrdersContextValue | null>(null);
 export function OrdersProvider({ children }: { children: ReactNode }) {
@@ -15,17 +15,13 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
     [],
     isOrders,
   );
-  const placeDemoOrder = (items: CartItem[]) => {
-    const order = createDemoOrder(
-      items,
-      `RMS-DEMO-${crypto.randomUUID().slice(0, 8).toUpperCase()}`,
-      new Date().toISOString(),
-    );
+  const placeOrder = (items: CartItem[], id: string, email: string) => {
+    const order = createOrder(items, id, new Date().toISOString(), email);
     if (order) setOrders((current) => [order, ...current]);
     return order;
   };
   return (
-    <OrdersContext.Provider value={{ orders, placeDemoOrder }}>
+    <OrdersContext.Provider value={{ orders, placeOrder }}>
       {children}
     </OrdersContext.Provider>
   );

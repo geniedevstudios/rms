@@ -1,5 +1,8 @@
+import { type ReactNode } from "react";
 import { products } from "../../data/products";
 import { useCart } from "../../features/cart/cart.context";
+import { useOrders } from "../../features/orders/orders.context";
+import { OrderProgress } from "../../features/orders/order-progress";
 import { Cart } from "../../features/cart/cart";
 import { Wishlist } from "../../features/wishlist/wishlist";
 import { SearchPanel } from "../../features/search/search";
@@ -15,11 +18,17 @@ import { useDialogs } from "./dialogs.context";
 
 /** The only place that mounts dialogs; feature logic lives with each feature. */
 export function DialogHost() {
-  const { dialog, closeDialog } = useDialogs();
+  const { dialog, openDialog, dismissDialog } = useDialogs();
   const { count } = useCart();
+  const { orders } = useOrders();
   if (!dialog) return null;
-  let title: string;
-  let content;
+  const fromMenu =
+    (dialog.type === "search" ||
+      dialog.type === "wishlist" ||
+      dialog.type === "account") &&
+    !!dialog.fromMenu;
+  let title = "";
+  let content: ReactNode = null;
   switch (dialog.type) {
     case "cart":
       title = `Your bag (${count})`;
@@ -57,6 +66,12 @@ export function DialogHost() {
       title = "Copyright Notice";
       content = <CopyrightNotice />;
       break;
+    case "order": {
+      const order = orders.find((item) => item.id === dialog.orderId);
+      title = "Order progress";
+      content = <OrderProgress order={order} />;
+      break;
+    }
     case "quick-view": {
       const product = products.find(
         (product) => product.id === dialog.productId,
@@ -70,15 +85,43 @@ export function DialogHost() {
       break;
     }
   }
+  const sheet =
+    dialog.type === "cart" ||
+    dialog.type === "search" ||
+    dialog.type === "wishlist" ||
+    dialog.type === "account";
   return (
-    <Overlay
-      key={dialog.type}
-      title={title}
-      onClose={closeDialog}
-      wide={dialog.type === "film" || dialog.type === "quick-view"}
-      popup={dialog.type === "copyright"}
-    >
-      {content}
-    </Overlay>
+    <>
+      {(dialog.type === "menu" || fromMenu) && (
+        <Overlay
+          key="menu"
+          title="RIVERMINDSTYLE"
+          onClose={() => dismissDialog()}
+          brand
+          menu
+          covered={fromMenu}
+        >
+          <MobileMenu />
+        </Overlay>
+      )}
+      {dialog.type !== "menu" && (
+        <Overlay
+          key={dialog.type}
+          title={title}
+          onClose={(hash) => {
+            if (!hash && fromMenu) {
+              openDialog({ type: "menu" });
+              return;
+            }
+            dismissDialog();
+          }}
+          wide={dialog.type === "film" || dialog.type === "quick-view"}
+          popup={dialog.type === "copyright" || dialog.type === "order"}
+          sheet={sheet}
+        >
+          {content}
+        </Overlay>
+      )}
+    </>
   );
 }

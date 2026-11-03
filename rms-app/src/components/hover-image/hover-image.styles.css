@@ -1,0 +1,21 @@
+.product-image,
+.category-image,
+.journal-image {
+  position: relative;
+}
+.hover-shot {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.65s ease;
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .product-card:hover .hover-shot,
+  .product-image:focus-within .hover-shot,
+  .category-card:hover .hover-shot,
+  .category-card:focus-visible .hover-shot,
+  .journal-card:hover .hover-shot,
+  .journal-card:focus-visible .hover-shot {
+    opacity: 1;
+  }
+}

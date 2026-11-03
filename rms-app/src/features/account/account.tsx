@@ -3,9 +3,8 @@ import { type FormEvent, useEffect, useRef, useState } from "react";
 import { useWishlist } from "../wishlist/wishlist.context";
 import { useOrders } from "../orders/orders.context";
 import { useDialogs } from "../../components/dialogs/dialogs.context";
-import { Heart, Package, ArrowUpRight, ArrowRight, ArrowLeft } from "lucide-react";
+import { Heart, Package, ArrowRight, ArrowLeft } from "lucide-react";
 import { Link } from "../../routing/link";
-import { money } from "../../lib/format-currency";
 
 type AuthMode = "sign-in" | "create";
 
@@ -62,8 +61,8 @@ export function Account() {
           {done ? (
             <p className="account-done" role="status">
               {mode === "sign-in"
-                ? "This preview does not sign you in. Nothing was sent."
-                : "This preview does not create an account. Nothing was saved."}
+                ? "Welcome back."
+                : "Your RMS is ready."}
             </p>
           ) : (
             <form ref={formRef} className="account-form" onSubmit={submit}>
@@ -118,8 +117,8 @@ export function Account() {
           <span className="eyebrow">YOUR PERSONAL EDIT</span>
           <h3>A little more you.</h3>
           <p>
-            Your saved pieces and demo orders live in this browser. Sign in, or
-            create an account, when you are ready.
+            Your saved pieces and orders are here. Sign in, or create an
+            account, when you are ready.
           </p>
           <button
             className="button outline full"
@@ -127,31 +126,9 @@ export function Account() {
           >
             View saved pieces ({saved.length}) <Heart size={16} />
           </button>
-          <h4>Your demo orders</h4>
-          {orders.length ? (
-            orders.map((order) => (
-              <Link
-                key={order.id}
-                to={`/confirmation/${order.id}`}
-                className="order-row"
-              >
-                <Package size={20} />
-                <div>
-                  <strong>{order.id}</strong>
-                  <span>
-                    {new Date(order.date).toLocaleDateString("en-GB")} ·{" "}
-                    {money(order.total)}
-                  </span>
-                </div>
-                <ArrowUpRight size={17} />
-              </Link>
-            ))
-          ) : (
-            <p className="empty-orders">
-              No demo orders yet. Explore the collection to try the shopping
-              experience.
-            </p>
-          )}
+          <Link to="/orders" className="button outline full">
+            Your orders ({orders.length}) <Package size={16} />
+          </Link>
           <div className="account-actions">
             <button className="button dark" onClick={() => openAuth("sign-in")}>
               Sign in <ArrowRight size={16} />

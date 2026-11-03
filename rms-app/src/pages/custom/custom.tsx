@@ -104,14 +104,13 @@ export function Custom() {
           <span className="eyebrow">BOOK AN APPOINTMENT</span>
           <h2>Tell us how to reach you.</h2>
           <p>
-            The consultation fee is {money(consultationFee)}. This preview
-            records the request and does not take payment.
+            The consultation fee is {money(consultationFee)}.
           </p>
         </div>
         {booked ? (
           <p className="custom-confirmed" role="status">
             Your appointment request is in. We will be in touch to confirm an
-            online meeting or a visit to the atelier. Nothing has been charged.
+            online meeting or a visit to the atelier.
           </p>
         ) : (
           <form className="custom-form" onSubmit={book}>

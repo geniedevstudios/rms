@@ -15,7 +15,7 @@ export function SearchPanel() {
         <input
           autoFocus
           type="search"
-          placeholder="Search dresses, tailoring, colour…"
+          placeholder="Search pants, tops, skirts…"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           aria-label="Search products"
@@ -38,7 +38,7 @@ export function SearchPanel() {
         ))}
         {results.length === 0 && (
           <p className="no-results">
-            No pieces found. Try “dress”, “sand” or “tailoring”.
+            No pieces found. Try “skirt”, “sand” or “top”.
           </p>
         )}
       </div>

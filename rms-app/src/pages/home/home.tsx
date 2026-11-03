@@ -105,8 +105,8 @@ export function Home() {
             There is power in feeling entirely yourself. Discover thoughtful
             proportions, expressive details and silhouettes with room to be you.
           </p>
-          <Link to="/shop?category=Tailoring" className="text-link">
-            Explore tailoring <ArrowRight size={16} />
+          <Link to="/shop?category=Two%20piece" className="text-link">
+            Explore two piece <ArrowRight size={16} />
           </Link>
           <span className="editorial-number">RMS / 001</span>
         </div>
@@ -120,22 +120,32 @@ export function Home() {
         </div>
         <div className="category-grid">
           <Category
-            title="The dress edit"
-            subtitle="For moments, big and small."
-            image="/images/portrait.jpg"
-            to="/shop?category=Dresses"
-          />
-          <Category
-            title="Everyday, elevated"
-            subtitle="A different kind of essential."
+            title="Pants"
+            subtitle="A line that moves with you."
             image="/images/city.jpg"
-            to="/shop?category=Tailoring"
+            hover="/images/suit.jpg"
+            to="/shop?category=Pants"
           />
           <Category
-            title="A new perspective"
-            subtitle="An expression beyond the expected."
-            image="/images/editorial.jpg"
-            to="/shop?category=Outerwear"
+            title="Tops"
+            subtitle="The piece closest to you."
+            image="/images/portrait.jpg"
+            hover="/images/tailoring.jpg"
+            to="/shop?category=Tops"
+          />
+          <Category
+            title="Two piece"
+            subtitle="Worn together, or apart."
+            image="/images/cream.jpg"
+            hover="/images/suit.jpg"
+            to="/shop?category=Two%20piece"
+          />
+          <Category
+            title="Skirts"
+            subtitle="For moments, big and small."
+            image="/images/hero.jpg"
+            hover="/images/dress.jpg"
+            to="/shop?category=Skirts"
           />
         </div>
       </section>
@@ -176,12 +186,14 @@ export function Home() {
             title="The beauty of becoming"
             label="THE POINT OF VIEW"
             image="/images/hero.jpg"
+            hover="/images/portrait.jpg"
             to="/journal/becoming"
           />
           <JournalCard
             title="A study in soft structure"
             label="THE WARDROBE"
             image="/images/cream.jpg"
+            hover="/images/suit.jpg"
             to="/journal/structure"
           />
         </div>

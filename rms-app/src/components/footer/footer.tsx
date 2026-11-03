@@ -44,9 +44,7 @@ export function Footer() {
           <button onClick={() => openDialog({ type: "wishlist" })}>
             Saved pieces
           </button>
-          <button onClick={() => openDialog({ type: "account" })}>
-            Your orders
-          </button>
+          <Link to="/orders">Your orders</Link>
           <Link to="/journal">The journal</Link>
         </div>
         <div className="footer-col">

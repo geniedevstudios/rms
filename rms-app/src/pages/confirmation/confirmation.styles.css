@@ -39,13 +39,33 @@
 .confirmation-item {
   display: flex;
   width: 100%;
-  justify-content: space-between;
-  gap: 15px;
+  align-items: center;
+  gap: 16px;
   padding-top: 16px;
   border-top: 1px solid var(--line);
   font-size: 10px;
 }
-.confirmation > .button {
+.confirmation-item img {
+  width: 72px;
+  height: 96px;
+  flex: none;
+  object-position: center 25%;
+}
+.confirmation-item > div {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.confirmation-item strong {
+  font-weight: 500;
+  font-size: 12px;
+}
+.confirmation-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
   margin-top: 10px;
 }
 @media (max-width: 760px) {
@@ -67,5 +87,13 @@
   }
   .confirmation-item {
     font-size: 9px;
+    gap: 12px;
+  }
+  .confirmation-item img {
+    width: 58px;
+    height: 78px;
+  }
+  .confirmation-item strong {
+    font-size: 11px;
   }
 }

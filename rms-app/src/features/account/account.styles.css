@@ -81,6 +81,9 @@
     grid-template-columns: 1fr;
   }
 }
+.account-panel > a.button {
+  margin-top: 12px;
+}
 .account-panel > .eyebrow {
   font-size: 8px;
   color: var(--muted);

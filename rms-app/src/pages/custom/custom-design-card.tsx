@@ -4,6 +4,7 @@ import type { CustomDesign } from "../../data/custom-designs";
 import { money } from "../../lib/format-currency";
 import { Link } from "../../routing/link";
 import { customPath } from "../../routing/navigation";
+import { HoverImage } from "../../components/hover-image/hover-image";
 
 export function CustomDesignCard({ design }: { design: CustomDesign }) {
   const to = customPath(design.id);
@@ -11,10 +12,10 @@ export function CustomDesignCard({ design }: { design: CustomDesign }) {
     <article className="product-card">
       <div className="product-image-wrap">
         <Link to={to} className="product-image">
-          <img
+          <HoverImage
             src={design.image}
+            hover={design.hoverImage}
             alt={`${design.name} in ${design.color}`}
-            loading="lazy"
           />
         </Link>
         <Link to={to} className="quick-view">

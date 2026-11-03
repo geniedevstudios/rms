@@ -4,7 +4,7 @@ import { useCart } from "./cart.context";
 import { useDialogs } from "../../components/dialogs/dialogs.context";
 import { findPiece } from "../../data/catalog";
 import { Link } from "../../routing/link";
-import { piecePath, go } from "../../routing/navigation";
+import { piecePath } from "../../routing/navigation";
 import { money } from "../../lib/format-currency";
 import { Minus, Plus, X, ArrowRight, ShoppingBag } from "lucide-react";
 import { EmptyState } from "../../components/empty-state/empty-state";
@@ -64,7 +64,6 @@ export function Cart() {
         <Link to="/checkout" className="button dark full">
           Continue to checkout <ArrowRight size={17} />
         </Link>
-        <p className="demo-caption">Preview shopping bag. No live purchases.</p>
         <button className="text-link" onClick={() => closeDialog()}>
           Continue exploring
         </button>
@@ -75,10 +74,7 @@ export function Cart() {
       icon={<ShoppingBag />}
       title="Room for something special."
       text="Your bag is waiting for a piece that feels like you."
-      action={() => {
-        closeDialog();
-        go("/shop");
-      }}
+      action={() => closeDialog("#/shop")}
     />
   );
 }

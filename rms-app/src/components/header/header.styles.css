@@ -40,14 +40,6 @@
   text-align: center;
   white-space: nowrap;
 }
-.wordmark span {
-  display: block;
-  font-family: Inter, sans-serif;
-  font-weight: 400;
-  font-size: 6.5px;
-  letter-spacing: 2px;
-  margin-top: 7px;
-}
 .header-actions {
   display: flex;
   gap: 11px;
@@ -71,21 +63,23 @@
   top: 7px;
 }
 .desktop-nav {
+  position: relative;
   height: 41px;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  padding-top: 4px;
+  align-items: stretch;
   gap: 35px;
 }
-.desktop-nav a {
+.desktop-nav > a,
+.nav-drop > a {
   font-size: 9px;
   text-transform: uppercase;
   letter-spacing: 0.9px;
-  padding: 5px 0;
+  padding: 9px 0 5px;
   position: relative;
 }
-.desktop-nav a:after {
+.desktop-nav > a:after,
+.nav-drop > a:after {
   position: absolute;
   content: "";
   height: 1px;
@@ -95,9 +89,79 @@
   bottom: 0;
   transition: width 0.2s;
 }
-.desktop-nav a:hover:after,
-.desktop-nav a.active:after {
+.desktop-nav > a:hover:after,
+.desktop-nav > a.active:after,
+.nav-drop:hover > a:after,
+.nav-drop:focus-within > a:after,
+.nav-drop > a.active:after {
   width: 100%;
+}
+.nav-drop {
+  position: static;
+  display: flex;
+  align-items: flex-start;
+  align-self: stretch;
+}
+.nav-panel {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% - 16px);
+  z-index: 5;
+  display: grid;
+  grid-template-columns: minmax(180px, 260px) 1fr;
+  gap: 40px;
+  padding: 36px 7% 42px;
+  background: #f9f8f5;
+  border-bottom: 1px solid var(--line);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.nav-drop:hover .nav-panel,
+.nav-drop:focus-within .nav-panel,
+.nav-panel.is-open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+.nav-panel-links {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding-top: 4px;
+}
+.nav-panel-links .eyebrow {
+  margin-bottom: 14px;
+  color: var(--muted);
+}
+.nav-panel a {
+  font-size: 14px;
+  letter-spacing: 0.2px;
+  text-transform: none;
+  padding: 7px 0;
+}
+.nav-panel a:after {
+  display: none;
+}
+.nav-panel-photos {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+}
+.nav-panel-photos a {
+  width: min(180px, 22vw);
+  padding: 0;
+}
+.nav-panel-photos img {
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+}
+.nav-panel-photos span {
+  display: block;
+  margin-top: 10px;
+  font-size: 12px;
+  text-align: center;
 }
 .mobile-menu {
   display: none;

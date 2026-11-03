@@ -21,8 +21,7 @@ export function Newsletter() {
           <div role="status" className="newsletter-success">
             <Check size={19} />
             <span>
-              You’re on the preview list.
-              <small>Demo only — no email has been submitted.</small>
+              You’re on the list.
             </span>
           </div>
         ) : (
@@ -35,15 +34,13 @@ export function Newsletter() {
                 placeholder="Your email address"
                 aria-label="Your email address"
               />
-              <button type="submit" aria-label="Join the preview newsletter">
+              <button type="submit" aria-label="Join the newsletter">
                 <ArrowRight size={21} />
               </button>
             </label>
             <p className="newsletter-note">
               By joining, you agree to hear from RIVERMINDSTYLE. Unsubscribe
               anytime.
-              <br />
-              Preview only — subscriptions are not sent yet.
             </p>
           </>
         )}

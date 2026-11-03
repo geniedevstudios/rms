@@ -2,9 +2,12 @@
   background: #e6e5df;
   padding: 22px;
 }
-.film-modal > video {
+.film-modal > video,
+.film-modal > iframe {
+  width: 100%;
   height: 70svh;
   max-height: 650px;
+  border: 0;
   object-fit: contain;
   background: #1c1c19;
 }
@@ -19,7 +22,8 @@
   .film-modal {
     padding: 12px;
   }
-  .film-modal > video {
+  .film-modal > video,
+  .film-modal > iframe {
     height: 65svh;
   }
   .film-modal > p {

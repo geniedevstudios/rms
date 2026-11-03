@@ -1,4 +1,4 @@
-import type { Order } from "../../types/order.ts";
+import { orderStatuses, type Order } from "../../types/order.ts";
 import type { CartItem } from "../../types/cart.ts";
 import { cartSubtotal, isCart } from "../cart/cart.logic.ts";
 
@@ -14,21 +14,29 @@ export function isOrders(value: unknown): value is Order[] {
         Number.isFinite(Date.parse(order.date)) &&
         Number.isFinite(order.total) &&
         order.total >= 0 &&
-        isCart(order.items),
+        isCart(order.items) &&
+        (order.email === undefined || typeof order.email === "string") &&
+        (order.paid === undefined || typeof order.paid === "boolean") &&
+        (order.status === undefined ||
+          orderStatuses.some((status) => status === order.status)),
     )
   );
 }
 
-/** A demo order snapshots the bag; contact and address fields never enter storage. */
-export function createDemoOrder(
+/** The order snapshots the paid bag. The street address stays out of browser storage. */
+export function createOrder(
   items: CartItem[],
   id: string,
   date: string,
+  email?: string,
 ): Order | null {
   if (!items.length || !isCart(items)) return null;
   return {
     id,
     date,
+    email,
+    paid: true,
+    status: "confirmed",
     items: items.map((item) => ({ ...item })),
     total: cartSubtotal(items),
   };

@@ -219,7 +219,7 @@ main:focus {
 }
 .category-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 25px;
 }
 .journal-grid {
@@ -343,15 +343,6 @@ main:focus {
   .category-grid {
     grid-template-columns: 1fr 1fr;
     gap: 28px 15px;
-  }
-  .category-grid > .category-card:last-child {
-    grid-column: 1/-1;
-  }
-  .category-grid > .category-card:last-child .category-image {
-    aspect-ratio: 1.3;
-  }
-  .category-grid > .category-card:last-child img {
-    object-position: center 34%;
   }
   .journal-grid {
     gap: 28px;
