@@ -1,5 +1,6 @@
-export const atelierPreview = "/videos/atelier.mp4";
-export const atelierFilm = "/videos/atelier.mp4";
+import { mediaSlot } from "../../content/content";
+export const atelierPreview = mediaSlot("atelier-film").src;
+export const atelierFilm = atelierPreview;
 
 export function youtubeId(src: string) {
   try {

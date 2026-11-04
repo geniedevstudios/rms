@@ -132,7 +132,7 @@ async function verify(
   });
 }
 
-export function paystackApi(secret: string): Plugin {
+export function paystackApi(secret: string, contentOrigin = "http://127.0.0.1:5175"): Plugin {
   const handle = async (
     server: ViteDevServer,
     req: IncomingMessage,
@@ -154,6 +154,10 @@ export function paystackApi(secret: string): Plugin {
     }
     try {
       const body = await readJson(req);
+      if (url === "/api/paystack/initialize") {
+        const content = await server.ssrLoadModule("/src/content/content.ts");
+        await content.loadPublishedContent(contentOrigin, true);
+      }
       const cart = (await server.ssrLoadModule(
         "/src/features/cart/cart.logic.ts",
       )) as CartModule;

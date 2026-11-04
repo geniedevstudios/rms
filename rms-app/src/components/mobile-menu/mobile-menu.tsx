@@ -1,3 +1,4 @@
+import { mediaSlot } from "../../content/content";
 import "./mobile-menu.styles.css";
 import { useState, type ReactNode } from "react";
 import { useWishlist } from "../../features/wishlist/wishlist.context";
@@ -120,11 +121,11 @@ export function MobileMenu() {
         ))}
         <div className="mobile-group-photos">
           <Link to="/shop?category=Pants">
-            <img src="/images/city.jpg" alt="" />
+            <img src={mediaSlot("navigation-shop").src} alt={mediaSlot("navigation-shop").alt} />
             <span>Pants</span>
           </Link>
           <Link to="/shop?category=Skirts">
-            <img src="/images/hero.jpg" alt="" />
+            <img src={mediaSlot("navigation-collection").src} alt={mediaSlot("navigation-collection").alt} />
             <span>Skirts</span>
           </Link>
         </div>

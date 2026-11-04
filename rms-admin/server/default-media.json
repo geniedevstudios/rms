@@ -1,0 +1,92 @@
+[
+  {
+    "id": "seed-0",
+    "name": "city.jpg",
+    "url": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754716/rms/original-city.jpg",
+    "type": "image",
+    "alt": "city editorial",
+    "size": 150318,
+    "createdAt": "2026-11-01T00:00:00.000Z"
+  },
+  {
+    "id": "seed-1",
+    "name": "cream.jpg",
+    "url": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754717/rms/original-cream.jpg",
+    "type": "image",
+    "alt": "cream editorial",
+    "size": 60934,
+    "createdAt": "2026-11-01T00:00:00.000Z"
+  },
+  {
+    "id": "seed-2",
+    "name": "dress.jpg",
+    "url": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754718/rms/original-dress.jpg",
+    "type": "image",
+    "alt": "dress editorial",
+    "size": 231070,
+    "createdAt": "2026-11-01T00:00:00.000Z"
+  },
+  {
+    "id": "seed-3",
+    "name": "editorial.jpg",
+    "url": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754720/rms/original-editorial.jpg",
+    "type": "image",
+    "alt": "editorial editorial",
+    "size": 664740,
+    "createdAt": "2026-11-01T00:00:00.000Z"
+  },
+  {
+    "id": "seed-4",
+    "name": "hero.jpg",
+    "url": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754721/rms/original-hero.jpg",
+    "type": "image",
+    "alt": "hero editorial",
+    "size": 123281,
+    "createdAt": "2026-11-01T00:00:00.000Z"
+  },
+  {
+    "id": "seed-5",
+    "name": "mimi.jpg",
+    "url": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754722/rms/original-mimi.jpg",
+    "type": "image",
+    "alt": "Mirriam Elsa, founder of RIVERMINDSTYLE",
+    "size": 127957,
+    "createdAt": "2026-11-01T00:00:00.000Z"
+  },
+  {
+    "id": "seed-6",
+    "name": "portrait.jpg",
+    "url": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754723/rms/original-portrait.jpg",
+    "type": "image",
+    "alt": "portrait editorial",
+    "size": 175342,
+    "createdAt": "2026-11-01T00:00:00.000Z"
+  },
+  {
+    "id": "seed-7",
+    "name": "suit.jpg",
+    "url": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754724/rms/original-suit.jpg",
+    "type": "image",
+    "alt": "suit editorial",
+    "size": 40342,
+    "createdAt": "2026-11-01T00:00:00.000Z"
+  },
+  {
+    "id": "seed-8",
+    "name": "tailoring.jpg",
+    "url": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754726/rms/original-tailoring.jpg",
+    "type": "image",
+    "alt": "tailoring editorial",
+    "size": 262959,
+    "createdAt": "2026-11-01T00:00:00.000Z"
+  },
+  {
+    "id": "seed-film",
+    "name": "atelier.mp4",
+    "url": "https://res.cloudinary.com/hr5xa7o9/video/upload/v1793754735/rms/original-atelier.mp4",
+    "type": "video",
+    "alt": "Atelier study",
+    "size": 4562711,
+    "createdAt": "2026-11-01T00:00:00.000Z"
+  }
+]

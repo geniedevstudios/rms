@@ -1,3 +1,4 @@
+import { mediaSlot } from "../../content/content";
 import "../collection/collection.styles.css";
 import "./custom.styles.css";
 import { type FormEvent, useState } from "react";
@@ -29,8 +30,8 @@ export function Custom() {
     <>
       <section className="collection-hero">
         <img
-          src="/images/dress.jpg"
-          alt="A custom made dress, cut and finished in the atelier"
+          src={mediaSlot("custom-hero").src}
+          alt={mediaSlot("custom-hero").alt}
         />
         <div>
           <span className="eyebrow">CUSTOM MADE</span>
@@ -72,8 +73,8 @@ export function Custom() {
 
       <section className="collection-hero custom-bespoke">
         <img
-          src="/images/city.jpg"
-          alt="A quiet room set for a fitting conversation"
+          src={mediaSlot("custom-detail").src}
+          alt={mediaSlot("custom-detail").alt}
         />
         <div>
           <span className="eyebrow">BEYOND THE DESIGNS</span>

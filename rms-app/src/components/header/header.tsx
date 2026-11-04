@@ -1,3 +1,4 @@
+import { mediaSlot } from "../../content/content";
 import "./header.styles.css";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useRoute } from "../../routing/use-route";
@@ -184,11 +185,11 @@ export function Header() {
             </div>
             <div className="nav-panel-photos">
               <Link to="/shop?category=Pants">
-                <img src="/images/city.jpg" alt="" />
+                <img src={mediaSlot("navigation-shop").src} alt={mediaSlot("navigation-shop").alt} />
                 <span>Pants</span>
               </Link>
               <Link to="/shop?category=Skirts">
-                <img src="/images/hero.jpg" alt="" />
+                <img src={mediaSlot("navigation-collection").src} alt={mediaSlot("navigation-collection").alt} />
                 <span>Skirts</span>
               </Link>
             </div>

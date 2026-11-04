@@ -1,3 +1,4 @@
+import { mediaSlot } from "../../content/content";
 import "../../components/editorial/editorial.styles.css";
 import "./about.styles.css";
 import { useDialogs } from "../../components/dialogs/dialogs.context";
@@ -23,8 +24,8 @@ export function About() {
           </p>
         </div>
         <img
-          src="/images/portrait.jpg"
-          alt="A confident portrait in a black dress"
+          src={mediaSlot("about-hero").src}
+          alt={mediaSlot("about-hero").alt}
         />
       </section>
       <section className="manifesto">
@@ -74,8 +75,8 @@ export function About() {
       </section>
       <section className="founder">
         <img
-          src="/images/mimi.jpg"
-          alt="Mirriam Elsa, owner of RIVERMINDSTYLE"
+          src={mediaSlot("founder").src}
+          alt={mediaSlot("founder").alt}
         />
         <div className="founder-story">
           <span className="eyebrow">THE FOUNDER</span>

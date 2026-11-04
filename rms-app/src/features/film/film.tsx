@@ -1,8 +1,10 @@
+import { mediaSlot } from "../../content/content";
 import "./film.styles.css";
-import { atelierFilm, youtubeId } from "./film-source";
+import { youtubeId } from "./film-source";
 
 export function Film() {
-  const id = youtubeId(atelierFilm);
+  const film = mediaSlot("atelier-film").src;
+  const id = youtubeId(film);
   return (
     <div className="film-modal">
       {id ? (
@@ -14,17 +16,15 @@ export function Film() {
         />
       ) : (
         <video
-          src={atelierFilm}
+          src={film}
           controls
           autoPlay
           muted
           playsInline
-          aria-label="A seamstress adjusting fabric on a mannequin"
+          aria-label={mediaSlot("atelier-film").alt}
         />
       )}
-      <p>
-        Atelier mood film · Placeholder footage by Michael Burrows / Pexels. No
-        dialogue.
+      <p>{mediaSlot("atelier-film").alt}
       </p>
     </div>
   );

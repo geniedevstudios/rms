@@ -1,8 +1,10 @@
+import { mediaSlot } from "../../content/content";
 import "./atelier-video.styles.css";
 import { useEffect, useRef, useState } from "react";
 import { Play, Pause } from "lucide-react";
-import { atelierPreview } from "../../features/film/film-source";
 export function AtelierVideo({ openFilm }: { openFilm: () => void }) {
+  const src = mediaSlot("atelier-film").src;
+  const poster = mediaSlot("atelier-poster").src;
   const ref = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -11,13 +13,13 @@ export function AtelierVideo({ openFilm }: { openFilm: () => void }) {
     if (!video) return;
     if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     void video.play().catch(() => setFailed(true));
-  }, []);
+  }, [src]);
   return (
     <div className="atelier-video">
       <video
         ref={ref}
-        src={atelierPreview}
-        poster="/images/suit.jpg"
+        src={src}
+        poster={poster}
         autoPlay
         muted
         loop
@@ -26,7 +28,7 @@ export function AtelierVideo({ openFilm }: { openFilm: () => void }) {
         onError={() => setFailed(true)}
         onPlay={() => setPlaying(true)}
         onPause={() => setPlaying(false)}
-        aria-label="Atelier film of a seamstress shaping fabric on a mannequin"
+        aria-label={mediaSlot("atelier-film").alt}
       />
       {failed ? (
         <button className="film-play" onClick={openFilm}>

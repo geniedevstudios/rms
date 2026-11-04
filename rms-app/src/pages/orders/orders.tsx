@@ -45,7 +45,9 @@ export function Orders() {
                       className="order-piece"
                       key={`${order.id}-${item.productId}-${item.size}`}
                     >
-                      {piece && <img src={piece.image} alt={piece.name} />}
+                      {piece && (
+                        <img src={piece.image} alt={piece.name} />
+                      )}
                       <div>
                         <strong>{piece?.name ?? item.productId}</strong>
                         <span>

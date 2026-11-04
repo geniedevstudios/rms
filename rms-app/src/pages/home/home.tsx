@@ -1,3 +1,5 @@
+import { siteContent, mediaSlot } from "../../content/content";
+import { HeroMedia } from "../../components/hero-media/hero-media";
 import "../../components/editorial/editorial.styles.css";
 import "./home.styles.css";
 import { useDialogs } from "../../components/dialogs/dialogs.context";
@@ -14,19 +16,10 @@ export function Home() {
     <>
       <section className="hero">
         <div className="hero-copy">
-          <div className="eyebrow">RIVERMINDSTYLE — COLLECTION 01</div>
-          <h1>
-            For all that
-            <br /> you’re <em>becoming.</em>
-          </h1>
-          <p>
-            Considered silhouettes. A quiet kind of confidence.
-            <br className="desktop-break" /> Pieces that move through life with
-            you.
-          </p>
-          <Link to="/shop" className="button dark">
-            Discover the collection <ArrowRight size={17} />
-          </Link>
+          <div className="eyebrow">{siteContent.hero.eyebrow}</div>
+          <h1>{siteContent.hero.title.split("\n").map((line, index) => <span key={index}>{index > 0 && <br />}{index === 0 ? line : <em>{line}</em>}</span>)}</h1>
+          <p>{siteContent.hero.description}</p>
+          <Link to={siteContent.hero.buttonHref} className="button dark">{siteContent.hero.buttonLabel} <ArrowRight size={17}/></Link>
           <div className="hero-footnote">
             <span>A NEW EXPRESSION OF YOU</span>
             <a
@@ -43,18 +36,7 @@ export function Home() {
             </a>
           </div>
         </div>
-        <Link to="/collection" className="hero-image">
-          <img
-            src="/images/hero.jpg"
-            alt="Editorial portrait of a woman in a sculptural black dress"
-            fetchPriority="high"
-          />
-          <div className="hero-image-caption">
-            <span>THE BECOMING COLLECTION</span>
-            <ArrowUpRight size={22} />
-          </div>
-          <span className="image-index">01 / 01</span>
-        </Link>
+        <HeroMedia />
       </section>
       <section className="manifesto">
         <span className="eyebrow">THE RIVERMINDSTYLE POINT OF VIEW</span>
@@ -86,8 +68,8 @@ export function Home() {
       <section className="editorial-split">
         <div className="editorial-photo">
           <img
-            src="/images/suit.jpg"
-            alt="Sculptural neutral tailoring"
+            src={mediaSlot("home-editorial").src}
+            alt={mediaSlot("home-editorial").alt}
             loading="lazy"
           />
           <span className="image-label">
@@ -119,34 +101,7 @@ export function Home() {
           </div>
         </div>
         <div className="category-grid">
-          <Category
-            title="Pants"
-            subtitle="A line that moves with you."
-            image="/images/city.jpg"
-            hover="/images/suit.jpg"
-            to="/shop?category=Pants"
-          />
-          <Category
-            title="Tops"
-            subtitle="The piece closest to you."
-            image="/images/portrait.jpg"
-            hover="/images/tailoring.jpg"
-            to="/shop?category=Tops"
-          />
-          <Category
-            title="Two piece"
-            subtitle="Worn together, or apart."
-            image="/images/cream.jpg"
-            hover="/images/suit.jpg"
-            to="/shop?category=Two%20piece"
-          />
-          <Category
-            title="Skirts"
-            subtitle="For moments, big and small."
-            image="/images/hero.jpg"
-            hover="/images/dress.jpg"
-            to="/shop?category=Skirts"
-          />
+          {siteContent.categoryCards.map(card => <Category key={card.id} {...card} />)}
         </div>
       </section>
       <section className="film-section">
@@ -182,20 +137,7 @@ export function Home() {
           </Link>
         </div>
         <div className="journal-grid">
-          <JournalCard
-            title="The beauty of becoming"
-            label="THE POINT OF VIEW"
-            image="/images/hero.jpg"
-            hover="/images/portrait.jpg"
-            to="/journal/becoming"
-          />
-          <JournalCard
-            title="A study in soft structure"
-            label="THE WARDROBE"
-            image="/images/cream.jpg"
-            hover="/images/suit.jpg"
-            to="/journal/structure"
-          />
+          {siteContent.journals.filter(j => j.status === "published" && j.featured).map(j => <JournalCard key={j.id} title={j.title} label={j.label} image={j.image} hover={j.hover} to={`/journal/${j.id}`} />)}
         </div>
       </section>
     </>

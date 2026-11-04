@@ -54,12 +54,14 @@
   overflow: hidden;
   background: #b1b7b8;
 }
-.hero-image > img {
+.hero-image > img,
+.hero-image > video {
   height: 100%;
   object-position: 50% 30%;
   transition: transform 1.3s;
 }
-.hero-image:hover > img {
+.hero-image:hover > img,
+.hero-image:hover > video {
   transform: scale(1.02);
 }
 .hero-image:after {
@@ -203,7 +205,8 @@
     height: 510px;
     order: 1;
   }
-  .hero-image > img {
+  .hero-image > img,
+  .hero-image > video {
     object-position: center 15%;
   }
   .hero-image-caption {
