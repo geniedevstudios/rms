@@ -1,1 +1,83 @@
-.hero-media-link{display:block;width:100%;height:100%;position:relative}.hero-media-link>img,.hero-media-link>video{width:100%;height:100%;object-fit:cover;object-position:50% 30%;animation:hero-appear .5s ease}.hero-media-controls{position:absolute;bottom:75px;left:35px;display:flex;align-items:center;gap:7px;z-index:2}.hero-media-controls>button{width:28px;height:30px;border:0;padding:0;background:transparent;position:relative;color:white}.hero-media-controls>button:not(.hero-pause):after{content:'';position:absolute;inset:13px 0;border-radius:2px;background:#ffffff60}.hero-media-controls>button.active:after{background:white}.hero-media-controls>.hero-pause{display:grid;place-items:center;margin-left:6px}.hero-image .image-index{z-index:2;pointer-events:none}.hero-copy h1,.hero-copy>p{white-space:pre-line}@keyframes hero-appear{from{opacity:.6}to{opacity:1}}@media(prefers-reduced-motion:reduce){.hero-media-link>img,.hero-media-link>video{animation:none}}
+.hero-media-link {
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+.hero-media-link > img,
+.hero-media-link > video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 30%;
+  opacity: 0;
+  transform: scale(1.045);
+  z-index: 0;
+}
+.hero-image .hero-media-link > img,
+.hero-image .hero-media-link > video {
+  transition:
+    opacity 1.15s cubic-bezier(0.22, 0.61, 0.36, 1),
+    transform 1.7s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.hero-image .hero-media-link > img.is-active,
+.hero-image .hero-media-link > video.is-active {
+  opacity: 1;
+  transform: scale(1);
+  z-index: 1;
+}
+.hero-image .hero-media-link > img.is-leaving,
+.hero-image .hero-media-link > video.is-leaving {
+  opacity: 1;
+  transform: scale(1);
+  z-index: 0;
+  transition: none;
+}
+.hero-media-controls {
+  position: absolute;
+  bottom: 75px;
+  left: 35px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  z-index: 3;
+}
+.hero-media-controls > button {
+  width: 28px;
+  height: 30px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  position: relative;
+  color: white;
+}
+.hero-media-controls > button:not(.hero-pause):after {
+  content: "";
+  position: absolute;
+  inset: 13px 0;
+  border-radius: 2px;
+  background: #ffffff60;
+  transition: background 0.4s ease, transform 0.4s ease;
+}
+.hero-media-controls > button.active:after {
+  background: white;
+  transform: scaleY(1.15);
+}
+.hero-media-controls > .hero-pause {
+  display: grid;
+  place-items: center;
+  margin-left: 6px;
+}
+.hero-copy h1,
+.hero-copy > p {
+  white-space: pre-line;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-image .hero-media-link > img,
+  .hero-image .hero-media-link > video,
+  .hero-media-controls > button:not(.hero-pause):after {
+    transition: none;
+  }
+}

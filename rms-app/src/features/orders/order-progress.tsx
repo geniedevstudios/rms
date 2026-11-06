@@ -1,6 +1,7 @@
 import "./order-progress.styles.css";
 import { orderStatuses, type Order, type OrderStatus } from "../../types/order";
 import { findPiece } from "../../data/catalog";
+import { resolveColourway } from "../../data/size-guide";
 import { money } from "../../lib/format-currency";
 
 const stages: { id: OrderStatus; label: string; note: string }[] = [
@@ -48,13 +49,17 @@ export function OrderProgress({ order }: { order?: Order }) {
       <div className="order-progress-pieces">
         {order.items.map((item) => {
           const piece = findPiece(item.productId);
+          const colourway = piece ? resolveColourway(piece, item.colourwayId) : null;
+          const colour = item.color || colourway?.color;
           return (
-            <div key={`${item.productId}-${item.size}`}>
-              {piece && <img src={piece.image} alt="" />}
+            <div key={`${item.productId}-${item.colourwayId || ""}-${item.size}`}>
+              {(item.image || colourway?.image || piece?.image) && (
+                <img src={item.image || colourway?.image || piece?.image} alt="" />
+              )}
               <span>
                 {piece?.name ?? item.productId}
                 <small>
-                  {item.size} / Qty {item.quantity}
+                  {[colour, item.size, `Qty ${item.quantity}`].filter(Boolean).join(" / ")}
                 </small>
               </span>
             </div>

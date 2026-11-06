@@ -72,24 +72,15 @@ export function DialogHost() {
       content = <OrderProgress order={order} />;
       break;
     }
-    case "quick-view": {
-      const product = products.find(
-        (product) => product.id === dialog.productId,
-      );
-      title = product ? "A closer look" : "Piece unavailable";
-      content = product ? (
-        <QuickView key={product.id} product={product} />
-      ) : (
-        <p>This piece is no longer available.</p>
-      );
-      break;
-    }
   }
   const sheet =
     dialog.type === "cart" ||
     dialog.type === "search" ||
     dialog.type === "wishlist" ||
     dialog.type === "account";
+  const fromProductId = dialog.type === "size-guide" ? dialog.fromProductId : undefined;
+  const quickViewId = dialog.type === "quick-view" ? dialog.productId : fromProductId;
+  const quickViewProduct = products.find(product => product.id === quickViewId);
   return (
     <>
       {(dialog.type === "menu" || fromMenu) && (
@@ -104,19 +95,29 @@ export function DialogHost() {
           <MobileMenu />
         </Overlay>
       )}
-      {dialog.type !== "menu" && (
+      {quickViewId && (
+        <Overlay key="quick-view" title={quickViewProduct ? "A closer look" : "Piece unavailable"}
+          onClose={() => dismissDialog()} wide covered={!!fromProductId}>
+          {quickViewProduct ? <QuickView key={quickViewProduct.id} product={quickViewProduct} /> : <p>This piece is no longer available.</p>}
+        </Overlay>
+      )}
+      {dialog.type !== "menu" && dialog.type !== "quick-view" && (
         <Overlay
           key={dialog.type}
           title={title}
           onClose={(hash) => {
+            if (!hash && fromProductId) {
+              openDialog({ type: "quick-view", productId: fromProductId });
+              return;
+            }
             if (!hash && fromMenu) {
               openDialog({ type: "menu" });
               return;
             }
             dismissDialog();
           }}
-          wide={dialog.type === "film" || dialog.type === "quick-view"}
-          popup={dialog.type === "copyright" || dialog.type === "order"}
+          wide={dialog.type === "film"}
+          popup={dialog.type === "copyright" || dialog.type === "order" || dialog.type === "size-guide"}
           sheet={sheet}
         >
           {content}

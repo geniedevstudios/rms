@@ -1,5 +1,12 @@
 import { products } from "../../data/products.ts";
+import { pieceColourways } from "../../data/size-guide";
 import type { Product } from "../../types/product.ts";
+
+function colourNames(product: Product) {
+  return pieceColourways(product)
+    .map((way) => way.color.trim())
+    .filter(Boolean);
+}
 
 export type ProductFilters = {
   category: string;
@@ -13,11 +20,13 @@ export function filterProducts(
   filters: ProductFilters,
   catalog: Product[] = products,
 ): Product[] {
-  const list = (filters.newEdit ? catalog.slice(0, 4) : catalog).filter(
+  const list = (
+    filters.newEdit ? catalog.filter((product) => product.newArrival) : catalog
+  ).filter(
     (product) =>
       (filters.category === "All pieces" ||
         product.category === filters.category) &&
-      (filters.color === "All colours" || product.color === filters.color) &&
+      (filters.color === "All colours" || colourNames(product).includes(filters.color)) &&
       (filters.maxPrice === "all" || product.price <= Number(filters.maxPrice)),
   );
   if (filters.sort === "low") list.sort((a, b) => a.price - b.price);
@@ -31,7 +40,7 @@ export function searchProducts(
 ): Product[] {
   const term = query.trim().toLowerCase();
   return catalog.filter((product) =>
-    `${product.name} ${product.category} ${product.color}`
+    `${product.name} ${product.category} ${colourNames(product).join(" ")}`
       .toLowerCase()
       .includes(term),
   );

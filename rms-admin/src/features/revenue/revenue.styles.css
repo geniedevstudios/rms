@@ -1,0 +1,319 @@
+.revenue-report {
+  --revenue-accent: #61364b;
+  --revenue-muted: #826b76;
+  display: grid;
+  gap: 24px;
+}
+.revenue-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.revenue-caption {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--revenue-muted);
+  font-size: 9px;
+  letter-spacing: 1.5px;
+}
+.revenue-periods {
+  display: flex;
+  padding: 4px;
+  border-radius: 99px;
+  background: #f3ecee;
+}
+.revenue-periods button {
+  border: 0;
+  background: none;
+  color: #745e69;
+  padding: 12px 20px;
+  border-radius: 99px;
+  font-size: 12px;
+  min-height: 44px;
+}
+.revenue-periods button[aria-pressed="true"] {
+  background: var(--revenue-accent);
+  color: white;
+  box-shadow: 0 3px 8px #61364b20;
+}
+.revenue-date-nav {
+  display: flex;
+  justify-content: center;
+  gap: 17px;
+  align-items: center;
+}
+.revenue-date-nav strong {
+  font-size: 13px;
+  font-weight: 500;
+  min-width: 175px;
+  text-align: center;
+}
+.revenue-date-nav .icon-button {
+  border: 1px solid #e9dde3;
+  border-radius: 50%;
+  height: 40px;
+  width: 40px;
+}
+.revenue-summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  align-items: flex-end;
+}
+.revenue-summary > div {
+  display: grid;
+  gap: 9px;
+}
+.revenue-summary span {
+  color: var(--revenue-muted);
+  font-size: 12px;
+}
+.revenue-summary strong {
+  font: 42px/1.15 var(--serif);
+  color: var(--revenue-accent);
+}
+.revenue-summary .revenue-order-count {
+  text-align: right;
+}
+.revenue-order-count strong {
+  font-size: 25px;
+}
+.revenue-chart {
+  display: flex;
+  gap: 14px;
+  padding-top: 40px;
+}
+.revenue-scale {
+  width: 37px;
+  flex: none;
+  height: 225px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  color: var(--revenue-muted);
+  font-size: 11px;
+}
+.revenue-scale span {
+  transform: translateY(-50%);
+}
+.revenue-plot {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+.revenue-grid {
+  position: absolute;
+  inset: 0 0 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  pointer-events: none;
+}
+.revenue-grid i {
+  border-top: 1px dashed #e7dce1;
+  width: 100%;
+}
+.revenue-bars {
+  display: flex;
+  position: relative;
+  gap: clamp(6px, 2vw, 24px);
+}
+.revenue-column {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  color: var(--revenue-muted);
+  border-radius: 9px;
+}
+.revenue-bar-space {
+  height: 225px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.revenue-bar {
+  display: block;
+  position: relative;
+  width: 100%;
+  max-width: 85px;
+  min-height: 3px;
+  border-radius: 100px;
+  background:
+    repeating-linear-gradient(125deg, transparent 0 5px, #855c7018 5px 7px),
+    #dac1cc;
+  transition:
+    height 300ms ease,
+    background-color 150ms ease;
+}
+.revenue-column:hover .revenue-bar {
+  background-color: #c8a3b5;
+}
+.revenue-column.is-selected .revenue-bar {
+  background:
+    repeating-linear-gradient(125deg, transparent 0 5px, #ffffff0c 5px 7px),
+    var(--revenue-accent);
+}
+.revenue-bar.is-zero {
+  min-height: 2px;
+  background: #e6dce1;
+}
+.revenue-bar-value {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--revenue-accent);
+  color: white;
+  border-radius: 30px;
+  padding: 6px 10px;
+  font-size: 11px;
+  white-space: nowrap;
+}
+.revenue-bar-value::after {
+  content: "";
+  position: absolute;
+  width: 9px;
+  height: 9px;
+  border: 2px solid #fffdfa;
+  background: var(--revenue-accent);
+  border-radius: 50%;
+  left: 50%;
+  top: calc(100% + 7px);
+  transform: translateX(-50%);
+}
+.revenue-bar-label {
+  display: flex;
+  height: 32px;
+  align-items: flex-end;
+  justify-content: center;
+  font-size: 10px;
+  text-transform: uppercase;
+}
+.revenue-selection {
+  min-height: 46px;
+  padding: 13px 17px;
+  border-radius: 15px;
+  background: #f6eff2;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  font-size: 12px;
+  color: #745e69;
+}
+.revenue-selection strong {
+  color: var(--revenue-accent);
+  margin-left: auto;
+  font-weight: 500;
+}
+.revenue-footnote {
+  font-size: 11px;
+  line-height: 1.7;
+  color: var(--revenue-muted);
+  margin: -10px 0 0;
+}
+.revenue-orders {
+  border-top: 1px solid #ebdfe5;
+  padding-top: 17px;
+  font-size: 12px;
+}
+.revenue-orders summary {
+  cursor: pointer;
+  color: var(--revenue-accent);
+  padding: 5px 0;
+}
+.revenue-orders ul {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+}
+.revenue-orders li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  border-top: 1px solid #eee5e9;
+  padding: 13px 0;
+}
+.revenue-orders strong {
+  font-weight: 500;
+}
+.revenue-orders small {
+  display: block;
+  margin-top: 5px;
+  color: var(--revenue-muted);
+}
+.revenue-notice {
+  padding: 40px 15px;
+  text-align: center;
+  color: var(--revenue-muted);
+}
+@media (max-width: 600px) {
+  .revenue-report {
+    gap: 20px;
+  }
+  .revenue-periods {
+    width: 100%;
+  }
+  .revenue-periods button {
+    flex: 1;
+    padding-inline: 10px;
+  }
+  .revenue-summary strong {
+    font-size: 30px;
+  }
+  .revenue-order-count strong {
+    font-size: 22px;
+  }
+  .revenue-chart {
+    gap: 6px;
+  }
+  .revenue-scale {
+    width: 28px;
+    font-size: 9px;
+  }
+  .revenue-bars {
+    gap: 8px;
+  }
+  .revenue-bars-year {
+    gap: 5px;
+  }
+  .revenue-bars-year .revenue-bar-label {
+    font-size: 8px;
+    writing-mode: vertical-rl;
+    height: 42px;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+  .revenue-chart:has(.revenue-bars-year) .revenue-grid {
+    bottom: 42px;
+  }
+  .revenue-selection {
+    font-size: 11px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .revenue-bar {
+    transition: none;
+  }
+}
+
+.modal:has(.revenue-report) .modal-heading {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  background: #fffdfa;
+  padding: 10px 0;
+  margin-top: -10px;
+}
+.modal:has(.revenue-report) .modal-heading .icon-button {
+  min-width: 44px;
+  min-height: 44px;
+}
+

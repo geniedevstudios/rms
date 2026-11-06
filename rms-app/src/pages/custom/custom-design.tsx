@@ -1,16 +1,26 @@
 import "../product/product.styles.css";
 import "./custom.styles.css";
+import { useEffect, useState } from "react";
 import { Plus, ArrowUpRight, ArrowRight } from "lucide-react";
+import { pieceColourways } from "../../data/size-guide";
 import { customDesigns, type CustomDesign } from "../../data/custom-designs";
 import { ProductPurchase } from "../../features/products/product-purchase/product-purchase";
 import { useDialogs } from "../../components/dialogs/dialogs.context";
 import { money } from "../../lib/format-currency";
 import { Link } from "../../routing/link";
 import { CustomDesignCard } from "./custom-design-card";
+import { ProductGallery, productFrames } from "../../features/products/product-gallery/product-gallery";
 
 export function CustomDesignPage({ design }: { design: CustomDesign }) {
   const { openDialog } = useDialogs();
+  const ways = pieceColourways(design);
+  const [colourId, setColourId] = useState(ways[0]?.id ?? "");
+  useEffect(() => {
+    setColourId(pieceColourways(design)[0]?.id ?? "");
+  }, [design.id]);
+  const colourway = ways.find((way) => way.id === colourId) ?? ways[0];
   const others = customDesigns.filter((item) => item.id !== design.id);
+  if (!colourway) return null;
   return (
     <>
       <div className="breadcrumbs">
@@ -19,20 +29,19 @@ export function CustomDesignPage({ design }: { design: CustomDesign }) {
         <span>{design.name}</span>
       </div>
       <section className="product-page">
-        <div className="product-gallery">
-          <img
-            src={design.image}
-            alt={`${design.name} — full look in ${design.color}`}
-          />
-          <span>MADE TO ORDER / 01</span>
-        </div>
+        <ProductGallery
+          key={colourway.id}
+          frames={productFrames(colourway)}
+          name={design.name}
+          label="MADE TO ORDER"
+        />
         <div className="product-info">
           <span className="eyebrow">CUSTOM MADE</span>
           <h1>{design.name}</h1>
           <p className="product-price">{money(design.price)}</p>
           <p className="product-lead">Ready in {design.leadDays} days</p>
           <p className="product-description">{design.description}</p>
-          <ProductPurchase product={design} />
+          <ProductPurchase product={design} colourway={colourway} onColour={setColourId} />
           <div className="product-accordions">
             <details open>
               <summary>

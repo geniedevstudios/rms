@@ -1,0 +1,83 @@
+.product-gallery {
+  position: relative;
+  background: #e7e5e0;
+}
+.product-gallery > img {
+  aspect-ratio: 3/4;
+  object-position: center 30%;
+}
+.product-gallery > span {
+  position: absolute;
+  bottom: 20px;
+  left: 22px;
+  font-size: 7px;
+  color: white;
+  letter-spacing: 1.5px;
+  text-shadow: 0 1px 6px #000;
+}
+.gallery-nav {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.gallery-nav button {
+  pointer-events: auto;
+  position: absolute;
+  top: 50%;
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border-radius: 50%;
+  color: #2f2a27;
+  background:
+    radial-gradient(
+      120% 80% at 30% 12%,
+      rgba(255, 255, 255, 0.55) 0%,
+      rgba(255, 255, 255, 0.08) 42%,
+      rgba(255, 255, 255, 0) 70%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.22) 0%,
+      rgba(255, 255, 255, 0.06) 100%
+    );
+  backdrop-filter: blur(16px) saturate(180%) brightness(1.12);
+  -webkit-backdrop-filter: blur(16px) saturate(180%) brightness(1.12);
+  border: 1px solid rgba(255, 255, 255, 0.62);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.75) inset,
+    0 -1px 0 rgba(39, 43, 54, 0.08) inset,
+    0 10px 24px rgba(37, 38, 33, 0.18);
+  transform: translateY(-50%);
+}
+.gallery-nav button:first-child {
+  left: 16px;
+}
+.gallery-nav button:last-child {
+  right: 16px;
+}
+.gallery-nav button:hover {
+  transform: translateY(-50%) scale(1.04);
+}
+@media (max-width: 760px) {
+  .product-gallery > img {
+    aspect-ratio: 3/3.8;
+  }
+  .product-gallery > span {
+    font-size: 6px;
+    left: 16px;
+    bottom: 17px;
+  }
+  .gallery-nav button {
+    width: 36px;
+    height: 36px;
+  }
+  .gallery-nav button:first-child {
+    left: 12px;
+  }
+  .gallery-nav button:last-child {
+    right: 12px;
+  }
+}

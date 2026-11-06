@@ -1,4 +1,5 @@
 import { filterProducts } from "../../features/products/product-selectors";
+import { pieceColourways } from "../../data/size-guide";
 import "./shop.styles.css";
 import { useState } from "react";
 import { products, shopCategories } from "../../data/products";
@@ -6,10 +7,6 @@ import { SlidersHorizontal, X } from "lucide-react";
 import { ProductCard } from "../../features/products/product-card/product-card";
 import { SelectMenu } from "../../components/select-menu/select-menu";
 
-const colours = [
-  "All colours",
-  ...new Set(products.map((product) => product.color)),
-];
 export function Shop({
   category: initialCategory,
   newEdit,
@@ -22,6 +19,16 @@ export function Shop({
   const [showFilters, setShowFilters] = useState(false);
   const [color, setColor] = useState("All colours");
   const [maxPrice, setMaxPrice] = useState("all");
+  const colours = [
+    "All colours",
+    ...new Set(
+      products.flatMap((product) =>
+        pieceColourways(product)
+          .map((way) => way.color.trim())
+          .filter(Boolean),
+      ),
+    ),
+  ];
   const list = filterProducts({ category, color, maxPrice, newEdit, sort });
   return (
     <section className="shop-page section">

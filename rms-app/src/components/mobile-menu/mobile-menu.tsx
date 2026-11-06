@@ -1,12 +1,17 @@
-import { mediaSlot } from "../../content/content";
 import "./mobile-menu.styles.css";
 import { useState, type ReactNode } from "react";
 import { useWishlist } from "../../features/wishlist/wishlist.context";
 import { useDialogs } from "../dialogs/dialogs.context";
 import { Link } from "../../routing/link";
-import { products, shopCategories } from "../../data/products";
+import { shopCategories } from "../../data/products";
 import { collections } from "../../data/collections";
 import { productPath } from "../../routing/navigation";
+import {
+  collectionMenuPhotos,
+  newArrivalPhotos,
+  newArrivals,
+  shopMenuPhotos,
+} from "../navigation/menu-photos";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -54,29 +59,7 @@ export function MobileMenu() {
   const { openDialog } = useDialogs();
   const [open, setOpen] = useState<string | null>(null);
   const toggle = (id: string) => setOpen((current) => (current === id ? null : id));
-  const collectionPhotos = collections.slice(0, 2).flatMap((collection) => {
-    const piece = products.find(
-      (product) => product.id === collection.productIds[1],
-    );
-    return [
-      {
-        key: collection.id,
-        to: "/collection",
-        image: collection.image,
-        label: collection.title.map((line) => line.text).join(" "),
-      },
-      ...(collections.length === 1 && piece
-        ? [
-            {
-              key: piece.id,
-              to: productPath(piece.id),
-              image: piece.image,
-              label: piece.name,
-            },
-          ]
-        : []),
-    ];
-  });
+  const arrivals = newArrivals();
   return (
     <div className="mobile-navigation">
       <MenuGroup
@@ -88,16 +71,16 @@ export function MobileMenu() {
       >
         <span className="eyebrow">Just in</span>
         <Link to="/shop?edit=new">All new arrivals</Link>
-        {products.slice(0, 4).map((product) => (
+        {arrivals.map((product) => (
           <Link key={product.id} to={productPath(product.id)}>
             {product.name}
           </Link>
         ))}
         <div className="mobile-group-photos">
-          {products.slice(0, 2).map((product) => (
-            <Link key={product.id} to={productPath(product.id)}>
-              <img src={product.image} alt="" />
-              <span>{product.name}</span>
+          {newArrivalPhotos().map((photo) => (
+            <Link key={photo.key} to={photo.to}>
+              <img src={photo.image} alt="" />
+              <span>{photo.label}</span>
             </Link>
           ))}
         </div>
@@ -120,14 +103,12 @@ export function MobileMenu() {
           </Link>
         ))}
         <div className="mobile-group-photos">
-          <Link to="/shop?category=Pants">
-            <img src={mediaSlot("navigation-shop").src} alt={mediaSlot("navigation-shop").alt} />
-            <span>Pants</span>
-          </Link>
-          <Link to="/shop?category=Skirts">
-            <img src={mediaSlot("navigation-collection").src} alt={mediaSlot("navigation-collection").alt} />
-            <span>Skirts</span>
-          </Link>
+          {shopMenuPhotos().map((photo) => (
+            <Link key={photo.key} to={photo.to}>
+              <img src={photo.image} alt="" />
+              <span>{photo.label}</span>
+            </Link>
+          ))}
         </div>
       </MenuGroup>
       <MenuGroup
@@ -145,7 +126,7 @@ export function MobileMenu() {
           </Link>
         ))}
         <div className="mobile-group-photos">
-          {collectionPhotos.map((photo) => (
+          {collectionMenuPhotos().map((photo) => (
             <Link key={photo.key} to={photo.to}>
               <img src={photo.image} alt="" />
               <span>{photo.label}</span>

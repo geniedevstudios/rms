@@ -5,6 +5,7 @@ import { searchProducts } from "../products/product-selectors";
 import { Link } from "../../routing/link";
 import { productPath } from "../../routing/navigation";
 import { money } from "../../lib/format-currency";
+import { pieceColour } from "../products/colour";
 export function SearchPanel() {
   const [query, setQuery] = useState("");
   const results = searchProducts(query);
@@ -25,17 +26,20 @@ export function SearchPanel() {
         {query ? "YOUR RESULTS" : "A FEW PIECES TO DISCOVER"}
       </span>
       <div className="search-results">
-        {results.map((p) => (
+        {results.map((p) => {
+          const colour = pieceColour(p);
+          return (
           <Link key={p.id} to={productPath(p.id)} className="search-result">
             <img src={p.image} alt={p.name} />
             <div>
               <h3>{p.name}</h3>
-              <p>{p.color}</p>
+              {colour && <p>{colour.name}</p>}
               <span>{money(p.price)}</span>
             </div>
             <ArrowUpRight size={16} />
           </Link>
-        ))}
+          );
+        })}
         {results.length === 0 && (
           <p className="no-results">
             No pieces found. Try “skirt”, “sand” or “top”.

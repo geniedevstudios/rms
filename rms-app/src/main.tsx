@@ -8,14 +8,14 @@ import "@fontsource/playfair-display/500.css";
 import "@fontsource/playfair-display/600.css";
 import "@fontsource/playfair-display/400-italic.css";
 import "./styles/global.css";
-import "./lib/supabase";
-import { loadPublishedContent } from "./content/content";
+import { loadPublishedContent, watchPublishedContent } from "./content/content";
 import { watchIntro } from "./intro";
 
 watchIntro();
 
 async function mountStorefront() {
   await loadPublishedContent();
+  watchPublishedContent();
   const { default: App } = await import("./app/app");
   ReactDOM.createRoot(document.getElementById("root")!).render(
     <React.StrictMode><App /></React.StrictMode>,

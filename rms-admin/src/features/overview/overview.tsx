@@ -1,10 +1,233 @@
-import { ArrowUpRight,ArrowRight,Image,Layers,BookOpen,Package,CheckCircle2,Clock3 } from 'lucide-react';
-import { useContent } from '../../app/content.context';
-import { PageHeading,Thumb,formatDate } from '../../components/ui';
-export function Overview({navigate}:{navigate:(page:string)=>void}){
- const {state,content,pending}=useContent();const active=content.products.filter(p=>p.status==='active').length;const journals=content.journals.filter(j=>j.status==='published').length;
- return <><PageHeading eyebrow="YOUR BRAND, BEAUTIFULLY IN HAND" title="A little perspective." description="A considered space to shape what comes next."/><div className="stats-grid">{[{label:'Catalogue pieces',value:active,note:`${content.customDesigns.length} made-to-order designs`,Icon:Package,page:'products'},{label:'Media library',value:state.media.length,note:`${state.media.filter(m=>m.type==='video').length} films · ready to use`,Icon:Image,page:'media'},{label:'Journal stories',value:journals,note:`${content.journals.length-journals} in progress`,Icon:BookOpen,page:'journal'},{label:'Collections',value:content.collections.length,note:'Curated, with intention',Icon:Layers,page:'collections'}].map(s=><button className="stat" key={s.label} onClick={()=>navigate(s.page)}><div><span>{s.label}</span><s.Icon size={17}/></div><strong>{String(s.value).padStart(2,'0')}</strong><small>{s.note}<ArrowUpRight size={14}/></small></button>)}</div>
- <div className="overview-grid"><section className="panel campaign-panel"><div className="panel-heading"><div><span className="eyebrow">IN THE SPOTLIGHT</span><h2>Your homepage, at a glance.</h2></div><span className="badge">{pending?'Draft workspace':'Current content'}</span></div><div className="campaign-preview"><div><span className="eyebrow">{content.hero.eyebrow}</span><h3>{content.hero.title}</h3><p>{content.hero.description}</p><span className="mini-link">{content.hero.buttonLabel}<ArrowRight size={13}/></span></div><Thumb src={content.hero.slides[0].src} video={content.hero.slides[0].type==='video'} alt={content.hero.slides[0].alt}/></div><div className="panel-footer"><span>{content.hero.slides.length} {content.hero.slides.length===1?'hero slide':'rotating slides'}</span><button className="text-button" onClick={()=>navigate('website')}>Edit homepage <ArrowRight size={15}/></button></div></section>
- <section className="panel next-panel"><span className="eyebrow">MAKE ROOM FOR WHAT’S NEXT</span><h2>A fresh point of view.</h2><p>New imagery. A story worth telling. Bring your next chapter into focus.</p><button className="quick-action" onClick={()=>navigate('media')}><span className="action-icon"><Image size={19}/></span><span><strong>Refresh your imagery</strong><small>Upload photographs and films</small></span><ArrowUpRight size={17}/></button><button className="quick-action" onClick={()=>navigate('journal')}><span className="action-icon"><BookOpen size={19}/></span><span><strong>Tell a new story</strong><small>Write for the RMS journal</small></span><ArrowUpRight size={17}/></button><button className="quick-action" onClick={()=>navigate('products')}><span className="action-icon"><Package size={19}/></span><span><strong>Consider the collection</strong><small>Manage your pieces</small></span><ArrowUpRight size={17}/></button></section></div>
- <div className="overview-lower"><section className="panel"><div className="panel-heading"><h2>Recently in your studio</h2><span className="muted">LATEST ACTIVITY</span></div>{state.activity.length?state.activity.slice(0,4).map(a=><div className="activity" key={a.id}><Clock3 size={15}/><span>{a.message}</span><time>{formatDate(a.at)}</time></div>):<div className="quiet-note"><span className="activity-dot"/><div><strong>Your studio is ready.</strong><p>Start with the storefront’s existing imagery, pieces, and stories. Your changes will appear here.</p></div></div>}</section><section className="publish-note"><CheckCircle2 size={22}/><h3>{pending?'A new chapter is taking shape.':'Everything has its place.'}</h3><p>{pending?'Your changes stay in the studio until you publish. Take your time. Make it yours.':'Save your edits as a draft, then publish them together when they’re ready.'}</p><span>LAST PUBLISHED</span><small>{formatDate(state.publishedAt)}</small></section></div></>;
+import { useEffect, useState } from "react";
+import {
+  ArrowUpRight,
+  ShoppingBag,
+  Calendar,
+  Package,
+  CheckCircle2,
+  Clock3,
+} from "lucide-react";
+import { useContent } from "../../app/content.context";
+import { api } from "../../lib/api";
+import { PageHeading, formatDate } from "../../components/ui";
+
+import { Revenue } from "../revenue/revenue";
+import { InventoryNotice } from "./inventory-notice";
+import { inventoryNotices } from "./inventory";
+import {
+  money,
+  validRevenueOrders,
+  type PaidOrder,
+} from "../revenue/revenue.model";
+type Consultation = { id: string; status?: string };
+
+export function Overview({ navigate }: { navigate: (page: string) => void }) {
+  const { state, content, pending } = useContent();
+  const [orders, setOrders] = useState<PaidOrder[]>([]);
+  const [consultations, setConsultations] = useState<Consultation[]>([]);
+  const [revenueOpen, setRevenueOpen] = useState(false);
+  const [inventoryOpen, setInventoryOpen] = useState(false);
+  const [ordersLoading, setOrdersLoading] = useState(true);
+  const [ordersError, setOrdersError] = useState("");
+  const [refresh, setRefresh] = useState(0);
+  const notices = inventoryNotices(content.products);
+  const received = validRevenueOrders(orders).reduce(
+    (sum, order) => sum + order.total,
+    0,
+  );
+  const freshOrders = orders.filter(
+    (order) => order.status === "confirmed",
+  ).length;
+  const freshConsults = consultations.filter(
+    (item) => item.status === "requested",
+  ).length;
+  useEffect(() => {
+    let stop = false;
+    setOrdersLoading(true);
+    setOrdersError("");
+    void api<PaidOrder[]>("orders")
+      .then((next) => {
+        if (!stop) setOrders(next);
+      })
+      .catch(() => {
+        if (!stop)
+          setOrdersError("Revenue could not be loaded. Please try again.");
+      })
+      .finally(() => {
+        if (!stop) setOrdersLoading(false);
+      });
+    void api<Consultation[]>("consultations")
+      .then((next) => {
+        if (!stop) setConsultations(next);
+      })
+      .catch(() => undefined);
+    return () => {
+      stop = true;
+    };
+  }, [refresh]);
+
+  return (
+    <>
+      <PageHeading
+        eyebrow="YOUR BRAND, BEAUTIFULLY IN HAND"
+        title="A little perspective."
+        description="What has come in, and what is waiting for you."
+      />
+      <div className="stats-grid">
+        <button className="stat" onClick={() => setInventoryOpen(true)}>
+          <div>
+            <span>Inventory notice</span>
+            <Package size={17} />
+          </div>
+          <strong>{String(notices.length).padStart(2, "0")}</strong>
+          <small>
+            Two or fewer left
+            <ArrowUpRight size={14} />
+          </small>
+        </button>
+        <button
+          className="stat stat-money"
+          onClick={() => setRevenueOpen(true)}
+        >
+          <div>
+            <span>Revenue</span>
+            <ShoppingBag size={17} />
+          </div>
+          <strong>
+            {ordersLoading
+              ? "Loading…"
+              : ordersError
+                ? "Unavailable"
+                : money(received)}
+          </strong>
+          <small>
+            Weekly, monthly & yearly
+            <ArrowUpRight size={14} />
+          </small>
+        </button>
+        <button className="stat" onClick={() => navigate("orders")}>
+          <div>
+            <span>New orders</span>
+            <ShoppingBag size={17} />
+          </div>
+          <strong>{String(freshOrders).padStart(2, "0")}</strong>
+          <small>
+            Waiting to be prepared
+            <ArrowUpRight size={14} />
+          </small>
+        </button>
+        <button className="stat" onClick={() => navigate("consultations")}>
+          <div>
+            <span>New consultations</span>
+            <Calendar size={17} />
+          </div>
+          <strong>{String(freshConsults).padStart(2, "0")}</strong>
+          <small>
+            Appointment requests
+            <ArrowUpRight size={14} />
+          </small>
+        </button>
+      </div>
+      <section className="panel next-panel overview-band">
+        <span className="eyebrow">MAKE ROOM FOR WHAT’S NEXT</span>
+        <h2>A fresh point of view.</h2>
+        <p>
+          New imagery. A story worth telling. Bring your next chapter into
+          focus.
+        </p>
+        <button className="quick-action" onClick={() => navigate("media")}>
+          <span className="action-icon">
+            <ShoppingBag size={19} />
+          </span>
+          <span>
+            <strong>Refresh your imagery</strong>
+            <small>Upload photographs and films</small>
+          </span>
+          <ArrowUpRight size={17} />
+        </button>
+        <button className="quick-action" onClick={() => navigate("journal")}>
+          <span className="action-icon">
+            <Calendar size={19} />
+          </span>
+          <span>
+            <strong>Tell a new story</strong>
+            <small>Write for the RMS journal</small>
+          </span>
+          <ArrowUpRight size={17} />
+        </button>
+        <button className="quick-action" onClick={() => navigate("products")}>
+          <span className="action-icon">
+            <Package size={19} />
+          </span>
+          <span>
+            <strong>Consider the collection</strong>
+            <small>Manage your pieces</small>
+          </span>
+          <ArrowUpRight size={17} />
+        </button>
+      </section>
+      <div className="overview-lower">
+        <section className="panel">
+          <div className="panel-heading">
+            <h2>Recently in your studio</h2>
+            <span className="muted">LATEST ACTIVITY</span>
+          </div>
+          {state.activity.length ? (
+            state.activity.slice(0, 4).map((a) => (
+              <div className="activity" key={a.id}>
+                <Clock3 size={15} />
+                <span>{a.message}</span>
+                <time>{formatDate(a.at)}</time>
+              </div>
+            ))
+          ) : (
+            <div className="quiet-note">
+              <span className="activity-dot" />
+              <div>
+                <strong>Your studio is ready.</strong>
+                <p>
+                  Start with the storefront’s existing imagery, pieces, and
+                  stories. Your changes will appear here.
+                </p>
+              </div>
+            </div>
+          )}
+        </section>
+        <section className="publish-note">
+          <CheckCircle2 size={22} />
+          <h3>
+            {pending
+              ? "A new chapter is taking shape."
+              : "Everything has its place."}
+          </h3>
+          <p>
+            {pending
+              ? "Your changes stay in the studio until you publish. Take your time. Make it yours."
+              : "The storefront matches this studio."}
+          </p>
+          <span>LAST PUBLISHED</span>
+          <small>{formatDate(state.publishedAt)}</small>
+        </section>
+      </div>
+      {inventoryOpen && (
+        <InventoryNotice
+          products={content.products}
+          onClose={() => setInventoryOpen(false)}
+          onOpenCatalogue={() => {
+            setInventoryOpen(false);
+            navigate("products");
+          }}
+        />
+      )}
+      {revenueOpen && (
+        <Revenue
+          orders={orders}
+          loading={ordersLoading}
+          error={ordersError}
+          onRetry={() => setRefresh((value) => value + 1)}
+          onClose={() => setRevenueOpen(false)}
+        />
+      )}
+    </>
+  );
 }

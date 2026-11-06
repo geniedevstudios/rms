@@ -1,29 +1,109 @@
 import { mediaSlot } from "../../content/content";
 import "../collection/collection.styles.css";
 import "./custom.styles.css";
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useState, useRef } from "react";
 import { ArrowDown, ArrowRight } from "lucide-react";
 import { SelectMenu } from "../../components/select-menu/select-menu";
 import { consultationFee, customDesigns } from "../../data/custom-designs";
 import { money } from "../../lib/format-currency";
+import { openPaystack, preparePaystack } from "../../features/payments/paystack";
+import { rememberAppointment } from "../confirmation/appointment";
+import { go } from "../../routing/navigation";
+import {
+  accraToday,
+  WheelDatePicker,
+} from "../../../../rms-admin/shared/wheel-picker.tsx";
 import { CustomDesignCard } from "./custom-design-card";
 
-const services = [
-  ...customDesigns.map((design) => design.name),
-  "A bespoke piece",
-];
+const services = ["Styling consultation", "Bespoke tailoring"];
+
+function comingDay() {
+  const [year, month, date] = accraToday().split("-").map(Number);
+  return new Date(Date.UTC(year, month - 1, date + 1)).toISOString().slice(0, 10);
+}
 
 export function Custom() {
-  const [booked, setBooked] = useState(false);
+  const requestId = useRef<string | null>(null);
+  const signature = useRef("");
+  const [day, setDay] = useState(comingDay);
+  const [sending, setSending] = useState(false);
+  const [problem, setProblem] = useState("");
 
   const scrollTo = (id: string) => (event: { preventDefault: () => void }) => {
     event.preventDefault();
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const book = (event: FormEvent<HTMLFormElement>) => {
+  const book = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setBooked(true);
+    const data = new FormData(event.currentTarget);
+    const booking = {
+      name: String(data.get("name") || ""),
+      email: String(data.get("email") || ""),
+      phone: String(data.get("phone") || ""),
+      service: String(data.get("service") || ""),
+      meeting: String(data.get("meeting") || ""),
+      vision: String(data.get("vision") || ""),
+      appointment: day,
+    };
+    const nextSignature = JSON.stringify(booking);
+    if (signature.current !== nextSignature) {
+      signature.current = nextSignature;
+      requestId.current = null;
+    }
+    const bytes = new Uint8Array(6);
+    crypto.getRandomValues(bytes);
+    const id = (requestId.current ||=
+      "CST-" +
+      [...bytes].map((byte) => byte.toString(16).padStart(2, "0")).join("").toUpperCase());
+    setSending(true);
+    setProblem("");
+    try {
+      const started = await fetch("/api/cms/consultations/pay", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...booking, id }),
+      });
+      const payment = (await started.json().catch(() => ({}))) as {
+        accessCode?: string;
+        reference?: string;
+        error?: string;
+      };
+      if (!started.ok || !payment.accessCode || !payment.reference)
+        throw new Error(payment.error || "Payment could not be started.");
+      await preparePaystack();
+      const reference = await openPaystack(payment.accessCode, payment.reference);
+      const recorded = await fetch("/api/cms/consultations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reference }),
+      });
+      const saved = (await recorded.json().catch(() => ({}))) as {
+        id?: string;
+        fee?: number;
+        error?: string;
+      };
+      if (!recorded.ok) throw new Error(saved.error || "The appointment could not be saved.");
+      const receiptId = saved.id || reference;
+      rememberAppointment({
+        id: receiptId,
+        name: booking.name,
+        service: booking.service,
+        meeting: booking.meeting,
+        appointment: booking.appointment,
+        fee: typeof saved.fee === "number" ? saved.fee : consultationFee,
+        vision: booking.vision || undefined,
+      });
+      go(`/confirmation/${receiptId}`);
+    } catch (error) {
+      setProblem(
+        error instanceof Error && error.message
+          ? error.message
+          : "We could not send the request. Try again.",
+      );
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -84,11 +164,9 @@ export function Custom() {
             is only yours
           </h2>
           <p>
-            Want something that is not one of the designs above. A bespoke
-            piece starts with a conversation. A consultation fee of{" "}
-            {money(consultationFee)} holds your appointment. It is a down
-            payment on the piece, taken when the work begins. Meet online, or
-            come to the atelier.
+            A styling consultation or bespoke tailoring starts here. The fee
+            of {money(consultationFee)} requests the appointment. Choose a day,
+            then pay. The studio may reschedule that day based on availability.
           </p>
           <a
             href="#custom-booking"
@@ -105,16 +183,11 @@ export function Custom() {
           <span className="eyebrow">BOOK AN APPOINTMENT</span>
           <h2>Tell us how to reach you.</h2>
           <p>
-            The consultation fee is {money(consultationFee)}.
+            The appointment fee is {money(consultationFee)}. Pay when you
+            request the day.
           </p>
         </div>
-        {booked ? (
-          <p className="custom-confirmed" role="status">
-            Your appointment request is in. We will be in touch to confirm an
-            online meeting or a visit to the atelier.
-          </p>
-        ) : (
-          <form className="custom-form" onSubmit={book}>
+        <form className="custom-form" onSubmit={book}>
             <div className="form-row">
               <label>
                 Full name
@@ -159,6 +232,14 @@ export function Custom() {
                 ]}
               />
             </div>
+            <div className="field">
+              <span>Preferred day</span>
+              <WheelDatePicker value={day} onChange={setDay} />
+              <p className="custom-note">
+                The studio may reschedule this day based on availability. You’ll
+                get an email when it is confirmed, or if it needs to move.
+              </p>
+            </div>
             <label>
               <span className="field-name">
                 Your vision <em>Optional</em>
@@ -169,11 +250,12 @@ export function Custom() {
                 placeholder="A note about the piece you have in mind"
               />
             </label>
-            <button className="button dark" type="submit">
-              Request the appointment <ArrowRight size={16} />
+            {problem && <p className="form-error">{problem}</p>}
+            <button className="button dark" type="submit" disabled={sending}>
+              {sending ? "Opening payment…" : "Request the appointment"}{" "}
+              <ArrowRight size={16} />
             </button>
-          </form>
-        )}
+        </form>
       </section>
     </>
   );

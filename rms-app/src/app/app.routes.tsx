@@ -11,6 +11,7 @@ import { Shop } from "../pages/shop/shop";
 import { ProductPage } from "../pages/product/product";
 import { Checkout } from "../pages/checkout/checkout";
 import { Confirmation } from "../pages/confirmation/confirmation";
+import { readAppointment } from "../pages/confirmation/appointment";
 import { Orders } from "../pages/orders/orders";
 import { Collection } from "../pages/collection/collection";
 import { Custom } from "../pages/custom/custom";
@@ -37,7 +38,7 @@ export function AppRoutes() {
         ? "The wardrobe"
         : pathname === "/about"
           ? "Our world"
-          : pathname === "/collection"
+          : pathname.startsWith("/collection")
             ? "Collections"
             : pathname === "/custom"
               ? "Custom"
@@ -47,8 +48,10 @@ export function AppRoutes() {
                 ? "Checkout"
                 : pathname === "/orders"
                   ? "Your orders"
-                  : pathname.startsWith("/confirmation/")
-                    ? "Order confirmation"
+                  : pathname.startsWith("/confirmation/CST-")
+                    ? "Appointment"
+                    : pathname.startsWith("/confirmation/")
+                      ? "Order confirmation"
                   : "A wardrobe for becoming");
     document.title = `RIVERMINDSTYLE — ${pageTitle}`;
   }, [pathname, product, customDesign]);
@@ -65,13 +68,18 @@ export function AppRoutes() {
   if (product) return <ProductPage key={product.id} product={product} />;
   if (pathname === "/checkout") return <Checkout />;
   if (pathname === "/orders") return <Orders />;
-  if (pathname.startsWith("/confirmation/"))
+  if (pathname.startsWith("/confirmation/")) {
+    const id = decodeURIComponent(pathname.slice("/confirmation/".length));
+    if (id.startsWith("CST-"))
+      return <Confirmation appointment={readAppointment(id)} />;
     return (
       <Confirmation
         order={orders.find((order) => pathname === `/confirmation/${order.id}`)}
       />
     );
+  }
   if (pathname === "/collection") return <Collection />;
+  if (pathname.startsWith("/collection/")) return <Collection id={pathname.slice("/collection/".length)} />;
   if (pathname === "/custom") return <Custom />;
   if (customDesign)
     return <CustomDesignPage key={customDesign.id} design={customDesign} />;

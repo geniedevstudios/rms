@@ -57,6 +57,8 @@ export function DialogProvider({ children }: { children: ReactNode }) {
   }, []);
   const openDialog = (next: Dialog) => {
     setDialog((current) => {
+      if (current?.type === "quick-view" && next.type === "size-guide")
+        return { ...next, fromProductId: current.productId };
       if (
         keepsMenu(current) &&
         (next.type === "search" ||

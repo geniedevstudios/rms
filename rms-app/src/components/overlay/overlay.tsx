@@ -1,5 +1,5 @@
 import "./overlay.styles.css";
-import { type ReactNode, useRef, useEffect, useState } from "react";
+import { type ReactNode, useRef, useEffect, useState, useId } from "react";
 import { X } from "lucide-react";
 import { useDialogs } from "../dialogs/dialogs.context";
 export function Overlay({
@@ -24,6 +24,7 @@ export function Overlay({
   covered?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
+  const titleId = useId();
   const { registerClose } = useDialogs();
   const closeRef = useRef(onClose);
   closeRef.current = onClose;
@@ -122,7 +123,7 @@ export function Overlay({
         ref={ref}
         role="dialog"
         aria-modal="true"
-        aria-labelledby={menu ? "menu-dialog-title" : "dialog-title"}
+        aria-labelledby={titleId}
         className="drawer"
         onAnimationEnd={(event) => {
           if (
@@ -135,7 +136,7 @@ export function Overlay({
         }}
       >
         <div className={`drawer-heading${brand ? " is-brand" : ""}`}>
-          <h2 id={menu ? "menu-dialog-title" : "dialog-title"}>{title}</h2>
+          <h2 id={titleId}>{title}</h2>
           <button
             className="icon-button"
             onClick={() => requestClose()}

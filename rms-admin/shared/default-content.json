@@ -72,22 +72,6 @@
       "src": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754716/rms/original-city.jpg",
       "alt": "Considered tailoring",
       "description": "Consultation editorial image."
-    },
-    {
-      "id": "navigation-shop",
-      "label": "Navigation · shop",
-      "group": "Navigation",
-      "src": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754716/rms/original-city.jpg",
-      "alt": "Explore the shop",
-      "description": "Desktop and mobile shop menu image."
-    },
-    {
-      "id": "navigation-collection",
-      "label": "Navigation · collection",
-      "group": "Navigation",
-      "src": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754721/rms/original-hero.jpg",
-      "alt": "The Becoming collection",
-      "description": "Desktop and mobile collection menu image."
     }
   ],
   "categoryCards": [
@@ -137,6 +121,7 @@
       "tag": "NEW SEASON",
       "description": "An expression of quiet confidence. A sculpted black skirt, considered from every angle, for the moments that become memories.",
       "fabric": "Structured crepe · specialist clean",
+      "newArrival": true,
       "status": "active"
     },
     {
@@ -151,6 +136,7 @@
       "tag": "THE EDIT",
       "description": "Soft structure meets a confident line. A two-piece set with a flared leg, designed to move between the everyday and the exceptional.",
       "fabric": "Woven suiting · specialist clean",
+      "newArrival": true,
       "status": "active"
     },
     {
@@ -164,6 +150,7 @@
       "hoverImage": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754718/rms/original-dress.jpg",
       "description": "A timeless shape, with a point of view. Clean lines and an expressive silhouette make this the piece you return to, season after season.",
       "fabric": "Soft stretch crepe · specialist clean",
+      "newArrival": true,
       "status": "active"
     },
     {
@@ -177,6 +164,7 @@
       "hoverImage": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754717/rms/original-cream.jpg",
       "description": "A lighter approach to a pant. Easy proportions and a warm neutral tone bring a sense of ease to days that unfold on their own terms.",
       "fabric": "Cotton-blend suiting · specialist clean",
+      "newArrival": true,
       "status": "active"
     },
     {

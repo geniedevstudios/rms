@@ -8,6 +8,7 @@ import {
 } from "react";
 import { Check, ChevronDown } from "lucide-react";
 import "./select-menu.styles.css";
+import { measureSelectPosition, revealSelectOption } from "../../../../rms-admin/shared/select-position";
 
 export type SelectOption = {
   value: string;
@@ -49,7 +50,7 @@ export function SelectMenu({
   const [open, setOpen] = useState(false);
   const [internal, setInternal] = useState(defaultValue);
   const [active, setActive] = useState(0);
-  const [above, setAbove] = useState(false);
+  const [placement, setPlacement] = useState({ above: false, maxHeight: 280 });
   const rootRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
@@ -93,17 +94,34 @@ export function SelectMenu({
 
   useLayoutEffect(() => {
     if (!open || !buttonRef.current || !listRef.current) return;
-    const button = buttonRef.current.getBoundingClientRect();
-    const height = listRef.current.offsetHeight;
-    const spaceBelow = window.innerHeight - button.bottom;
-    setAbove(spaceBelow < height + 12 && button.top > height + 12);
-    listRef.current.focus({ preventScroll: true });
+    const button = buttonRef.current;
+    const list = listRef.current;
+    const position = () => {
+      const next = measureSelectPosition(button, list);
+      setPlacement(current => current.above === next.above && current.maxHeight === next.maxHeight ? current : next);
+    };
+    position();
+    list.focus({ preventScroll: true });
+    window.addEventListener("resize", position);
+    window.addEventListener("scroll", position, true);
+    window.visualViewport?.addEventListener("resize", position);
+    window.visualViewport?.addEventListener("scroll", position);
+    const observer = new ResizeObserver(position);
+    observer.observe(button);
+    observer.observe(list);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", position);
+      window.removeEventListener("scroll", position, true);
+      window.visualViewport?.removeEventListener("resize", position);
+      window.visualViewport?.removeEventListener("scroll", position);
+    };
   }, [open, options.length]);
 
   useEffect(() => {
     if (!open) return;
     const option = listRef.current?.querySelector<HTMLElement>('[data-active="true"]');
-    option?.scrollIntoView({ block: "nearest" });
+    if (option && listRef.current) revealSelectOption(listRef.current, option);
   }, [open, active]);
 
   const onButtonKey = (event: KeyboardEvent<HTMLButtonElement>) => {
@@ -134,6 +152,7 @@ export function SelectMenu({
       if (option) commit(option.value);
     } else if (event.key === "Escape") {
       event.preventDefault();
+      event.stopPropagation();
       setOpen(false);
       buttonRef.current?.focus();
     } else if (event.key === "Tab") {
@@ -151,7 +170,7 @@ export function SelectMenu({
   return (
     <div
       ref={rootRef}
-      className={`select-menu is-${variant}${open ? " is-open" : ""}${above ? " is-above" : ""}`}
+      className={`select-menu is-${variant}${open ? " is-open" : ""}${placement.above ? " is-above" : ""}`}
       onBlur={(event) => {
         if (!rootRef.current?.contains(event.relatedTarget as Node)) setOpen(false);
       }}
@@ -180,6 +199,7 @@ export function SelectMenu({
         aria-label={label}
         aria-activedescendant={open ? `${uid}-option-${active}` : undefined}
         hidden={!open}
+        style={open ? { maxHeight: placement.maxHeight } : undefined}
         onKeyDown={onListKey}
         onPointerDown={(event) => event.stopPropagation()}
       >

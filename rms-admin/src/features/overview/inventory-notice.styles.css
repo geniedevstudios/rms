@@ -1,0 +1,71 @@
+.inventory-lead,
+.inventory-clear {
+  margin: 0 0 18px;
+  color: #826b76;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.inventory-clear {
+  margin: 0;
+  padding: 22px 18px;
+  border: 1px solid #eee4df;
+  border-radius: 8px;
+  background: #fff;
+}
+.inventory-list {
+  list-style: none;
+  margin: 0;
+  border: 1px solid #eee4df;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+}
+.inventory-list > li {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  gap: 14px;
+  align-items: center;
+  padding: 14px 16px;
+  border-top: 1px solid #f1e9e5;
+}
+.inventory-list > li:first-child {
+  border-top: 0;
+}
+.inventory-levels {
+  list-style: none;
+  margin: 10px 0 0;
+  display: grid;
+  gap: 6px;
+}
+.inventory-levels li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 11px;
+  color: #795761;
+}
+.inventory-list .thumb {
+  width: 64px;
+  height: 80px;
+  border-radius: 4px;
+}
+.inventory-list strong {
+  display: block;
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 400;
+  color: #4c2938;
+}
+.inventory-list small {
+  display: block;
+  margin-top: 5px;
+  color: #8c9380;
+  font-size: 11px;
+}
+.inventory-levels em {
+  font-style: normal;
+  text-align: right;
+}
+.inventory-levels em.is-out {
+  color: #8d3d3d;
+}

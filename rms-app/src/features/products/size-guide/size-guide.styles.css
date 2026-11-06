@@ -1,18 +1,18 @@
 .size-guide {
-  padding: 32px 28px;
+  padding: 24px 28px;
 }
 .size-guide > p {
   font-size: 12px;
   line-height: 1.9;
   color: var(--muted);
-  margin: 20px 0;
+  margin: 16px 0;
 }
 .size-guide table {
   width: 100%;
   border-collapse: collapse;
   font-size: 11px;
-  text-align: left;
-  margin: 30px 0;
+  text-align: center;
+  margin: 20px 0;
 }
 .size-guide caption {
   font-size: 9px;
@@ -25,11 +25,20 @@
 }
 .size-guide th,
 .size-guide td {
-  padding: 16px 10px;
+  padding: 10px 6px;
   border-bottom: 1px solid var(--line);
 }
 .size-guide thead {
-  background: #eeede7;
+  background: #35202b;
+  color: #fff7f4;
+}
+.size-guide tbody tr:nth-child(4n + 1),
+.size-guide tbody tr:nth-child(4n + 2) {
+  background: #f5e9e7;
+}
+.size-guide tbody tr:nth-child(2n) td,
+.size-guide tbody tr:nth-child(2n) th {
+  border-bottom-color: #cbb7bb;
 }
 .size-guide .demo-caption {
   font-size: 10px;

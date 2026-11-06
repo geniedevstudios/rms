@@ -3,8 +3,9 @@
   grid-template-columns: 1fr 1fr;
   align-items: start;
 }
-.quick-view-image {
+.quick-view-content .product-gallery > img {
   height: min(650px, 73svh);
+  aspect-ratio: auto;
   object-position: center 25%;
 }
 .quick-view-details {
@@ -32,7 +33,7 @@
   .quick-view-content {
     grid-template-columns: 1fr;
   }
-  .quick-view-image {
+  .quick-view-content .product-gallery > img {
     height: 270px;
     object-position: center 25%;
   }

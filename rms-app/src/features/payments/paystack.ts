@@ -1,3 +1,4 @@
+import { checkoutToken, followupRequest } from "../checkout-followup/checkout-followup";
 type PaystackPopup = {
   resumeTransaction: (
     accessCode: string,
@@ -103,14 +104,17 @@ export async function startPaystack(input: {
   email: string;
   name: string;
   phone: string;
-  items: { productId: string; size: string; quantity: number }[];
+  items: { productId: string; size: string; quantity: number; colourwayId?: string }[];
   reference: string;
 }) {
   const started = await post<{ accessCode: string; reference: string }>(
-    "/api/paystack/initialize",
-    input,
+    "/api/cms/checkouts/initialize",
+    { token: checkoutToken(), reference: input.reference },
   );
-  await preparePaystack();
+  try { await preparePaystack(); } catch (error) {
+    void followupRequest('/issue',{token:checkoutToken(),reference:started.reference,reason:'interrupted'}).catch(()=>undefined);
+    throw error;
+  }
   const accessCode = started.accessCode;
   const reference = started.reference;
   hideCheckoutFrame();
@@ -126,21 +130,45 @@ export async function startPaystack(input: {
       onCancel: () => {
         if (settled) return;
         settled = true;
-        reject(new Error("Payment cancelled."));
+        void followupRequest('/issue',{token:checkoutToken(),reference,reason:'cancelled'}).catch(()=>undefined);
+        reject(new Error("Payment cancelled. Your bag is saved."));
       },
       onError: (error) => {
         showCheckoutFrame();
         if (settled) return;
         settled = true;
+        void followupRequest('/issue',{token:checkoutToken(),reference,reason:'interrupted'}).catch(()=>undefined);
         reject(new Error(error.message || "Paystack could not open."));
       },
     });
   });
 }
 
+export function openPaystack(accessCode: string, reference: string) {
+  hideCheckoutFrame();
+  return new Promise<string>((resolve, reject) => {
+    let settled = false;
+    const finish = (callback: () => void) => {
+      if (settled) return;
+      settled = true;
+      callback();
+    };
+    popup!.resumeTransaction(accessCode, {
+      onLoad: showCheckoutFrame,
+      onSuccess: (transaction) =>
+        finish(() => resolve(transaction.reference || reference)),
+      onCancel: () => finish(() => reject(new Error("Payment was not completed."))),
+      onError: (error) => {
+        showCheckoutFrame();
+        finish(() => reject(new Error(error.message || "Paystack could not open.")));
+      },
+    });
+  });
+}
+
 export function verifyPaystack(reference: string) {
-  return post<{ reference: string; email: string; total: number }>(
-    "/api/paystack/verify",
-    { reference },
+  return post<{ reference: string; email: string; total: number; subtotal?: number; discount?: number; promoCode?: string }>(
+    "/api/cms/checkouts/verify",
+    { reference, token: checkoutToken() },
   );
 }

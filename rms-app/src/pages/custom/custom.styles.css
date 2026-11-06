@@ -81,12 +81,13 @@
   align-self: flex-start;
   margin-top: 8px;
 }
-.custom-confirmed {
-  max-width: 560px;
-  margin: 0 auto;
-  text-align: center;
-  font-size: 14px;
-  line-height: 1.8;
+.custom-note {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.7;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--muted);
 }
 @media (max-width: 760px) {
   .custom-bespoke > img {

@@ -1,22 +1,38 @@
-import { mediaSlot } from "../../content/content";
 import "./header.styles.css";
+import { AnnouncementBar } from "../../features/promotions/promotions";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useRoute } from "../../routing/use-route";
 import { useCart } from "../../features/cart/cart.context";
 import { useWishlist } from "../../features/wishlist/wishlist.context";
 import { useDialogs } from "../dialogs/dialogs.context";
 import { Link } from "../../routing/link";
-import { products, shopCategories } from "../../data/products";
+import { shopCategories } from "../../data/products";
 import { collections } from "../../data/collections";
 import { productPath } from "../../routing/navigation";
 import {
-  ArrowRight,
+  collectionMenuPhotos,
+  newArrivalPhotos,
+  newArrivals,
+  shopMenuPhotos,
+} from "../navigation/menu-photos";
+import {
   Menu,
   Search,
   Heart,
   UserRound,
   ShoppingBag,
 } from "lucide-react";
+
+function splitHeader(pathname: string) {
+  const pictureOnLeft =
+    pathname === "/collection" ||
+    pathname.startsWith("/collection/") ||
+    pathname === "/custom";
+  const pictureOnRight = pathname === "/" || pathname === "/about";
+  if (!pictureOnLeft && !pictureOnRight) return "";
+  const pictureFirst = pathname !== "/about";
+  return ` is-split${pictureOnLeft ? " image-start" : ""}${pictureFirst ? " photo-top" : ""}`;
+}
 
 function NavDrop({
   label,
@@ -66,46 +82,135 @@ export function Header() {
   const { count } = useCart();
   const { saved } = useWishlist();
   const { openDialog } = useDialogs();
-  const collectionPhotos = collections.slice(0, 2).flatMap((collection) => {
-    const piece = products.find(
-      (product) => product.id === collection.productIds[1],
-    );
-    return [
-      {
-        key: collection.id,
-        to: "/collection",
-        image: collection.image,
-        label: collection.title.map((line) => line.text).join(" "),
-      },
-      ...(collections.length === 1 && piece
-        ? [
-            {
-              key: piece.id,
-              to: productPath(piece.id),
-              image: piece.image,
-              label: piece.name,
-            },
-          ]
-        : []),
-    ];
-  });
+  const arrivals = newArrivals();
+  const headerRef = useRef<HTMLElement>(null);
+  const [away, setAway] = useState(false);
+  const [solid, setSolid] = useState(false);
+  const scrollState = useRef({ y: 0, away: false, solid: false, distance: 0 });
+  useEffect(() => {
+    const header = headerRef.current;
+    if (!header) return;
+    const apply = () => {
+      document.documentElement.style.setProperty(
+        "--site-header-height",
+        `${header.offsetHeight}px`,
+      );
+    };
+    apply();
+    const observer = new ResizeObserver(apply);
+    observer.observe(header);
+    return () => observer.disconnect();
+  }, []);
+  useEffect(() => {
+    const state = scrollState.current;
+    const y = window.scrollY;
+    state.y = y;
+    state.away = false;
+    state.solid = y > 10;
+    state.distance = 0;
+    setAway(false);
+    setSolid(y > 10);
+    let settle: number | undefined;
+    const commit = (nextAway: boolean, nextSolid: boolean) => {
+      if (nextAway !== state.away) {
+        state.away = nextAway;
+        setAway(nextAway);
+      }
+      if (nextSolid !== state.solid) {
+        state.solid = nextSolid;
+        setSolid(nextSolid);
+      }
+    };
+    const onScroll = () => {
+      const y = window.scrollY;
+      const delta = y - state.y;
+      state.y = y;
+      if (y <= 10) {
+        state.distance = 0;
+        if (state.away) {
+          commit(false, true);
+          window.clearTimeout(settle);
+          settle = window.setTimeout(() => {
+            if (window.scrollY <= 10 && !scrollState.current.away) commit(false, false);
+          }, 720);
+        } else {
+          commit(false, false);
+        }
+        return;
+      }
+      if (delta === 0) return;
+      if ((delta > 0 && state.distance < 0) || (delta < 0 && state.distance > 0)) {
+        state.distance = 0;
+      }
+      state.distance += delta;
+      if (state.distance > 28) {
+        state.distance = 0;
+        commit(true, state.solid);
+      } else if (state.distance < -28) {
+        state.distance = 0;
+        commit(false, true);
+      }
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.clearTimeout(settle);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, [pathname]);
+  useEffect(() => {
+    const header = headerRef.current;
+    if (!header) return;
+    const place = () => {
+      const split = header.classList.contains("is-split");
+      const photoOnLeft = header.classList.contains("image-start");
+      const mid = window.innerWidth / 2;
+      header.querySelectorAll<HTMLAnchorElement>(".desktop-nav > a, .nav-drop > a").forEach((link) => {
+        if (!split) {
+          delete link.dataset.onPhoto;
+          delete link.dataset.across;
+          return;
+        }
+        const box = link.getBoundingClientRect();
+        const crosses = box.left < mid && box.right > mid;
+        if (crosses) {
+          link.dataset.across = "true";
+          delete link.dataset.onPhoto;
+          return;
+        }
+        delete link.dataset.across;
+        const onPhoto = photoOnLeft ? box.right <= mid : box.left >= mid;
+        if (onPhoto) link.dataset.onPhoto = "true";
+        else delete link.dataset.onPhoto;
+      });
+    };
+    place();
+    const observer = new ResizeObserver(place);
+    observer.observe(header);
+    window.addEventListener("resize", place);
+    const fonts = document.fonts?.ready.then(place);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", place);
+      void fonts;
+    };
+  }, [pathname]);
   return (
     <>
-      <div className="announcement">
-        A new chapter. A wardrobe for becoming.{" "}
-        <Link to="/shop">
-          Discover the collection <ArrowRight size={12} />
-        </Link>
-      </div>
-      <header className="site-header">
+      <AnnouncementBar />
+      <header
+        className={`site-header${splitHeader(pathname)}${pathname === "/shop" ? " no-rule" : ""}${away ? " is-away" : ""}${solid ? " is-solid" : ""}`}
+        ref={headerRef}
+      >
         <div className="header-main">
-          <button
-            className="icon-button mobile-menu"
-            aria-label="Open menu"
-            onClick={() => openDialog({ type: "menu" })}
-          >
-            <Menu />
-          </button>
+          <div className="header-lead">
+            <button
+              className="icon-button mobile-menu"
+              aria-label="Open menu"
+              onClick={() => openDialog({ type: "menu" })}
+            >
+              <Menu />
+            </button>
+          </div>
           <Link to="/" className="wordmark" aria-label="RIVERMINDSTYLE home">
             RIVERMINDSTYLE
           </Link>
@@ -151,17 +256,17 @@ export function Header() {
             <div className="nav-panel-links">
               <span className="eyebrow">Just in</span>
               <Link to="/shop?edit=new">All new arrivals</Link>
-              {products.slice(0, 4).map((product) => (
+              {arrivals.map((product) => (
                 <Link key={product.id} to={productPath(product.id)}>
                   {product.name}
                 </Link>
               ))}
             </div>
             <div className="nav-panel-photos">
-              {products.slice(0, 2).map((product) => (
-                <Link key={product.id} to={productPath(product.id)}>
-                  <img src={product.image} alt="" />
-                  <span>{product.name}</span>
+              {newArrivalPhotos().map((photo) => (
+                <Link key={photo.key} to={photo.to}>
+                  <img src={photo.image} alt="" />
+                  <span>{photo.label}</span>
                 </Link>
               ))}
             </div>
@@ -184,20 +289,18 @@ export function Header() {
               ))}
             </div>
             <div className="nav-panel-photos">
-              <Link to="/shop?category=Pants">
-                <img src={mediaSlot("navigation-shop").src} alt={mediaSlot("navigation-shop").alt} />
-                <span>Pants</span>
-              </Link>
-              <Link to="/shop?category=Skirts">
-                <img src={mediaSlot("navigation-collection").src} alt={mediaSlot("navigation-collection").alt} />
-                <span>Skirts</span>
-              </Link>
+              {shopMenuPhotos().map((photo) => (
+                <Link key={photo.key} to={photo.to}>
+                  <img src={photo.image} alt="" />
+                  <span>{photo.label}</span>
+                </Link>
+              ))}
             </div>
           </NavDrop>
           <NavDrop
             label="Collections"
             to="/collection"
-            active={pathname === "/collection"}
+            active={pathname === "/collection" || pathname.startsWith("/collection/")}
           >
             <div className="nav-panel-links">
               <span className="eyebrow">The collections</span>
@@ -209,7 +312,7 @@ export function Header() {
               ))}
             </div>
             <div className="nav-panel-photos">
-              {collectionPhotos.map((photo) => (
+              {collectionMenuPhotos().map((photo) => (
                 <Link key={photo.key} to={photo.to}>
                   <img src={photo.image} alt="" />
                   <span>{photo.label}</span>
@@ -217,10 +320,15 @@ export function Header() {
               ))}
             </div>
           </NavDrop>
-          <Link to="/custom" className={pathname === "/custom" ? "active" : ""}>
+          <Link
+            to="/custom"
+            className={pathname === "/custom" || pathname.startsWith("/custom/") ? "active" : ""}
+          >
             Custom
           </Link>
-          <Link to="/about">Our world</Link>
+          <Link to="/about" className={pathname === "/about" ? "active" : ""}>
+            Our world
+          </Link>
         </nav>
       </header>
     </>

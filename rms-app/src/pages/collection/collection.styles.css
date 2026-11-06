@@ -4,9 +4,22 @@
   background: #e7e6de;
   min-height: 650px;
 }
+main > div:first-child > .collection-hero:first-child,
+main > .collection-hero:first-child {
+  --header-offset: var(--site-header-height, 134px);
+  margin-top: calc(-1 * var(--header-offset));
+}
 .collection-hero > img {
   height: 650px;
   object-position: center 20%;
+}
+main > div:first-child > .collection-hero:first-child > img,
+main > .collection-hero:first-child > img {
+  height: calc(650px + var(--header-offset));
+}
+main > div:first-child > .collection-hero:first-child > div,
+main > .collection-hero:first-child > div {
+  padding-top: calc(70px + var(--header-offset));
 }
 .collection-hero > div {
   padding: 70px 15%;
@@ -35,8 +48,16 @@
   .collection-hero > img {
     height: 480px;
   }
+  main > div:first-child > .collection-hero:first-child > img,
+  main > .collection-hero:first-child > img {
+    height: calc(480px + var(--header-offset));
+  }
   .collection-hero > div {
     padding: 45px 7% 55px;
+  }
+  main > div:first-child > .collection-hero:first-child > div,
+  main > .collection-hero:first-child > div {
+    padding-top: 45px;
   }
   .collection-hero h1 {
     font-size: 52px;

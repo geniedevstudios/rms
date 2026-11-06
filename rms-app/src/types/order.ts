@@ -14,6 +14,9 @@ export type Order = {
   date: string;
   items: CartItem[];
   total: number;
+  subtotal?: number;
+  discount?: number;
+  promoCode?: string;
   email?: string;
   paid?: boolean;
   status?: OrderStatus;

@@ -1,0 +1,53 @@
+.colourways {
+  display: grid;
+  gap: 16px;
+  margin-top: 8px;
+}
+.colourways-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+}
+.colourways-heading h2 {
+  margin: 0 0 6px;
+  font-size: 22px;
+}
+.colourways-heading p {
+  margin: 0;
+  max-width: 460px;
+  color: #827979;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.colourway {
+  border: 1px solid #eee4df;
+  border-radius: 8px;
+  padding: 18px 18px 6px;
+  background: #fff;
+}
+.colourway-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.colourway-title strong {
+  font-family: var(--serif);
+  font-size: 20px;
+  font-weight: 400;
+  color: #4c2938;
+}
+.colourway-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 22px;
+}
+@media (max-width: 800px) {
+  .colourways-heading,
+  .colourway-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+}

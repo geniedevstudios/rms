@@ -5,9 +5,11 @@ import { money } from "../../lib/format-currency";
 import { Link } from "../../routing/link";
 import { customPath } from "../../routing/navigation";
 import { HoverImage } from "../../components/hover-image/hover-image";
+import { pieceColour } from "../../features/products/colour";
 
 export function CustomDesignCard({ design }: { design: CustomDesign }) {
   const to = customPath(design.id);
+  const colour = pieceColour(design);
   return (
     <article className="product-card">
       <div className="product-image-wrap">
@@ -15,7 +17,7 @@ export function CustomDesignCard({ design }: { design: CustomDesign }) {
           <HoverImage
             src={design.image}
             hover={design.hoverImage}
-            alt={`${design.name} in ${design.color}`}
+            alt={colour ? `${design.name} in ${colour.name}` : design.name}
           />
         </Link>
         <Link to={to} className="quick-view">
@@ -25,15 +27,17 @@ export function CustomDesignCard({ design }: { design: CustomDesign }) {
       <div className="product-details">
         <div>
           <Link to={to}>{design.name}</Link>
-          <span>{design.color}</span>
+          {colour && <span>{colour.name}</span>}
         </div>
         <p>{money(design.price)}</p>
       </div>
-      <div
-        className="product-swatch"
-        style={{ backgroundColor: design.swatch }}
-        title={design.color}
-      />
+      {colour?.swatch && (
+        <div
+          className="product-swatch"
+          style={{ backgroundColor: colour.swatch }}
+          title={colour.name}
+        />
+      )}
     </article>
   );
 }

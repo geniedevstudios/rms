@@ -1,12 +1,16 @@
+import { useState } from "react";
 import { mediaSlot } from "../../content/content";
 import "../../components/editorial/editorial.styles.css";
 import "./about.styles.css";
 import { useDialogs } from "../../components/dialogs/dialogs.context";
-import { Play } from "lucide-react";
+import { ArrowRight, Play } from "lucide-react";
 import { AtelierVideo } from "../../components/atelier-video/atelier-video";
+import { Link } from "../../routing/link";
+import { StudioMap } from "./studio-map";
 export function About() {
   const { openDialog } = useDialogs();
   const onFilm = () => openDialog({ type: "film" });
+  const [atStudio, setAtStudio] = useState(false);
   return (
     <>
       <section className="about-hero">
@@ -93,6 +97,61 @@ export function About() {
             woman inside it, with room to move and room to become. This is her
             point of view, offered as a wardrobe.
           </p>
+        </div>
+      </section>
+      <section className="manifesto studio-break">
+        <span className="eyebrow">VISIT</span>
+        <h2>
+          Find the studio.
+          <br />
+          <em>Vanilla Street.</em>
+        </h2>
+        <p className="manifesto-body">
+          The house is in Adenta, Accra. A visit is arranged ahead, any day
+          from 9:00 to 17:45.
+        </p>
+      </section>
+      <section className="studio-locator" aria-label="Studio location">
+        <div className="studio-panel">
+          <h2>Our studio</h2>
+          <p className="studio-count">1 studio in Adenta</p>
+          <div
+            className={atStudio ? "studio-card is-open" : "studio-card"}
+            role="button"
+            tabIndex={0}
+            onClick={(event) => {
+              if ((event.target as HTMLElement).closest("a")) return;
+              setAtStudio(true);
+            }}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                setAtStudio(true);
+              }
+            }}
+          >
+            <h3>RIVERMINDSTYLE</h3>
+            <p className="eyebrow">By appointment</p>
+            <address>
+              Vanilla Street
+              <br />
+              Adenta, Accra, Ghana
+            </address>
+            <div className="studio-hours">
+              <span className="eyebrow">Hours</span>
+              <p>Every day, 9:00–17:45</p>
+              <p>A visit is arranged ahead.</p>
+            </div>
+            <Link to="/custom" className="text-link">
+              Book an appointment <ArrowRight size={15} />
+            </Link>
+          </div>
+        </div>
+        <div className="studio-map-frame">
+          <button type="button" className="studio-reset" onClick={() => setAtStudio(false)}>
+            Studio locator
+          </button>
+          <StudioMap focused={atStudio} onSelect={() => setAtStudio(true)} />
         </div>
       </section>
     </>

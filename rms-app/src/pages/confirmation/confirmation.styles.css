@@ -61,6 +61,23 @@
   font-weight: 500;
   font-size: 12px;
 }
+.confirmation-line {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+}
+.confirmation-line span {
+  color: var(--muted);
+}
+.confirmation-line strong {
+  font-weight: 500;
+  text-align: right;
+}
 .confirmation-actions {
   display: flex;
   flex-direction: column;

@@ -3,6 +3,8 @@ import { ArrowRight } from "lucide-react";
 import { useOrders } from "../../features/orders/orders.context";
 import { orderStage } from "../../features/orders/order-progress";
 import { findPiece } from "../../data/catalog";
+import { resolveColourway } from "../../data/size-guide";
+import { pieceLine } from "../../features/products/colour";
 import { money } from "../../lib/format-currency";
 import { Link } from "../../routing/link";
 import { useDialogs } from "../../components/dialogs/dialogs.context";
@@ -40,19 +42,19 @@ export function Orders() {
               <div className="order-pieces">
                 {order.items.map((item) => {
                   const piece = findPiece(item.productId);
+                  const colourway = piece ? resolveColourway(piece, item.colourwayId) : null;
                   return (
                     <div
                       className="order-piece"
-                      key={`${order.id}-${item.productId}-${item.size}`}
+                      key={`${order.id}-${item.productId}-${item.colourwayId || ""}-${item.size}`}
                     >
-                      {piece && (
-                        <img src={piece.image} alt={piece.name} />
+                      {(item.image || colourway?.image || piece?.image) && (
+                        <img src={item.image || colourway?.image || piece?.image} alt={piece?.name || ""} />
                       )}
                       <div>
                         <strong>{piece?.name ?? item.productId}</strong>
                         <span>
-                          {piece ? `${piece.color} / ` : ""}
-                          {item.size} / Qty {item.quantity}
+                          {pieceLine(item.color || colourway?.color, item.size, item.quantity)}
                         </span>
                       </div>
                       {piece && <span>{money(piece.price * item.quantity)}</span>}

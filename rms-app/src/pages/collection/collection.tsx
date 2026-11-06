@@ -4,11 +4,14 @@ import { ArrowDown } from "lucide-react";
 import { collections } from "../../data/collections";
 import { products } from "../../data/products";
 import { ProductCard } from "../../features/products/product-card/product-card";
+import { Link } from "../../routing/link";
 
-export function Collection() {
+export function Collection({ id }: { id?: string }) {
+  const selected = id ? collections.filter(c => c.id === id) : collections;
+  if (id && !selected.length) return <section className="empty-page"><h1>This collection is unavailable.</h1><Link to="/collection" className="text-link">Explore all collections</Link></section>;
   return (
     <>
-      {collections.map((collection) => {
+      {selected.map((collection) => {
         const pieces = collection.productIds.flatMap((id) => {
           const product = products.find((item) => item.id === id);
           return product ? [product] : [];

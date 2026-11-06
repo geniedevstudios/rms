@@ -1,4 +1,17 @@
+export type Colourway = {
+  id: string;
+  color: string;
+  swatch: string;
+  image: string;
+  hoverImage?: string;
+  gallery?: string[];
+  availableSizes?: string[];
+  stock?: { size: string; left: number }[];
+};
 export type Product = {
+  availableSizes?: string[];
+  stock?: { size: string; left: number }[];
+  colourways?: Colourway[];
   id: string;
   name: string;
   category: "Pants" | "Tops" | "Two piece" | "Skirts" | "Dresses";
@@ -7,8 +20,10 @@ export type Product = {
   swatch: string;
   image: string;
   hoverImage?: string;
+  gallery?: string[];
   description: string;
   fabric: string;
   tag?: string;
   leadDays?: number;
+  newArrival?: boolean;
 };

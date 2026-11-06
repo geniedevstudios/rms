@@ -7,9 +7,13 @@ import { piecePath } from "../../../routing/navigation";
 import { Heart, ArrowUpRight } from "lucide-react";
 import { money } from "../../../lib/format-currency";
 import { HoverImage } from "../../../components/hover-image/hover-image";
+import { pieceColour } from "../colour";
+import { pieceColourways } from "../../../data/size-guide";
 export function ProductCard({ product }: { product: Product }) {
   const { openDialog } = useDialogs();
   const { isSaved, toggleSavedProduct: onSave } = useSavedProduct(product.id);
+  const colour = pieceColour(product);
+  const colours = pieceColourways(product).filter((way) => way.color.trim());
   return (
     <article className="product-card">
       <div className="product-image-wrap">
@@ -17,7 +21,11 @@ export function ProductCard({ product }: { product: Product }) {
           <HoverImage
             src={product.image}
             hover={product.hoverImage}
-            alt={`${product.name} in ${product.color}`}
+            alt={
+              colour
+                ? `${product.name} in ${colour.name}`
+                : product.name
+            }
           />
         </Link>
         {product.tag && <span className="product-tag">{product.tag}</span>}
@@ -43,15 +51,24 @@ export function ProductCard({ product }: { product: Product }) {
       <div className="product-details">
         <div>
           <Link to={piecePath(product)}>{product.name}</Link>
-          <span>{product.color}</span>
+          {colour && <span>{colour.name}</span>}
+          {colours.length > 1 && (
+            <span className="product-colours">
+              {colours.map((way) => (
+                <i key={way.id} style={way.swatch ? { background: way.swatch } : undefined} title={way.color} />
+              ))}
+            </span>
+          )}
         </div>
         <p>{money(product.price)}</p>
       </div>
-      <div
-        className="product-swatch"
-        style={{ backgroundColor: product.swatch }}
-        title={product.color}
-      />
+      {colour?.swatch && (
+        <div
+          className="product-swatch"
+          style={{ backgroundColor: colour.swatch }}
+          title={colour.name}
+        />
+      )}
     </article>
   );
 }

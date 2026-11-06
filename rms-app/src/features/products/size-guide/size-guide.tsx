@@ -1,4 +1,5 @@
 import "./size-guide.styles.css";
+import { sizeGuide } from "../../../data/size-guide";
 
 export function SizeGuide() {
   return (
@@ -6,42 +7,36 @@ export function SizeGuide() {
       <span className="eyebrow">A LITTLE GUIDANCE</span>
       <p>
         Measure around the fullest part of your bust and hips, and the narrowest
-        part of your waist. Measurements below are in centimetres.
+        part of your waist. Measurements below are in inches.
       </p>
       <table>
-        <caption>Indicative body measurements</caption>
+        <caption>RIVERMINDSTYLE · UK sizes 6–20 · Measurements in inches</caption>
         <thead>
           <tr>
-            <th>Size</th>
-            <th>Bust</th>
-            <th>Waist</th>
-            <th>Hip</th>
+            <th scope="col">Size</th>
+            <th scope="col">UK</th>
+            <th scope="col">Bust</th>
+            <th scope="col">Waist</th>
+            <th scope="col">Hip</th>
+            <th scope="col">Pants<br />length</th>
           </tr>
         </thead>
         <tbody>
-          {[
-            ["XS", "80–84", "62–66", "86–90"],
-            ["S", "85–89", "67–71", "91–95"],
-            ["M", "90–94", "72–76", "96–100"],
-            ["L", "95–101", "77–83", "101–107"],
-            ["XL", "102–108", "84–90", "108–114"],
-          ].map((row) => (
-            <tr key={row[0]}>
-              {row.map((cell, index) =>
-                index === 0 ? (
-                  <th key={cell} scope="row">
-                    {cell}
-                  </th>
-                ) : (
-                  <td key={cell}>{cell}</td>
-                ),
-              )}
+          {sizeGuide.flatMap(group => group.measurements.map(row => (
+            <tr key={row.uk}>
+              <td title={group.label}>{group.size}</td>
+              <th scope="row">{row.uk}</th>
+              <td>{row.bust}</td>
+              <td>{row.waist}</td>
+              <td>{row.hip}</td>
+              <td>{row.pantsLength}</td>
             </tr>
-          ))}
+          )))}
         </tbody>
       </table>
       <p className="demo-caption">
-        Choose the size closest to your measurements.
+        We’re happy to adjust the measurements. Just let us know in the order
+        notes when placing your order.
       </p>
     </div>
   );

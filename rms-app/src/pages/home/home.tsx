@@ -49,6 +49,7 @@ export function Home() {
           Enter our world <ArrowUpRight size={15} />
         </Link>
       </section>
+      {products.some((product) => product.newArrival) && (
       <section className="section new-arrivals" id="new-arrivals">
         <div className="section-heading">
           <div>
@@ -60,11 +61,12 @@ export function Home() {
           </Link>
         </div>
         <div className="product-grid">
-          {products.slice(0, 4).map((product) => (
+          {products.filter((product) => product.newArrival).map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
       </section>
+      )}
       <section className="editorial-split">
         <div className="editorial-photo">
           <img

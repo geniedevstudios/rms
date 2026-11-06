@@ -1,2 +1,2 @@
 export const money = (amount: number) =>
-  `GH₵ ${amount.toLocaleString("en-GH", { maximumFractionDigits: 0 })}`;
+  `GH₵ ${amount.toLocaleString("en-GH", { maximumFractionDigits: 2 })}`;

@@ -1,9 +1,11 @@
 .hero {
+  --header-offset: var(--site-header-height, 134px);
   display: grid;
   grid-template-columns: 1fr 1fr;
-  min-height: 660px;
-  height: calc(100svh - 163px);
-  max-height: 850px;
+  margin-top: calc(-1 * var(--header-offset));
+  min-height: calc(660px + var(--header-offset));
+  height: calc(100svh - 163px + var(--header-offset));
+  max-height: calc(850px + var(--header-offset));
 }
 .hero-copy {
   padding: 72px 8.6% 30px 9%;
@@ -54,11 +56,9 @@
   overflow: hidden;
   background: #b1b7b8;
 }
-.hero-image > img,
-.hero-image > video {
-  height: 100%;
+.hero-image .hero-media-link > img,
+.hero-image .hero-media-link > video {
   object-position: 50% 30%;
-  transition: transform 1.3s;
 }
 .hero-image:hover > img,
 .hero-image:hover > video {
@@ -70,6 +70,7 @@
   inset: 60% 0 0;
   background: linear-gradient(transparent, rgba(0, 0, 0, 0.25));
   pointer-events: none;
+  z-index: 2;
 }
 .hero-image-caption {
   position: absolute;
@@ -82,15 +83,7 @@
   align-items: center;
   font-size: 8px;
   letter-spacing: 1.5px;
-  z-index: 1;
-}
-.image-index {
-  position: absolute;
-  right: 25px;
-  top: 24px;
-  font-size: 8px;
-  letter-spacing: 1.5px;
-  color: white;
+  z-index: 3;
 }
 .editorial-split {
   display: grid;
@@ -165,6 +158,7 @@
     max-height: none;
     min-height: 0;
     grid-template-columns: 1fr;
+    margin-top: calc(-1 * var(--header-offset));
   }
   .hero-copy {
     padding: 48px 7% 48px;
@@ -202,11 +196,13 @@
     display: none;
   }
   .hero-image {
-    height: 510px;
+    height: calc(510px + var(--header-offset));
     order: 1;
   }
-  .hero-image > img,
-  .hero-image > video {
+  .hero-image .hero-media-link > img,
+  .hero-image .hero-media-link > video {
+    height: 100%;
+    aspect-ratio: auto;
     object-position: center 15%;
   }
   .hero-image-caption {
@@ -214,11 +210,6 @@
     right: 23px;
     bottom: 25px;
     font-size: 7px;
-  }
-  .image-index {
-    font-size: 7px;
-    right: 22px;
-    top: 22px;
   }
   .editorial-split {
     grid-template-columns: 1fr;
@@ -255,7 +246,7 @@
 }
 @media (max-width: 380px) {
   .hero-image {
-    height: 430px;
+    height: calc(430px + var(--header-offset));
   }
   .hero h1 {
     font-size: 43px;
