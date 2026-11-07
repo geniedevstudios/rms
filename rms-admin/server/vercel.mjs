@@ -1,7 +1,7 @@
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
-import { createApi } from "../server/api.mjs";
-import { cloudinaryConfig } from "../server/cloudinary.mjs";
+import { createApi } from "./api.mjs";
+import { cloudinaryConfig } from "./cloudinary.mjs";
 
 let handler;
 
@@ -23,6 +23,18 @@ function studio() {
 
 export function requestPath(url = "/") {
   const current = new URL(url, "http://localhost");
+  const forward = current.searchParams.get("forward");
+  if (
+    forward &&
+    forward.startsWith("/") &&
+    !forward.includes("..") &&
+    /^\/(api|media|uploads)\//.test(forward)
+  ) {
+    current.searchParams.delete("forward");
+    const rest = current.searchParams.toString();
+    current.pathname = forward;
+    current.search = rest ? `?${rest}` : "";
+  }
   if (current.pathname.startsWith("/api/media/") || current.pathname.startsWith("/api/uploads/"))
     current.pathname = current.pathname.slice(4);
   return current.pathname + current.search;

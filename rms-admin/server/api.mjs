@@ -348,7 +348,7 @@ export function createApi({
             : resolve(root, "public", path.slice(1)),
         );
       }
-      const mediaPath = /^\/media\/(image|video)\/([A-Za-z0-9][A-Za-z0-9_./-]*)$/.exec(
+      const mediaPath = /^\/media\/(image|video)\/([A-Za-z0-9][A-Za-z0-9_.,/-]*)$/.exec(
         path,
       );
       if (mediaPath) {
