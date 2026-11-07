@@ -1,0 +1,400 @@
+{
+  "hero": {
+    "eyebrow": "RIVERMINDSTYLE — COLLECTION 01",
+    "title": "For all that\nyou’re becoming.",
+    "description": "Considered silhouettes. A quiet kind of confidence.\nPieces that move through life with you.",
+    "buttonLabel": "Discover the collection",
+    "buttonHref": "/shop",
+    "caption": "THE BECOMING COLLECTION",
+    "interval": 7,
+    "slides": [
+      {
+        "id": "hero-1",
+        "src": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754721/rms/original-hero.jpg",
+        "alt": "Editorial portrait of a woman in a sculptural black dress",
+        "type": "image"
+      }
+    ]
+  },
+  "editorial": {
+    "eyebrow": "THE ART OF EVERYDAY DRESSING",
+    "title": "Soft in form.\nStrong in spirit.",
+    "description": "There is power in feeling entirely yourself. Discover thoughtful proportions, expressive details and silhouettes with room to be you.",
+    "buttonLabel": "Explore two piece",
+    "buttonHref": "/shop?category=Two%20piece",
+    "caption": "FORM, FEELING & EVERYTHING IN BETWEEN.",
+    "mark": "RMS / 001"
+  },
+  "films": {
+    "home": {
+      "eyebrow": "BEHIND THE SILHOUETTE",
+      "title": "It begins\nwith *intention.*",
+      "description": "A closer look at the gestures, textures and details that give a garment its character.",
+      "buttonLabel": "Watch the atelier film",
+      "note": "AN ATELIER STUDY — 00:10",
+      "caption": "THE ART OF MAKING"
+    },
+    "about": {
+      "eyebrow": "THE MAKING OF A SILHOUETTE",
+      "title": "Thoughtful\nby *nature.*",
+      "description": "Form. Texture. Movement. An exploration of the details that make a piece feel personal.",
+      "buttonLabel": "Watch the atelier study",
+      "note": "",
+      "caption": "THE ART OF MAKING"
+    }
+  },
+  "slots": [
+    {
+      "id": "home-editorial",
+      "label": "Homepage editorial",
+      "group": "Home",
+      "src": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754724/rms/original-suit.jpg",
+      "alt": "Sculptural neutral tailoring",
+      "description": "The photograph alongside Soft in form. Strong in spirit."
+    },
+    {
+      "id": "atelier-film",
+      "label": "Atelier film",
+      "group": "Film",
+      "src": "https://res.cloudinary.com/hr5xa7o9/video/upload/v1793754735/rms/original-atelier.mp4",
+      "alt": "An atelier study",
+      "description": "Plays beside the atelier wording on Home, and in the Home film player."
+    },
+    {
+      "id": "atelier-poster",
+      "label": "Atelier film cover",
+      "group": "Film",
+      "src": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754724/rms/original-suit.jpg",
+      "alt": "Atelier film cover",
+      "description": "The still shown before the Home film plays."
+    },
+    {
+      "id": "about-film",
+      "label": "Our world film",
+      "group": "Our world",
+      "src": "https://res.cloudinary.com/hr5xa7o9/video/upload/v1793754735/rms/original-atelier.mp4",
+      "alt": "An atelier study",
+      "description": "Plays beside the atelier wording on Our world, and in that film player."
+    },
+    {
+      "id": "about-poster",
+      "label": "Our world film cover",
+      "group": "Our world",
+      "src": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754724/rms/original-suit.jpg",
+      "alt": "Our world film cover",
+      "description": "The still shown before the Our world film plays."
+    },
+    {
+      "id": "about-hero",
+      "label": "Our world · opening image",
+      "group": "Our world",
+      "src": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754723/rms/original-portrait.jpg",
+      "alt": "A confident portrait in a black dress",
+      "description": "Opening portrait on the Our world page."
+    },
+    {
+      "id": "founder",
+      "label": "Founder portrait",
+      "group": "Our world",
+      "src": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754722/rms/original-mimi.jpg",
+      "alt": "Mirriam Elsa, owner of RIVERMINDSTYLE",
+      "description": "The founder story portrait."
+    },
+    {
+      "id": "custom-hero",
+      "label": "Made to order · hero",
+      "group": "Made to order",
+      "src": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754718/rms/original-dress.jpg",
+      "alt": "A dress made for you",
+      "description": "Opening image for made-to-order designs."
+    },
+    {
+      "id": "custom-detail",
+      "label": "Made to order · detail",
+      "group": "Made to order",
+      "src": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754716/rms/original-city.jpg",
+      "alt": "Considered tailoring",
+      "description": "Consultation editorial image."
+    }
+  ],
+  "categoryCards": [
+    {
+      "id": "category-0",
+      "title": "Pants",
+      "subtitle": "A line that moves with you.",
+      "image": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754716/rms/original-city.jpg",
+      "hover": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754724/rms/original-suit.jpg",
+      "to": "/shop?category=Pants"
+    },
+    {
+      "id": "category-1",
+      "title": "Tops",
+      "subtitle": "The piece closest to you.",
+      "image": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754723/rms/original-portrait.jpg",
+      "hover": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754726/rms/original-tailoring.jpg",
+      "to": "/shop?category=Tops"
+    },
+    {
+      "id": "category-2",
+      "title": "Two piece",
+      "subtitle": "Worn together, or apart.",
+      "image": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754717/rms/original-cream.jpg",
+      "hover": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754724/rms/original-suit.jpg",
+      "to": "/shop?category=Two%20piece"
+    },
+    {
+      "id": "category-3",
+      "title": "Skirts",
+      "subtitle": "For moments, big and small.",
+      "image": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754721/rms/original-hero.jpg",
+      "hover": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754718/rms/original-dress.jpg",
+      "to": "/shop?category=Skirts"
+    }
+  ],
+  "products": [
+    {
+      "id": "noir-dress",
+      "name": "The Noir Skirt",
+      "category": "Skirts",
+      "price": 1450,
+      "color": "Onyx",
+      "swatch": "#282726",
+      "image": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754721/rms/original-hero.jpg",
+      "hoverImage": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754723/rms/original-portrait.jpg",
+      "tag": "NEW SEASON",
+      "description": "An expression of quiet confidence. A sculpted black skirt, considered from every angle, for the moments that become memories.",
+      "fabric": "Structured crepe · specialist clean",
+      "newArrival": true,
+      "status": "active"
+    },
+    {
+      "id": "form-suit",
+      "name": "The Form Set",
+      "category": "Two piece",
+      "price": 2200,
+      "color": "Sand",
+      "swatch": "#b5a18b",
+      "image": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754724/rms/original-suit.jpg",
+      "hoverImage": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754726/rms/original-tailoring.jpg",
+      "tag": "THE EDIT",
+      "description": "Soft structure meets a confident line. A two-piece set with a flared leg, designed to move between the everyday and the exceptional.",
+      "fabric": "Woven suiting · specialist clean",
+      "newArrival": true,
+      "status": "active"
+    },
+    {
+      "id": "muse-dress",
+      "name": "The Muse Top",
+      "category": "Tops",
+      "price": 1650,
+      "color": "Midnight",
+      "swatch": "#29252d",
+      "image": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754723/rms/original-portrait.jpg",
+      "hoverImage": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754718/rms/original-dress.jpg",
+      "description": "A timeless shape, with a point of view. Clean lines and an expressive silhouette make this the piece you return to, season after season.",
+      "fabric": "Soft stretch crepe · specialist clean",
+      "newArrival": true,
+      "status": "active"
+    },
+    {
+      "id": "daybreak-suit",
+      "name": "The Daybreak Pant",
+      "category": "Pants",
+      "price": 1950,
+      "color": "Oat",
+      "swatch": "#c8b7a1",
+      "image": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754716/rms/original-city.jpg",
+      "hoverImage": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754717/rms/original-cream.jpg",
+      "description": "A lighter approach to a pant. Easy proportions and a warm neutral tone bring a sense of ease to days that unfold on their own terms.",
+      "fabric": "Cotton-blend suiting · specialist clean",
+      "newArrival": true,
+      "status": "active"
+    },
+    {
+      "id": "soft-form-set",
+      "name": "The Soft Set",
+      "category": "Two piece",
+      "price": 2100,
+      "color": "Ecru",
+      "swatch": "#d5c7b2",
+      "image": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754717/rms/original-cream.jpg",
+      "hoverImage": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754724/rms/original-suit.jpg",
+      "description": "A study in balance. Fluid tailoring and an understated palette come together in a two-piece set with a beautifully relaxed sensibility.",
+      "fabric": "Textured suiting · specialist clean",
+      "status": "active"
+    },
+    {
+      "id": "reverie-dress",
+      "name": "The Reverie Skirt",
+      "category": "Skirts",
+      "price": 1800,
+      "color": "Mist",
+      "swatch": "#a4bbc9",
+      "image": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754718/rms/original-dress.jpg",
+      "hoverImage": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754720/rms/original-editorial.jpg",
+      "description": "A little movement, beautifully considered. A fluid skirt in a soft mist blue, for sunlit days and moments worth celebrating.",
+      "fabric": "Fluid woven fabric · specialist clean",
+      "status": "active"
+    },
+    {
+      "id": "azure-coat",
+      "name": "The Azure Top",
+      "category": "Tops",
+      "price": 2400,
+      "color": "Sky",
+      "swatch": "#8eaabd",
+      "image": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754720/rms/original-editorial.jpg",
+      "hoverImage": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754716/rms/original-city.jpg",
+      "description": "An easy top in a soft sky blue. A clean line and generous ease bring a fresh perspective to a familiar form.",
+      "fabric": "Wool-blend coating · specialist clean",
+      "status": "active"
+    },
+    {
+      "id": "lace-dress",
+      "name": "The Solstice Pant",
+      "category": "Pants",
+      "price": 1750,
+      "color": "Indigo",
+      "swatch": "#302857",
+      "image": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754726/rms/original-tailoring.jpg",
+      "hoverImage": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754721/rms/original-hero.jpg",
+      "description": "Texture takes the lead. A considered pant with presence, lightness and a character all its own.",
+      "fabric": "Textured lace · specialist clean",
+      "status": "active"
+    }
+  ],
+  "customDesigns": [
+    {
+      "id": "column-dress",
+      "name": "The Column Dress",
+      "category": "Dresses",
+      "price": 1850,
+      "color": "Ivory",
+      "swatch": "#f3efe6",
+      "image": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754718/rms/original-dress.jpg",
+      "hoverImage": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754717/rms/original-cream.jpg",
+      "description": "A long, quiet column cut to your measurements in silk.",
+      "fabric": "Silk column · specialist clean",
+      "leadDays": 21,
+      "status": "active"
+    },
+    {
+      "id": "private-gown",
+      "name": "The Private Gown",
+      "category": "Dresses",
+      "price": 2400,
+      "color": "Midnight",
+      "swatch": "#29252d",
+      "image": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754723/rms/original-portrait.jpg",
+      "hoverImage": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754720/rms/original-editorial.jpg",
+      "description": "An evening gown shaped through a fitting, for one occasion.",
+      "fabric": "Evening crepe · specialist clean",
+      "leadDays": 28,
+      "status": "active"
+    },
+    {
+      "id": "ceremony-dress",
+      "name": "The Ceremony Dress",
+      "category": "Dresses",
+      "price": 2650,
+      "color": "Champagne",
+      "swatch": "#e4d2bc",
+      "image": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754720/rms/original-editorial.jpg",
+      "hoverImage": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754718/rms/original-dress.jpg",
+      "description": "A ceremonial dress with a longer hand-finish.",
+      "fabric": "Hand-finished silk · specialist clean",
+      "leadDays": 35,
+      "status": "active"
+    },
+    {
+      "id": "soft-commission",
+      "name": "The Soft Commission",
+      "category": "Dresses",
+      "price": 1600,
+      "color": "Cream",
+      "swatch": "#f7f1e8",
+      "image": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754717/rms/original-cream.jpg",
+      "hoverImage": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754723/rms/original-portrait.jpg",
+      "description": "A lighter dress in cream, made for the way you move.",
+      "fabric": "Soft cream weave · specialist clean",
+      "leadDays": 18,
+      "status": "active"
+    }
+  ],
+  "collections": [
+    {
+      "id": "becoming",
+      "label": "RIVERMINDSTYLE / COLLECTION 01",
+      "image": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754721/rms/original-hero.jpg",
+      "imageAlt": "The Becoming collection editorial",
+      "title": [
+        {
+          "text": "The art of"
+        },
+        {
+          "text": "becoming.",
+          "emphasis": true
+        }
+      ],
+      "description": [
+        "A new chapter in self-expression.",
+        "Quiet confidence, in every silhouette."
+      ],
+      "productIds": [
+        "noir-dress",
+        "form-suit",
+        "muse-dress",
+        "daybreak-suit",
+        "soft-form-set",
+        "reverie-dress",
+        "azure-coat",
+        "lace-dress"
+      ],
+      "statement": {
+        "eyebrow": "A WARDROBE WITH A POINT OF VIEW",
+        "lines": [
+          {
+            "text": "For the woman you are."
+          },
+          {
+            "text": "For the woman you’re ",
+            "emphasis": false
+          },
+          {
+            "text": "becoming.",
+            "emphasis": true
+          }
+        ]
+      },
+      "status": "published"
+    }
+  ],
+  "journals": [
+    {
+      "id": "becoming",
+      "title": "The beauty of becoming",
+      "label": "THE POINT OF VIEW",
+      "excerpt": "A wardrobe is a conversation with the person you are becoming.",
+      "image": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754721/rms/original-hero.jpg",
+      "hover": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754723/rms/original-portrait.jpg",
+      "alt": "Sculptural black dress editorial",
+      "body": "Personal style is rarely a destination. More often, it is a practice of noticing what feels like you.\n\nSome days call for a clear, sculptural line. Others need a little softness, a familiar shape or a colour that shifts your mood. A considered wardrobe makes space for all of those versions of yourself.\n\n## Less noise. More you.\n\nBegin with the pieces you reach for instinctively. Notice their proportions, textures and the way they move. Let these become the foundation, then add something unexpected: a stronger silhouette, a new shade, a detail that makes you look twice.\n\nThe most lasting style is personal. It is not about arriving at a finished version of yourself. It is about enjoying the becoming.",
+      "status": "published",
+      "featured": true,
+      "readMinutes": 3
+    },
+    {
+      "id": "structure",
+      "title": "A study in soft structure",
+      "label": "THE WARDROBE",
+      "excerpt": "On the quiet power of a beautifully considered silhouette.",
+      "image": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754717/rms/original-cream.jpg",
+      "hover": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754724/rms/original-suit.jpg",
+      "alt": "Relaxed neutral tailoring",
+      "body": "There is a particular kind of confidence in clothes that never need to announce themselves.\n\nA generous sleeve. A shoulder with just enough definition. The way a trouser falls when you take a step. These small decisions shape how a garment lives with you, and how you feel within it.\n\n## Room to move\n\nSoft tailoring begins with balance: structure without stiffness, ease without losing intention. Wear a full set for a composed silhouette, or separate the pieces and let each find its own rhythm.\n\nThe result is a wardrobe that works with you. For the planned moments, and the ones that happen in between.",
+      "status": "published",
+      "featured": true,
+      "readMinutes": 3
+    }
+  ]
+}

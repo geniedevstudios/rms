@@ -16,6 +16,33 @@
       }
     ]
   },
+  "editorial": {
+    "eyebrow": "THE ART OF EVERYDAY DRESSING",
+    "title": "Soft in form.\nStrong in spirit.",
+    "description": "There is power in feeling entirely yourself. Discover thoughtful proportions, expressive details and silhouettes with room to be you.",
+    "buttonLabel": "Explore two piece",
+    "buttonHref": "/shop?category=Two%20piece",
+    "caption": "FORM, FEELING & EVERYTHING IN BETWEEN.",
+    "mark": "RMS / 001"
+  },
+  "films": {
+    "home": {
+      "eyebrow": "BEHIND THE SILHOUETTE",
+      "title": "It begins\nwith *intention.*",
+      "description": "A closer look at the gestures, textures and details that give a garment its character.",
+      "buttonLabel": "Watch the atelier film",
+      "note": "AN ATELIER STUDY — 00:10",
+      "caption": "THE ART OF MAKING"
+    },
+    "about": {
+      "eyebrow": "THE MAKING OF A SILHOUETTE",
+      "title": "Thoughtful\nby *nature.*",
+      "description": "Form. Texture. Movement. An exploration of the details that make a piece feel personal.",
+      "buttonLabel": "Watch the atelier study",
+      "note": "",
+      "caption": "THE ART OF MAKING"
+    }
+  },
   "slots": [
     {
       "id": "home-editorial",
@@ -31,7 +58,7 @@
       "group": "Film",
       "src": "https://res.cloudinary.com/hr5xa7o9/video/upload/v1793754735/rms/original-atelier.mp4",
       "alt": "An atelier study",
-      "description": "Used on the homepage, Our world, and in the film player."
+      "description": "Plays beside the atelier wording on Home, and in the Home film player."
     },
     {
       "id": "atelier-poster",
@@ -39,7 +66,23 @@
       "group": "Film",
       "src": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754724/rms/original-suit.jpg",
       "alt": "Atelier film cover",
-      "description": "The still shown before the film plays."
+      "description": "The still shown before the Home film plays."
+    },
+    {
+      "id": "about-film",
+      "label": "Our world film",
+      "group": "Our world",
+      "src": "https://res.cloudinary.com/hr5xa7o9/video/upload/v1793754735/rms/original-atelier.mp4",
+      "alt": "An atelier study",
+      "description": "Plays beside the atelier wording on Our world, and in that film player."
+    },
+    {
+      "id": "about-poster",
+      "label": "Our world film cover",
+      "group": "Our world",
+      "src": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754724/rms/original-suit.jpg",
+      "alt": "Our world film cover",
+      "description": "The still shown before the Our world film plays."
     },
     {
       "id": "about-hero",

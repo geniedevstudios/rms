@@ -56,7 +56,7 @@ export function DialogHost() {
       break;
     case "film":
       title = "An atelier study";
-      content = <Film />;
+      content = <Film place={dialog.place} />;
       break;
     case "help":
       title = dialog.topic;

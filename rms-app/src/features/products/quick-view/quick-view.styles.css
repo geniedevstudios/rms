@@ -11,10 +11,24 @@
 .quick-view-details {
   padding: 32px;
 }
-.quick-view-details > h3 {
-  font-size: 32px;
+.quick-view-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   margin-top: 18px;
+}
+.quick-view-title > h3 {
+  min-width: 0;
+  font-size: 32px;
   letter-spacing: -0.7px;
+}
+.name-label {
+  font-size: 8px;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  background: rgba(249, 248, 245, 0.9);
+  border: 1px solid #e7e2db;
+  padding: 6px 8px;
 }
 .quick-view-price {
   margin-top: 18px;
@@ -40,7 +54,7 @@
   .quick-view-details {
     padding: 25px;
   }
-  .quick-view-details > h3 {
+  .quick-view-title > h3 {
     font-size: 29px;
   }
 }

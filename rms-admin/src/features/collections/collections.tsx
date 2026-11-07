@@ -6,14 +6,73 @@ import { useContent } from "../../app/content.context";
 import { PageHeading, Thumb, Modal, Field } from "../../components/ui";
 import { SelectMenu } from "../../components/select-menu/select-menu";
 import { MediaField } from "../media/media-picker";
+
+type StatementLine = NonNullable<Collection["statement"]>["lines"][number];
+
+/** The words shown between a collection banner and its pieces. */
+function statementFields(statement?: Collection["statement"]) {
+  if (!statement) return { eyebrow: "", body: "" };
+  const rows: { text: string; emphasis: boolean }[][] = [];
+  statement.lines.forEach((line, index) => {
+    const startsRow = index === 0 || line.break === true || (line.break == null && index === 1);
+    const piece = { text: line.text, emphasis: Boolean(line.emphasis) };
+    if (startsRow || !rows.length) rows.push([piece]);
+    else rows[rows.length - 1].push(piece);
+  });
+  const body = rows
+    .map((segments) => {
+      const visible = segments.filter((segment) => segment.text);
+      if (visible.length === 1 && visible[0].emphasis) return visible[0].text;
+      return segments.map((segment) => (segment.emphasis ? `*${segment.text}*` : segment.text)).join("");
+    })
+    .join("\n");
+  return { eyebrow: statement.eyebrow, body };
+}
+
+function markedLines(row: string) {
+  const parts: { text: string; emphasis: boolean }[] = [];
+  const pattern = /\*([^*]+)\*/g;
+  let last = 0;
+  for (const match of row.matchAll(pattern)) {
+    const start = match.index ?? 0;
+    if (start > last) parts.push({ text: row.slice(last, start), emphasis: false });
+    parts.push({ text: match[1], emphasis: true });
+    last = start + match[0].length;
+  }
+  if (last < row.length) parts.push({ text: row.slice(last), emphasis: false });
+  return parts.filter((part) => part.text);
+}
+
+function readStatement(eyebrow: string, body: string): Collection["statement"] | undefined {
+  const rows = body.replace(/\s+$/, "").split("\n");
+  const written = eyebrow.trim() || rows.some((row) => row.trim());
+  if (!written) return undefined;
+  const marked = rows.some((row) => row.includes("*"));
+  const last = rows.reduce((found, row, index) => (row.trim() ? index : found), -1);
+  const lines: StatementLine[] = [];
+  rows.forEach((row, rowIndex) => {
+    const segments = marked ? markedLines(row) : [{ text: row, emphasis: rowIndex === last && last > 0 }];
+    if (!segments.length) segments.push({ text: "", emphasis: false });
+    segments.forEach((segment, segmentIndex) => {
+      const line: StatementLine = { text: segment.text };
+      if (segment.emphasis) line.emphasis = true;
+      if (!(rowIndex === 0 && segmentIndex === 0)) line.break = rowIndex > 0 && segmentIndex === 0;
+      lines.push(line);
+    });
+  });
+  return { eyebrow: eyebrow.trim(), lines };
+}
+
 export function Collections() {
   const { content, update } = useContent();
   const [editing, setEditing] = useState<Collection | null>(null);
   const [original, setOriginal] = useState<string | null>(null);
+  const [words, setWords] = useState({ eyebrow: "", body: "" });
   const [error, setError] = useState("");
   function open(c?: Collection) {
     setError("");
     setOriginal(c?.id || null);
+    setWords(statementFields(c?.statement));
     setEditing(
       c
         ? structuredClone(c)
@@ -41,9 +100,15 @@ export function Collections() {
       setError("Upload or choose an image for this collection.");
       return;
     }
+    const statement = readStatement(words.eyebrow, words.body);
+    if (statement && statement.lines.length > 10) {
+      setError("Keep the statement to ten lines.");
+      return;
+    }
     update((c) => {
       const id = original ?? createContentHandle(editing.label, c.collections.map(item => item.id), "collection");
-      const saved = { ...editing, id };
+      const saved = { ...editing, id, statement };
+      if (!statement) delete saved.statement;
       if (original) c.collections = c.collections.map(item => item.id === original ? saved : item);
       else c.collections.push(saved);
     });
@@ -123,6 +188,25 @@ export function Collections() {
                   onChange={(e) =>
                     patch({ description: e.target.value.split("\n") })
                   }
+                />
+              </Field>
+              <Field
+                label="Between the banner and the pieces"
+                hint="The small heading above the statement."
+              >
+                <input
+                  value={words.eyebrow}
+                  onChange={(e) => setWords((current) => ({ ...current, eyebrow: e.target.value }))}
+                />
+              </Field>
+              <Field
+                label="Statement"
+                hint="One line per row. The last line is italic. Wrap a word in *asterisks* to italicise only that word."
+              >
+                <textarea
+                  rows={3}
+                  value={words.body}
+                  onChange={(e) => setWords((current) => ({ ...current, body: e.target.value }))}
                 />
               </Field>
               <MediaField

@@ -1,16 +1,20 @@
 import { useState } from "react";
-import { mediaSlot } from "../../content/content";
+import { mediaSlot, siteContent } from "../../content/content";
+import defaults from "../../shared/default-content.json";
 import "../../components/editorial/editorial.styles.css";
 import "./about.styles.css";
 import { useDialogs } from "../../components/dialogs/dialogs.context";
 import { ArrowRight, Play } from "lucide-react";
-import { AtelierVideo } from "../../components/atelier-video/atelier-video";
+import { AtelierVideo, FilmLines } from "../../components/atelier-video/atelier-video";
 import { Link } from "../../routing/link";
 import { StudioMap } from "./studio-map";
 export function About() {
   const { openDialog } = useDialogs();
-  const onFilm = () => openDialog({ type: "film" });
+  const onFilm = () => openDialog({ type: "film", place: "about" });
   const [atStudio, setAtStudio] = useState(false);
+  const film = siteContent.films?.about?.title
+    ? siteContent.films.about
+    : defaults.films.about;
   return (
     <>
       <section className="about-hero">
@@ -48,21 +52,31 @@ export function About() {
       </section>
       <section className="film-section about-film">
         <div className="film-intro">
-          <span className="eyebrow">THE MAKING OF A SILHOUETTE</span>
+          <span className="eyebrow">{film.eyebrow}</span>
           <h2>
-            Thoughtful
-            <br />
-            by <em>nature.</em>
+            <FilmLines text={film.title} />
           </h2>
           <p>
-            Form. Texture. Movement. An exploration of the details that make a
-            piece feel personal.
+            {film.description.split("\n").map((line, index) => (
+              <span key={index}>
+                {index > 0 && <br />}
+                {line}
+              </span>
+            ))}
           </p>
-          <button className="text-link" onClick={onFilm}>
-            <Play size={14} /> Watch the atelier study
-          </button>
+          {film.buttonLabel.trim() && (
+            <button className="text-link" onClick={onFilm}>
+              <Play size={14} /> {film.buttonLabel}
+            </button>
+          )}
+          {film.note.trim() && <span className="film-note">{film.note}</span>}
         </div>
-        <AtelierVideo openFilm={onFilm} />
+        <AtelierVideo
+          filmId="about-film"
+          posterId="about-poster"
+          openFilm={onFilm}
+          caption={film.caption}
+        />
       </section>
       <section className="manifesto">
         <span className="eyebrow">BEHIND THE HOUSE</span>

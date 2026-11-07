@@ -1,6 +1,5 @@
 import { readFile } from "node:fs/promises";
 import { resolve, extname, sep } from "node:path";
-import { fileURLToPath } from "node:url";
 import { notificationMessage } from "./templates.mjs";
 const types = {
   ".jpg": "image/jpeg",
@@ -36,22 +35,9 @@ export async function buildNotificationMessage(
       continue;
     }
     let image = "";
-    if (
-      src.startsWith("/") &&
-      !src.startsWith("//") &&
-      !src.includes("..") &&
-      !src.includes("\\")
-    ) {
-      const upload = src.startsWith("/uploads/");
-      const root = upload
-        ? resolve(directory, "uploads")
-        : resolve(
-            fileURLToPath(new URL("../../../rms-app/public/", import.meta.url)),
-          );
-      const path = resolve(
-        root,
-        upload ? src.slice("/uploads/".length) : src.slice(1),
-      );
+    if (src.startsWith("/uploads/")) {
+      const root = resolve(directory, "uploads");
+      const path = resolve(root, src.slice("/uploads/".length));
       if (path.startsWith(root + sep) && types[extname(path).toLowerCase()]) {
         try {
           const data = await readFile(path);
@@ -73,6 +59,13 @@ export async function buildNotificationMessage(
         }
       }
       if (!image) image = new URL(src, config.storefrontUrl).href;
+    } else if (
+      src.startsWith("/") &&
+      !src.startsWith("//") &&
+      !src.includes("..") &&
+      !src.includes("\\")
+    ) {
+      image = new URL(src, config.storefrontUrl).href;
     } else {
       try {
         const url = new URL(src);

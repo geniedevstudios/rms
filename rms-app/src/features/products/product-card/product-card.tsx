@@ -28,7 +28,6 @@ export function ProductCard({ product }: { product: Product }) {
             }
           />
         </Link>
-        {product.tag && <span className="product-tag">{product.tag}</span>}
         <button
           className={`save-button ${isSaved ? "is-saved" : ""}`}
           aria-label={`${isSaved ? "Unsave" : "Save"} ${product.name}`}

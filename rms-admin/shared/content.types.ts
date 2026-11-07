@@ -61,7 +61,7 @@ export type Collection = {
   productIds: string[];
   statement?: {
     eyebrow: string;
-    lines: { text: string; emphasis?: boolean }[];
+    lines: { text: string; emphasis?: boolean; break?: boolean }[];
   };
   status: "published" | "draft";
 };
@@ -87,8 +87,27 @@ export type Promotions = {
   banner: PromotionAdvert;
   popup: PromotionAdvert;
 };
+export type FilmCopy = {
+  eyebrow: string;
+  title: string;
+  description: string;
+  buttonLabel: string;
+  note: string;
+  caption: string;
+};
+export type Editorial = {
+  eyebrow: string;
+  title: string;
+  description: string;
+  buttonLabel: string;
+  buttonHref: string;
+  caption: string;
+  mark: string;
+};
 export type Content = {
   promotions?: Promotions;
+  editorial?: Editorial;
+  films?: { home: FilmCopy; about: FilmCopy };
   hero: {
     eyebrow: string;
     title: string;

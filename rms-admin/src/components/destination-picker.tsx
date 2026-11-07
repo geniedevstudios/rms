@@ -10,6 +10,10 @@ export function DestinationPicker({ value, onChange, label = "Button destination
     { value: "/", label: "Home" },
     { value: "/shop", label: "Shop · All pieces" },
     { value: "/shop?edit=new", label: "Shop · New arrivals" },
+    ...["Pants", "Tops", "Two piece", "Skirts"].map((category) => ({
+      value: `/shop?category=${encodeURIComponent(category)}`,
+      label: `Shop · ${category}`,
+    })),
     { value: "/collection", label: "All collections" },
     { value: "/custom", label: "Made to order" },
     { value: "/about", label: "Our world" },

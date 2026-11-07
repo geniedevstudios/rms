@@ -12,7 +12,7 @@ import { go } from "../../routing/navigation";
 import {
   accraToday,
   WheelDatePicker,
-} from "../../../../rms-admin/shared/wheel-picker.tsx";
+} from "../../shared/wheel-picker.tsx";
 import { CustomDesignCard } from "./custom-design-card";
 
 const services = ["Styling consultation", "Bespoke tailoring"];

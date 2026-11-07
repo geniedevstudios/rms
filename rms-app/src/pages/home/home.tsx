@@ -1,4 +1,5 @@
 import { siteContent, mediaSlot } from "../../content/content";
+import defaults from "../../shared/default-content.json";
 import { HeroMedia } from "../../components/hero-media/hero-media";
 import "../../components/editorial/editorial.styles.css";
 import "./home.styles.css";
@@ -8,10 +9,16 @@ import { ArrowRight, ArrowDown, ArrowUpRight, Play } from "lucide-react";
 import { products } from "../../data/products";
 import { ProductCard } from "../../features/products/product-card/product-card";
 import { Category } from "../../components/category-card/category-card";
-import { AtelierVideo } from "../../components/atelier-video/atelier-video";
+import { AtelierVideo, FilmLines } from "../../components/atelier-video/atelier-video";
 import { JournalCard } from "../../components/journal-card/journal-card";
 export function Home() {
   const { openDialog } = useDialogs();
+  const editorial = siteContent.editorial?.title
+    ? siteContent.editorial
+    : defaults.editorial;
+  const film = siteContent.films?.home?.title
+    ? siteContent.films.home
+    : defaults.films.home;
   return (
     <>
       <section className="hero">
@@ -74,25 +81,36 @@ export function Home() {
             alt={mediaSlot("home-editorial").alt}
             loading="lazy"
           />
-          <span className="image-label">
-            FORM, FEELING & EVERYTHING IN BETWEEN.
-          </span>
+          {editorial.caption.trim() && (
+            <span className="image-label">{editorial.caption}</span>
+          )}
         </div>
         <div className="editorial-copy">
-          <span className="eyebrow">THE ART OF EVERYDAY DRESSING</span>
+          <span className="eyebrow">{editorial.eyebrow}</span>
           <h2>
-            Soft in form.
-            <br />
-            <em>Strong in spirit.</em>
+            {editorial.title.split("\n").map((line, index) => (
+              <span key={index}>
+                {index > 0 && <br />}
+                {index === 0 ? line : <em>{line}</em>}
+              </span>
+            ))}
           </h2>
           <p>
-            There is power in feeling entirely yourself. Discover thoughtful
-            proportions, expressive details and silhouettes with room to be you.
+            {editorial.description.split("\n").map((line, index) => (
+              <span key={index}>
+                {index > 0 && <br />}
+                {line}
+              </span>
+            ))}
           </p>
-          <Link to="/shop?category=Two%20piece" className="text-link">
-            Explore two piece <ArrowRight size={16} />
-          </Link>
-          <span className="editorial-number">RMS / 001</span>
+          {editorial.buttonLabel.trim() && (
+            <Link to={editorial.buttonHref} className="text-link">
+              {editorial.buttonLabel} <ArrowRight size={16} />
+            </Link>
+          )}
+          {editorial.mark.trim() && (
+            <span className="editorial-number">{editorial.mark}</span>
+          )}
         </div>
       </section>
       <section className="section category-section">
@@ -108,25 +126,34 @@ export function Home() {
       </section>
       <section className="film-section">
         <div className="film-intro">
-          <span className="eyebrow">BEHIND THE SILHOUETTE</span>
+          <span className="eyebrow">{film.eyebrow}</span>
           <h2>
-            It begins
-            <br />
-            with <em>intention.</em>
+            <FilmLines text={film.title} />
           </h2>
           <p>
-            A closer look at the gestures, textures and details that give a
-            garment its character.
+            {film.description.split("\n").map((line, index) => (
+              <span key={index}>
+                {index > 0 && <br />}
+                {line}
+              </span>
+            ))}
           </p>
-          <button
-            className="text-link"
-            onClick={() => openDialog({ type: "film" })}
-          >
-            <Play size={13} /> Watch the atelier film
-          </button>
-          <span className="film-note">AN ATELIER STUDY — 00:10</span>
+          {film.buttonLabel.trim() && (
+            <button
+              className="text-link"
+              onClick={() => openDialog({ type: "film", place: "home" })}
+            >
+              <Play size={13} /> {film.buttonLabel}
+            </button>
+          )}
+          {film.note.trim() && <span className="film-note">{film.note}</span>}
         </div>
-        <AtelierVideo openFilm={() => openDialog({ type: "film" })} />
+        <AtelierVideo
+          filmId="atelier-film"
+          posterId="atelier-poster"
+          openFilm={() => openDialog({ type: "film", place: "home" })}
+          caption={film.caption}
+        />
       </section>
       <section className="section journal-section">
         <div className="section-heading">

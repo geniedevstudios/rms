@@ -1,7 +1,7 @@
 import { findPiece } from "../../data/catalog.ts";
 import { sizes } from "../../data/products.ts";
 import { isSizeAvailable, pieceColourways, resolveColourway } from "../../data/size-guide";
-import { quantityCap } from "../../../../rms-admin/shared/stock.mjs";
+import { quantityCap } from "../../shared/stock.mjs";
 import type { CartItem, CartItemKey } from "../../types/cart.ts";
 
 export const MAX_ITEM_QUANTITY = 10;

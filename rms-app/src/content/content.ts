@@ -1,6 +1,6 @@
-import defaults from "../../../rms-admin/shared/default-content.json";
-import type { Content } from "../../../rms-admin/shared/content.types";
-import { rewriteMedia } from "../../../rms-admin/shared/media-url.mjs";
+import defaults from "../shared/default-content.json";
+import type { Content } from "../shared/content.types";
+import { rewriteMedia } from "../shared/media-url.mjs";
 import { supabase } from "../lib/supabase";
 
 type HotData = {
@@ -144,6 +144,21 @@ export function mediaSlot(id: string) {
   const slot = siteContent.slots.find((slot) => slot.id === id);
   if (!slot) throw new Error(`Missing content placement: ${id}`);
   return slot;
+}
+
+const filmFallback: Record<string, string> = {
+  "about-film": "atelier-film",
+  "about-poster": "atelier-poster",
+};
+
+export function filmMedia(id: string) {
+  const slot = siteContent.slots.find((item) => item.id === id);
+  if (slot) return slot;
+  const shared = filmFallback[id]
+    ? siteContent.slots.find((item) => item.id === filmFallback[id])
+    : undefined;
+  if (shared) return shared;
+  return mediaSlot(id);
 }
 
 if (import.meta.hot) {

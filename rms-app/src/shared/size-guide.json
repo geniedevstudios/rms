@@ -1,0 +1,18 @@
+[
+  { "size": "S", "label": "Small", "measurements": [
+    { "uk": 6, "bust": 32, "waist": 24, "hip": 36, "pantsLength": 45 },
+    { "uk": 8, "bust": 34, "waist": 26, "hip": 38, "pantsLength": 45 }
+  ] },
+  { "size": "M", "label": "Medium", "measurements": [
+    { "uk": 10, "bust": 36, "waist": 28, "hip": 40, "pantsLength": 45 },
+    { "uk": 12, "bust": 38, "waist": 30, "hip": 42, "pantsLength": 45 }
+  ] },
+  { "size": "L", "label": "Large", "measurements": [
+    { "uk": 14, "bust": 40, "waist": 32, "hip": 44, "pantsLength": 45 },
+    { "uk": 16, "bust": 42, "waist": 34, "hip": 46, "pantsLength": 45 }
+  ] },
+  { "size": "XL", "label": "X-Large", "measurements": [
+    { "uk": 18, "bust": 44, "waist": 36, "hip": 48, "pantsLength": 45 },
+    { "uk": 20, "bust": 46, "waist": 38, "hip": 50, "pantsLength": 45 }
+  ] }
+]

@@ -2,7 +2,7 @@ import { Ruler, ShoppingBag, Heart } from "lucide-react";
 import type { Colourway, Product } from "../../../types/product";
 import { sizes } from "../../../data/products";
 import { sizeLabel, availableSizes, isSizeAvailable, pieceColourways } from "../../../data/size-guide";
-import { quantityCap } from "../../../../../rms-admin/shared/stock.mjs";
+import { quantityCap } from "../../../shared/stock.mjs";
 import { useProductSelection } from "../use-product-selection";
 import { useDialogs } from "../../../components/dialogs/dialogs.context";
 import "./product-purchase.styles.css";

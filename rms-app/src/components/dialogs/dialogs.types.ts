@@ -1,7 +1,8 @@
 export type Dialog =
   | {
-      type: "cart" | "menu" | "film" | "copyright";
+      type: "cart" | "menu" | "copyright";
     }
+  | { type: "film"; place?: "home" | "about" }
   | {
       type: "search" | "wishlist" | "account";
       fromMenu?: boolean;

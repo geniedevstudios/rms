@@ -58,7 +58,7 @@ export function Collection({ id }: { id?: string }) {
                 <h2>
                   {collection.statement.lines.map((line, index) => (
                     <span key={`${line.text}-${index}`}>
-                      {index === 1 && <br />}
+                      {(line.break ?? index === 1) && <br />}
                       {line.emphasis ? <em>{line.text}</em> : line.text}
                     </span>
                   ))}

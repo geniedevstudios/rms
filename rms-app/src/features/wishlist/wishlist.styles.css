@@ -7,9 +7,6 @@
 .saved-grid .product-details {
   flex-direction: column;
 }
-.saved-grid .product-tag {
-  display: none;
-}
 .saved-grid .quick-view {
   display: flex;
   position: static;

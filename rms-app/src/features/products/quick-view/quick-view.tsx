@@ -27,7 +27,10 @@ export function QuickView({ product }: { product: Product }) {
       />
       <div className="quick-view-details">
         <span className="eyebrow">THE BECOMING COLLECTION</span>
-        <h3>{product.name}</h3>
+        <div className="quick-view-title">
+          <h3>{product.name}</h3>
+          {product.tag && <span className="name-label">{product.tag}</span>}
+        </div>
         <p className="quick-view-price">{money(product.price)}</p>
         <p className="quick-view-description">{product.description}</p>
         <ProductPurchase product={product} colourway={colourway} onColour={setColourId} />

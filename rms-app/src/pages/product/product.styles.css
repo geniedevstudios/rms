@@ -23,10 +23,24 @@
   font-size: 8px;
   color: var(--muted);
 }
+.product-title {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 18px;
+}
 .product-info h1 {
+  min-width: 0;
   font-size: 43px;
   letter-spacing: -1px;
-  margin-top: 18px;
+}
+.product-title .name-label {
+  font-size: 8px;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  background: rgba(249, 248, 245, 0.9);
+  border: 1px solid #e7e2db;
+  padding: 6px 8px;
 }
 .product-price {
   font-size: 14px;
@@ -94,9 +108,11 @@
   .product-info > .eyebrow {
     font-size: 7px;
   }
+  .product-title {
+    margin-top: 16px;
+  }
   .product-info h1 {
     font-size: 35px;
-    margin-top: 16px;
   }
   .product-price {
     font-size: 13px;

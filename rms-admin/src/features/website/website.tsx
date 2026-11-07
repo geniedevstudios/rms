@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { ArrowUp, ArrowDown, Plus, Trash2, Image } from "lucide-react";
+import defaults from "../../../shared/default-content.json";
+import { ArrowUp, ArrowDown, ArrowUpRight, Plus, Trash2, Image } from "lucide-react";
 import { useContent } from "../../app/content.context";
+import type { Content } from "../../../shared/content.types";
 import { PageHeading, Field, Thumb, Modal } from "../../components/ui";
 import { DestinationPicker } from "../../components/destination-picker";
 import { MediaPicker, MediaField } from "../media/media-picker";
@@ -9,6 +11,32 @@ import { JournalEditor } from "../journal/journal";
 import { Promotions } from "../promotions/promotions";
 
 const storefrontTabs = ["Home hero", "Page imagery"];
+const videoPlacements = new Set(["atelier-film", "about-film"]);
+
+function ensureSlot(draft: Content, id: string) {
+  if (draft.slots.some((slot) => slot.id === id)) return;
+  const seedSlot = (defaults.slots as Content["slots"]).find((slot) => slot.id === id);
+  if (!seedSlot) return;
+  const twinId =
+    id === "about-film" ? "atelier-film" : id === "about-poster" ? "atelier-poster" : "";
+  const twin = twinId ? draft.slots.find((slot) => slot.id === twinId) : undefined;
+  draft.slots.push({
+    ...structuredClone(seedSlot),
+    src: twin?.src || seedSlot.src,
+    alt: twin?.alt || seedSlot.alt,
+  });
+}
+
+function placementMedia(slots: Content["slots"], id: string) {
+  return (
+    slots.find((slot) => slot.id === id) ??
+    (id === "about-film"
+      ? slots.find((slot) => slot.id === "atelier-film")
+      : id === "about-poster"
+        ? slots.find((slot) => slot.id === "atelier-poster")
+        : undefined)
+  );
+}
 
 const imageryGuide = [
   {
@@ -16,22 +44,35 @@ const imageryGuide = [
     title: "Editorial photograph",
     page: "Home",
     pages: ["Home"],
-    where: "Beside “Soft in form. Strong in spirit.”",
+    where: "Beside the homepage editorial.",
   },
   {
     id: "atelier-film",
     title: "Atelier film",
     page: "Home",
-    pages: ["Home", "Our world"],
-    where:
-      "Plays from “It begins with intention.” on Home, and from “Thoughtful by nature.” on Our world.",
+    pages: ["Home"],
+    where: "Plays beside the atelier wording on Home.",
   },
   {
     id: "atelier-poster",
     title: "Film cover",
     page: "Home",
-    pages: ["Home", "Our world"],
-    where: "The still shown before that film plays, on Home and on Our world.",
+    pages: ["Home"],
+    where: "The still shown before the Home film plays.",
+  },
+  {
+    id: "about-film",
+    title: "Atelier film",
+    page: "Our world",
+    pages: ["Our world"],
+    where: "Plays beside the atelier wording on Our world.",
+  },
+  {
+    id: "about-poster",
+    title: "Film cover",
+    page: "Our world",
+    pages: ["Our world"],
+    where: "The still shown before the Our world film plays.",
   },
   {
     id: "about-hero",
@@ -67,10 +108,74 @@ const imageryPages = [
   { page: "Home", note: "These appear on the home page." },
   {
     page: "Our world",
-    note: "These appear on Our world. The atelier film from Home also plays here.",
+    note: "These appear on Our world.",
   },
   { page: "Custom", note: "These appear on the Custom page." },
 ];
+
+type FilmCopy = {
+  eyebrow: string;
+  title: string;
+  description: string;
+  buttonLabel: string;
+  note: string;
+  caption: string;
+};
+
+function FilmFields({
+  value,
+  onChange,
+}: {
+  value: FilmCopy;
+  onChange: (patch: Partial<FilmCopy>) => void;
+}) {
+  return (
+    <>
+      <Field label="Eyebrow">
+        <input
+          value={value.eyebrow}
+          onChange={(e) => onChange({ eyebrow: e.target.value })}
+        />
+      </Field>
+      <Field
+        label="Headline"
+        hint="One line per row. Wrap a word in *asterisks* to italicise it."
+      >
+        <textarea
+          rows={3}
+          value={value.title}
+          onChange={(e) => onChange({ title: e.target.value })}
+        />
+      </Field>
+      <Field label="Introduction">
+        <textarea
+          rows={3}
+          value={value.description}
+          onChange={(e) => onChange({ description: e.target.value })}
+        />
+      </Field>
+      <Field label="Button text" hint="Opens the film.">
+        <input
+          value={value.buttonLabel}
+          onChange={(e) => onChange({ buttonLabel: e.target.value })}
+        />
+      </Field>
+      <Field label="Small line" hint="Leave this empty to hide it.">
+        <input
+          value={value.note}
+          onChange={(e) => onChange({ note: e.target.value })}
+        />
+      </Field>
+      <Field label="Words on the film" hint="Leave this empty to hide them.">
+        <input
+          value={value.caption}
+          onChange={(e) => onChange({ caption: e.target.value })}
+        />
+      </Field>
+      <p className="muted">This page’s film and cover are chosen under Page imagery.</p>
+    </>
+  );
+}
 
 export function Website({
   section = "website",
@@ -81,10 +186,73 @@ export function Website({
 }) {
   const { content, update } = useContent();
   const [tab, setTab] = useState("Home hero");
+  const [imageryPage, setImageryPage] = useState("Home");
   const storefrontTab = tab === "Home hero" ? "Home hero" : "Page imagery";
   const [adding, setAdding] = useState(false);
   const [remove, setRemove] = useState<string | null>(null);
   const h = content.hero;
+  const editorial = content.editorial ?? defaults.editorial;
+  const [editorialOpen, setEditorialOpen] = useState(false);
+  const [editorialDraft, setEditorialDraft] = useState(editorial);
+  const [editorialError, setEditorialError] = useState("");
+  const films = {
+    home: content.films?.home ?? defaults.films.home,
+    about: content.films?.about ?? defaults.films.about,
+  };
+  const [filmEdit, setFilmEdit] = useState<"home" | "about" | null>(null);
+  const [filmDraft, setFilmDraft] = useState<FilmCopy>(films.home);
+  const [filmError, setFilmError] = useState("");
+  const covers = {
+    home: placementMedia(content.slots, "atelier-poster"),
+    about: placementMedia(content.slots, "about-poster"),
+  };
+  const editorialPhoto = content.slots.find((slot) => slot.id === "home-editorial");
+  function openEditorial() {
+    setEditorialError("");
+    setEditorialDraft(structuredClone(editorial));
+    setEditorialOpen(true);
+  }
+  function saveEditorial() {
+    if (
+      !editorialDraft.eyebrow.trim() ||
+      !editorialDraft.title.trim() ||
+      !editorialDraft.description.trim() ||
+      !editorialDraft.buttonLabel.trim()
+    ) {
+      setEditorialError("Add the eyebrow, headline, introduction, and button.");
+      return;
+    }
+    update((c) => {
+      c.editorial = editorialDraft;
+    });
+    setEditorialOpen(false);
+  }
+  function openFilm(place: "home" | "about") {
+    setFilmError("");
+    setFilmDraft(structuredClone(films[place]));
+    setFilmEdit(place);
+  }
+  function saveFilm() {
+    if (!filmEdit) return;
+    if (
+      !filmDraft.eyebrow.trim() ||
+      !filmDraft.title.trim() ||
+      !filmDraft.description.trim() ||
+      !filmDraft.buttonLabel.trim()
+    ) {
+      setFilmError("Add the eyebrow, headline, introduction, and button.");
+      return;
+    }
+    const place = filmEdit;
+    update((c) => {
+      c.films = {
+        home: films.home,
+        about: films.about,
+        [place]: filmDraft,
+      };
+    });
+    setFilmEdit(null);
+  }
   return (
     <>
       <div className="tabs centered" aria-label="Website">
@@ -139,6 +307,7 @@ export function Website({
         }
       />
       {storefrontTab === "Home hero" ? (
+        <>
         <div className="editor-layout">
           <section className="panel form-panel">
             <div className="section-label">
@@ -317,9 +486,65 @@ export function Website({
             </div>
           </section>
         </div>
+        </>
       ) : (
+        <>
+        <div className="toolbar">
+          <div className="tabs compact">
+            {imageryPages.map((group) => (
+              <button
+                className={imageryPage === group.page ? "active" : ""}
+                onClick={() => setImageryPage(group.page)}
+                key={group.page}
+              >
+                {group.page}
+              </button>
+            ))}
+          </div>
+        </div>
+        {(imageryPage === "Home" || imageryPage === "Our world") && (
+        <div className="collection-cards film-wording">
+          {imageryPage === "Home" && (
+          <section className="panel collection-tile">
+            {editorialPhoto && (
+              <Thumb src={editorialPhoto.src} alt={editorialPhoto.alt} />
+            )}
+            <div>
+              <span className="eyebrow">HOMEPAGE EDITORIAL</span>
+              <h2>{editorial.title.replace(/\n/g, " ")}</h2>
+              <p>{editorial.description}</p>
+              <button className="button secondary" onClick={openEditorial}>
+                Edit wording <ArrowUpRight size={15} />
+              </button>
+            </div>
+          </section>
+          )}
+          {(
+            [
+              ["home", "Home", films.home],
+              ["about", "Our world", films.about],
+            ] as const
+          )
+            .filter(([, page]) => page === imageryPage)
+            .map(([place, page, copy]) => (
+            <section className="panel collection-tile" key={place}>
+              {covers[place] && (
+                <Thumb src={covers[place].src} alt={covers[place].alt} />
+              )}
+              <div>
+                <span className="eyebrow">ATELIER FILM · {page}</span>
+                <h2>{copy.title.replace(/\*/g, "").replace(/\n/g, " ")}</h2>
+                <p>{copy.description}</p>
+                <button className="button secondary" onClick={() => openFilm(place)}>
+                  Edit wording <ArrowUpRight size={15} />
+                </button>
+              </div>
+            </section>
+          ))}
+        </div>
+        )}
         <div className="placement-groups">
-          {imageryPages.map((group) => {
+          {imageryPages.filter((group) => group.page === imageryPage).map((group) => {
             const cards = imageryGuide.filter((item) => item.page === group.page);
             return (
               <section key={group.page}>
@@ -329,16 +554,14 @@ export function Website({
                 </div>
                 <div className="placements">
                   {cards.map((item) => {
-                    const index = content.slots.findIndex(
-                      (slot) => slot.id === item.id,
-                    );
-                    const slot = content.slots[index];
+                    const slot = placementMedia(content.slots, item.id);
                     if (!slot) return null;
+                    const video = videoPlacements.has(item.id);
                     return (
-                      <section key={slot.id} className="panel placement">
+                      <section key={item.id} className="panel placement">
                         <Thumb
                           src={slot.src}
-                          video={slot.id === "atelier-film"}
+                          video={video}
                           alt={slot.alt}
                         />
                         <div>
@@ -354,11 +577,14 @@ export function Website({
                           <MediaField
                             label="Media"
                             value={slot.src}
-                            kind={slot.id === "atelier-film" ? "video" : "image"}
+                            kind={video ? "video" : "image"}
                             onChange={(m) =>
                               update((c) => {
-                                c.slots[index].src = m.url;
-                                c.slots[index].alt = m.alt;
+                                ensureSlot(c, item.id);
+                                const current = c.slots.find((entry) => entry.id === item.id);
+                                if (!current) return;
+                                current.src = m.url;
+                                current.alt = m.alt;
                               })
                             }
                           />
@@ -367,7 +593,10 @@ export function Website({
                               value={slot.alt}
                               onChange={(e) =>
                                 update((c) => {
-                                  c.slots[index].alt = e.target.value;
+                                  ensureSlot(c, item.id);
+                                  const current = c.slots.find((entry) => entry.id === item.id);
+                                  if (!current) return;
+                                  current.alt = e.target.value;
                                 })
                               }
                             />
@@ -434,6 +663,122 @@ export function Website({
             );
           })}
         </div>
+        </>
+      )}
+        </>
+      )}
+      {editorialOpen && (
+        <Modal title="Homepage editorial" onClose={() => setEditorialOpen(false)}>
+          <Field label="Eyebrow">
+            <input
+              value={editorialDraft.eyebrow}
+              onChange={(e) => {
+                setEditorialError("");
+                setEditorialDraft((current) => ({ ...current, eyebrow: e.target.value }));
+              }}
+            />
+          </Field>
+          <Field
+            label="Headline"
+            hint="The first line stays upright. Each following line is italic."
+          >
+            <textarea
+              rows={3}
+              value={editorialDraft.title}
+              onChange={(e) => {
+                setEditorialError("");
+                setEditorialDraft((current) => ({ ...current, title: e.target.value }));
+              }}
+            />
+          </Field>
+          <Field label="Introduction">
+            <textarea
+              rows={4}
+              value={editorialDraft.description}
+              onChange={(e) => {
+                setEditorialError("");
+                setEditorialDraft((current) => ({ ...current, description: e.target.value }));
+              }}
+            />
+          </Field>
+          <div className="form-grid">
+            <Field label="Button text">
+              <input
+                value={editorialDraft.buttonLabel}
+                onChange={(e) => {
+                  setEditorialError("");
+                  setEditorialDraft((current) => ({ ...current, buttonLabel: e.target.value }));
+                }}
+              />
+            </Field>
+            <Field label="Button destination">
+              <DestinationPicker
+                value={editorialDraft.buttonHref}
+                onChange={(value) => {
+                  setEditorialError("");
+                  setEditorialDraft((current) => ({ ...current, buttonHref: value }));
+                }}
+              />
+            </Field>
+          </div>
+          <Field label="Words on the photograph">
+            <input
+              value={editorialDraft.caption}
+              onChange={(e) =>
+                setEditorialDraft((current) => ({ ...current, caption: e.target.value }))
+              }
+            />
+          </Field>
+          <Field label="Corner mark">
+            <input
+              value={editorialDraft.mark}
+              onChange={(e) =>
+                setEditorialDraft((current) => ({ ...current, mark: e.target.value }))
+              }
+            />
+          </Field>
+          <p className="muted">The photograph beside this piece is chosen on this page.</p>
+          {editorialError && (
+            <p className="error" role="alert">
+              {editorialError}
+            </p>
+          )}
+          <div className="modal-actions">
+            <button className="button secondary" onClick={() => setEditorialOpen(false)}>
+              Cancel
+            </button>
+            <button className="button" onClick={saveEditorial}>
+              Apply to draft
+            </button>
+          </div>
+        </Modal>
+      )}
+      {filmEdit && (
+        <Modal
+          title={filmEdit === "home" ? "Atelier film on Home" : "Atelier film on Our world"}
+          onClose={() => setFilmEdit(null)}
+        >
+          <FilmFields
+            value={filmDraft}
+            onChange={(patch) => {
+              setFilmError("");
+              setFilmDraft((current) => ({ ...current, ...patch }));
+            }}
+          />
+          {filmError && (
+            <p className="error" role="alert">
+              {filmError}
+            </p>
+          )}
+          <div className="modal-actions">
+            <button className="button secondary" onClick={() => setFilmEdit(null)}>
+              Cancel
+            </button>
+            <button className="button" onClick={saveFilm}>
+              Apply to draft
+            </button>
+          </div>
+        </Modal>
       )}
       {adding && (
         <MediaPicker
@@ -473,8 +818,6 @@ export function Website({
             </button>
           </div>
         </Modal>
-      )}
-        </>
       )}
     </>
   );

@@ -640,6 +640,9 @@ textarea::placeholder {
 .form-panel {
   padding: 27px;
 }
+.film-wording {
+  margin-bottom: 36px;
+}
 .form-panel > h2 {
   margin-bottom: 25px;
 }

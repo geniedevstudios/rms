@@ -4,7 +4,7 @@ import { isSizeAvailable } from "../../data/size-guide";
 import type { Colourway } from "../../types/product";
 import { useCart } from "../cart/cart.context";
 import { MAX_ITEM_QUANTITY } from "../cart/cart.logic";
-import { quantityCap } from "../../../../rms-admin/shared/stock.mjs";
+import { quantityCap } from "../../shared/stock.mjs";
 import { useSavedProduct } from "../wishlist/use-saved-product";
 import { useDialogs } from "../../components/dialogs/dialogs.context";
 import { useToast } from "../../components/toast/toast.context";

@@ -16,17 +16,9 @@
   object-position: 50% 25%;
   transition: transform 0.7s;
 }
-.product-card:hover .product-image img {
+.product-image-wrap:hover .product-image img,
+.product-image:focus-visible img {
   transform: scale(1.025);
-}
-.product-tag {
-  position: absolute;
-  left: 14px;
-  top: 16px;
-  font-size: 7px;
-  letter-spacing: 1.2px;
-  background: rgba(249, 248, 245, 0.9);
-  padding: 6px 8px;
 }
 .save-button {
   position: absolute;
@@ -39,7 +31,15 @@
   justify-content: center;
   align-items: center;
   border-radius: 50%;
-  transition: background 0.2s;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s, background 0.2s;
+}
+.product-image-wrap:hover .save-button,
+.product-image:focus-visible ~ .save-button,
+.save-button:focus-visible {
+  opacity: 1;
+  pointer-events: auto;
 }
 .save-button:hover {
   background: white;
@@ -58,8 +58,9 @@
   transform: translateY(100%);
   transition: transform 0.2s;
 }
-.product-card:hover .quick-view,
-.product-card:focus-within .quick-view {
+.product-image-wrap:hover .quick-view,
+.product-image:focus-visible ~ .quick-view,
+.quick-view:focus-visible {
   transform: translateY(0);
 }
 .product-details {
@@ -114,23 +115,8 @@
   .product-image {
     aspect-ratio: 3/4.3;
   }
-  .product-tag {
-    font-size: 6px;
-    left: 8px;
-    top: 11px;
-    letter-spacing: 0.7px;
-    padding: 5px 6px;
-    max-width: 65%;
-  }
   .save-button {
-    width: 29px;
-    height: 29px;
-    right: 5px;
-    top: 6px;
-  }
-  .save-button svg {
-    width: 15px;
-    height: 15px;
+    display: none;
   }
   .product-details {
     margin-top: 13px;
@@ -157,12 +143,6 @@
     display: none;
   }
 }
-@media (max-width: 380px) {
-  .product-tag {
-    display: none;
-  }
-}
-
 @media (max-width: 760px) {
   .product-card .quick-view {
     display: flex;

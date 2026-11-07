@@ -8,7 +8,7 @@ import {
 } from "react";
 import { Check, ChevronDown } from "lucide-react";
 import "./select-menu.styles.css";
-import { measureSelectPosition, revealSelectOption } from "../../../../rms-admin/shared/select-position";
+import { measureSelectPosition, revealSelectOption } from "../../shared/select-position";
 
 export type SelectOption = {
   value: string;

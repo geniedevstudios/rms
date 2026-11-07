@@ -1,5 +1,5 @@
 import { MAX_ITEM_QUANTITY } from "./cart.logic";
-import { quantityCap } from "../../../../rms-admin/shared/stock.mjs";
+import { quantityCap } from "../../shared/stock.mjs";
 import "./cart.styles.css";
 import { useCart } from "./cart.context";
 import { useDialogs } from "../../components/dialogs/dialogs.context";

@@ -345,7 +345,7 @@ export function createApi({
           res,
           isUpload
             ? resolve(directory, path.slice(1))
-            : resolve(root, "../rms-app/public", path.slice(1)),
+            : resolve(root, "public", path.slice(1)),
         );
       }
       const mediaPath = /^\/media\/(image|video)\/([A-Za-z0-9][A-Za-z0-9_./-]*)$/.exec(

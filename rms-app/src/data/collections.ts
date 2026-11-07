@@ -1,5 +1,5 @@
 import { siteContent } from "../content/content";
-import type { Collection } from "../../../rms-admin/shared/content.types";
+import type { Collection } from "../shared/content.types";
 export type { Collection };
 
 function publishedCollections() {

@@ -4,7 +4,7 @@ New paid orders, consultation requests, verified failed payments, interrupted ch
 
 ## Configuration
 
-On the admin server set `RESEND_API_KEY`, `RESEND_FROM` (a verified sender), `RMS_ADMIN_EMAIL`, `PAYSTACK_SECRET_KEY`, `RMS_STOREFRONT_URL=https://rivermindstyle.com`, and `RMS_ADMIN_URL=https://admin.rivermindstyle.com`. `RMS_NOTIFICATION_EMAIL` optionally overrides the admin recipient. `RMS_EMAIL_AUTOMATION_ENABLED=false` pauses sending without stopping payment reconciliation. Development reuses the existing Paystack key from rms-app if no admin key is set. No keys are exposed to browsers.
+On the admin server set `RESEND_API_KEY`, `RESEND_FROM` (a verified sender), `RMS_ADMIN_EMAIL`, `PAYSTACK_SECRET_KEY`, `RMS_STOREFRONT_URL=https://rivermindstyle.com`, and `RMS_ADMIN_URL=https://admin.rivermindstyle.com`. `RMS_NOTIFICATION_EMAIL` optionally overrides the admin recipient. `RMS_EMAIL_AUTOMATION_ENABLED=false` pauses sending without stopping payment reconciliation. No keys are exposed to browsers.
 
 Local configuration now contains the chosen public URLs and enables sending. Deploy the shop and the studio as two Vercel projects. The shop forwards `/api/cms`, `/media`, and `/uploads` to the studio address in `RMS_CONTENT_ORIGIN`. Checkout, accounts, and Paystack run on the studio.
 

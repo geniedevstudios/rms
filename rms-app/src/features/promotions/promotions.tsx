@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { siteContent } from "../../content/content";
-import { defaultPromotions } from "../../../../rms-admin/shared/promotions";
+import { defaultPromotions } from "../../shared/promotions";
 import { Link } from "../../routing/link";
 import { Overlay } from "../../components/overlay/overlay";
 import { useDialogs } from "../../components/dialogs/dialogs.context";

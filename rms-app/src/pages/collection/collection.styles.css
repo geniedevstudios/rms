@@ -40,6 +40,9 @@ main > .collection-hero:first-child > div {
   line-height: 1.9;
   margin-bottom: 30px;
 }
+.collection-hero + .section {
+  padding-top: 96px;
+}
 @media (max-width: 760px) {
   .collection-hero {
     grid-template-columns: 1fr;
@@ -65,5 +68,8 @@ main > .collection-hero:first-child > div {
   }
   .collection-hero .eyebrow {
     font-size: 7px;
+  }
+  .collection-hero + .section {
+    padding-top: 64px;
   }
 }

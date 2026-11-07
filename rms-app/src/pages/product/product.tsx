@@ -40,7 +40,10 @@ export function ProductPage({ product }: { product: Product }) {
         />
         <div className="product-info">
           <span className="eyebrow">THE BECOMING COLLECTION</span>
-          <h1>{product.name}</h1>
+          <div className="product-title">
+            <h1>{product.name}</h1>
+            {product.tag && <span className="name-label">{product.tag}</span>}
+          </div>
           <p className="product-price">{money(product.price)}</p>
           <p className="product-description">{product.description}</p>
           <ProductPurchase product={product} colourway={colourway} onColour={setColourId} />

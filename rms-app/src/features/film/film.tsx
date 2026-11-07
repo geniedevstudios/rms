@@ -1,10 +1,10 @@
-import { mediaSlot } from "../../content/content";
+import { filmMedia } from "../../content/content";
 import "./film.styles.css";
 import { youtubeId } from "./film-source";
 
-export function Film() {
-  const film = mediaSlot("atelier-film").src;
-  const id = youtubeId(film);
+export function Film({ place = "home" }: { place?: "home" | "about" }) {
+  const media = filmMedia(place === "about" ? "about-film" : "atelier-film");
+  const id = youtubeId(media.src);
   return (
     <div className="film-modal">
       {id ? (
@@ -16,15 +16,15 @@ export function Film() {
         />
       ) : (
         <video
-          src={film}
+          src={media.src}
           controls
           autoPlay
           muted
           playsInline
-          aria-label={mediaSlot("atelier-film").alt}
+          aria-label={media.alt}
         />
       )}
-      <p>{mediaSlot("atelier-film").alt}
+      <p>{media.alt}
       </p>
     </div>
   );

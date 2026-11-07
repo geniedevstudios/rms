@@ -10,8 +10,8 @@
   transition: opacity 0.65s ease;
 }
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .product-card:hover .hover-shot,
-  .product-image:focus-within .hover-shot,
+  .product-image-wrap:hover .hover-shot,
+  .product-image:focus-visible .hover-shot,
   .category-card:hover .hover-shot,
   .category-card:focus-visible .hover-shot,
   .journal-card:hover .hover-shot,

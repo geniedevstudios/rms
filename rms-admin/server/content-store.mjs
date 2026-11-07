@@ -102,6 +102,39 @@ export function validateContent(c, media) {
     Number.isFinite(h.interval) && h.interval >= 4 && h.interval <= 30,
     "Hero rotation must be between 4 and 30 seconds.",
   );
+  if (!c.editorial || typeof c.editorial !== "object") c.editorial = {};
+  c.editorial = { ...structuredClone(seed.editorial), ...c.editorial };
+  const editorial = c.editorial;
+  for (const key of ["eyebrow", "title", "description", "buttonLabel"])
+    check(
+      text(editorial[key], 1000) && editorial[key].trim(),
+      "Complete the homepage editorial.",
+    );
+  check(
+    text(editorial.caption, 500) && text(editorial.mark, 500),
+    "The editorial caption is too long.",
+  );
+  check(
+    typeof editorial.buttonHref === "string" &&
+      /^\/(?!\/)[a-zA-Z0-9/?=&%._#-]*$/.test(editorial.buttonHref),
+    "Choose a page for the editorial button.",
+  );
+  if (!c.films || typeof c.films !== "object") c.films = {};
+  c.films = {
+    home: { ...structuredClone(seed.films.home), ...(c.films.home || {}) },
+    about: { ...structuredClone(seed.films.about), ...(c.films.about || {}) },
+  };
+  for (const film of [c.films.home, c.films.about]) {
+    for (const key of ["eyebrow", "title", "description", "buttonLabel"])
+      check(
+        text(film[key], 1000) && film[key].trim(),
+        "Complete the atelier film wording.",
+      );
+    check(
+      text(film.note, 500) && text(film.caption, 500),
+      "The atelier film note is too long.",
+    );
+  }
   const byUrl = new Map(media.map((m) => [m.url, m]));
   validatePromotions(c.promotions, media);
   const readyToWear = new Set(c.products);
@@ -300,7 +333,23 @@ export function validateContent(c, media) {
       );
   }
   const slotIds = new Set(seed.slots.map((slot) => slot.id));
+  const videoSlots = new Set(["atelier-film", "about-film"]);
   c.slots = c.slots.filter((slot) => slot && slotIds.has(slot.id));
+  for (const seedSlot of seed.slots) {
+    if (c.slots.some((slot) => slot.id === seedSlot.id)) continue;
+    const twinId =
+      seedSlot.id === "about-film"
+        ? "atelier-film"
+        : seedSlot.id === "about-poster"
+          ? "atelier-poster"
+          : "";
+    const twin = twinId ? c.slots.find((slot) => slot.id === twinId) : null;
+    c.slots.push(
+      twin
+        ? { ...structuredClone(seedSlot), src: twin.src, alt: twin.alt }
+        : structuredClone(seedSlot),
+    );
+  }
   check(
     c.slots.length === seed.slots.length &&
       seed.slots.every((s) => c.slots.some((x) => x.id === s.id)),
@@ -315,7 +364,7 @@ export function validateContent(c, media) {
       "Invalid media placement.",
     );
     check(
-      byUrl.get(s.src)?.type === (s.id === "atelier-film" ? "video" : "image"),
+      byUrl.get(s.src)?.type === (videoSlots.has(s.id) ? "video" : "image"),
       "Choose the correct media type for " + s.label + ".",
     );
   }
