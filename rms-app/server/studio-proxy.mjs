@@ -1,7 +1,15 @@
-const hop = new Set([
+const requestHop = new Set([
+  "accept-encoding",
   "connection",
   "content-length",
   "host",
+  "keep-alive",
+  "transfer-encoding",
+]);
+const responseHop = new Set([
+  "connection",
+  "content-encoding",
+  "content-length",
   "keep-alive",
   "transfer-encoding",
 ]);
@@ -38,7 +46,7 @@ export default async function proxyToStudio(req, res) {
   ).replace(/\/$/, "");
   const headers = new Headers();
   for (const [key, value] of Object.entries(req.headers)) {
-    if (hop.has(key) || value == null) continue;
+    if (requestHop.has(key) || value == null) continue;
     headers.set(key, Array.isArray(value) ? value.join(", ") : value);
   }
   const response = await fetch(origin + targetPath(req.url), {
@@ -49,7 +57,7 @@ export default async function proxyToStudio(req, res) {
   });
   const outgoing = {};
   response.headers.forEach((value, key) => {
-    if (key === "set-cookie" || hop.has(key)) return;
+    if (key === "set-cookie" || responseHop.has(key)) return;
     outgoing[key] = value;
   });
   const cookies = typeof response.headers.getSetCookie === "function" ? response.headers.getSetCookie() : [];
