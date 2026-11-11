@@ -155,6 +155,23 @@ export function Home() {
           caption={film.caption}
         />
       </section>
+      {products.some((product) => product.bestSeller) && (
+        <section className="section best-sellers" id="best-sellers">
+          <div className="section-heading">
+            <div>
+              <span className="eyebrow">MOST LOVED</span>
+              <h2>Best sellers</h2>
+            </div>
+          </div>
+          <div className="product-grid">
+            {products
+              .filter((product) => product.bestSeller)
+              .map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+          </div>
+        </section>
+      )}
       <section className="section journal-section">
         <div className="section-heading">
           <div>

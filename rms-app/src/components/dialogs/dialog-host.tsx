@@ -10,6 +10,7 @@ import { Account } from "../../features/account/account";
 import { Help } from "../../features/client-care/client-care";
 import { Film } from "../../features/film/film";
 import { SizeGuide } from "../../features/products/size-guide/size-guide";
+import { CareGuide } from "../../features/products/care-guide/care-guide";
 import { QuickView } from "../../features/products/quick-view/quick-view";
 import { MobileMenu } from "../mobile-menu/mobile-menu";
 import { CopyrightNotice } from "../footer/copyright-notice";
@@ -53,6 +54,10 @@ export function DialogHost() {
     case "size-guide":
       title = "Find your fit";
       content = <SizeGuide />;
+      break;
+    case "care-guide":
+      title = "Care guide";
+      content = <CareGuide />;
       break;
     case "film":
       title = "An atelier study";
@@ -117,7 +122,12 @@ export function DialogHost() {
             dismissDialog();
           }}
           wide={dialog.type === "film"}
-          popup={dialog.type === "copyright" || dialog.type === "order" || dialog.type === "size-guide"}
+          popup={
+            dialog.type === "copyright" ||
+            dialog.type === "order" ||
+            dialog.type === "size-guide" ||
+            dialog.type === "care-guide"
+          }
           sheet={sheet}
         >
           {content}

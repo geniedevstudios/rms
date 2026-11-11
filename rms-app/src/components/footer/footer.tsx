@@ -4,7 +4,6 @@ import { Link } from "../../routing/link";
 import { ArrowUp } from "lucide-react";
 export function Footer() {
   const { openDialog } = useDialogs();
-  const help = (topic: string) => openDialog({ type: "help", topic });
   return (
     <footer>
       <div className="footer-top">
@@ -27,30 +26,26 @@ export function Footer() {
         </div>
         <div className="footer-col">
           <h3>Client care</h3>
-          {["Contact us", "Delivery & returns", "Care guide"].map((topic) => (
-            <button key={topic} onClick={() => help(topic)}>
-              {topic}
-            </button>
-          ))}
-          <button onClick={() => openDialog({ type: "size-guide" })}>
+          <Link to="/contact">Contact us</Link>
+          <Link to="/delivery">Delivery & returns</Link>
+          <button type="button" onClick={() => openDialog({ type: "care-guide" })}>
+            Care guide
+          </button>
+          <button type="button" onClick={() => openDialog({ type: "size-guide" })}>
             Size guide
           </button>
         </div>
         <div className="footer-col">
           <h3>Your RMS</h3>
-          <button onClick={() => openDialog({ type: "account" })}>
-            Your account
-          </button>
-          <button onClick={() => openDialog({ type: "wishlist" })}>
-            Saved pieces
-          </button>
+          <Link to="/account">Your account</Link>
+          <Link to="/saved">Saved pieces</Link>
           <Link to="/orders">Your orders</Link>
           <Link to="/journal">The journal</Link>
         </div>
         <div className="footer-col">
           <h3>Legal</h3>
-          <button onClick={() => help("Privacy")}>Privacy</button>
-          <button onClick={() => help("Terms")}>Terms</button>
+          <Link to="/privacy">Privacy</Link>
+          <Link to="/terms">Terms</Link>
         </div>
       </div>
       <div className="footer-bottom">

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { ArrowUpRight } from "lucide-react";
+import { collectionForProduct, collectionTitle } from "../../../data/collections";
 import { pieceColourways } from "../../../data/size-guide";
 import type { Product } from "../../../types/product";
 import { Link } from "../../../routing/link";
@@ -16,6 +17,8 @@ export function QuickView({ product }: { product: Product }) {
     setColourId(pieceColourways(product)[0]?.id ?? "");
   }, [product.id]);
   const colourway = ways.find((way) => way.id === colourId) ?? ways[0];
+  const collection = collectionForProduct(product.id);
+  const collectionName = collection ? collectionTitle(collection) : "";
   if (!colourway) return null;
   return (
     <div className="quick-view-content">
@@ -26,7 +29,11 @@ export function QuickView({ product }: { product: Product }) {
         label="THE FULL LOOK"
       />
       <div className="quick-view-details">
-        <span className="eyebrow">THE BECOMING COLLECTION</span>
+        {collection && collectionName && (
+          <Link to={`/collection/${collection.id}`} className="eyebrow">
+            {collectionName}
+          </Link>
+        )}
         <div className="quick-view-title">
           <h3>{product.name}</h3>
           {product.tag && <span className="name-label">{product.tag}</span>}

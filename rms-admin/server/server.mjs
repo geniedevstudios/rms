@@ -2,9 +2,11 @@ import { createServer } from "node:http";
 import { resolve } from "node:path";
 import { createApi, serveFile } from "./api.mjs";
 import { cloudinaryConfig } from "./cloudinary.mjs";
+import { calendarConfig } from "./calendar.mjs";
 const api = createApi({
   production: true,
   cloudinary: cloudinaryConfig(),
+  calendar: calendarConfig(),
   supabase: {
     url: process.env.SUPABASE_URL,
     secret: process.env.SUPABASE_SECRET_KEY,

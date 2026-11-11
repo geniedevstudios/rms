@@ -234,6 +234,10 @@ export function validateContent(c, media) {
       "Choose whether a piece is a new arrival.",
     );
     check(
+      p.bestSeller === undefined || typeof p.bestSeller === "boolean",
+      "Choose whether a piece is a best seller.",
+    );
+    check(
       p.image && image(p.image) && image(p.hoverImage),
       "Product photography must be images.",
     );

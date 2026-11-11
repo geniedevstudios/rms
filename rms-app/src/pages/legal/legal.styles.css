@@ -1,0 +1,33 @@
+.legal-page .page-intro {
+  padding-bottom: 20px;
+}
+.legal-body {
+  max-width: 680px;
+  margin: 0 auto 90px;
+}
+.legal-body h2 {
+  font-size: 28px;
+  margin: 36px 0 14px;
+}
+.legal-body p {
+  font-size: 13px;
+  line-height: 2;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+.legal-body a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+@media (max-width: 760px) {
+  .legal-body {
+    margin-bottom: 60px;
+  }
+  .legal-body h2 {
+    font-size: 24px;
+  }
+  .legal-body p {
+    font-size: 12px;
+  }
+}

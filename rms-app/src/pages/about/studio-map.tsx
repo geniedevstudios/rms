@@ -5,12 +5,17 @@ import "leaflet/dist/leaflet.css";
 const region = { lat: 5.6037, lng: -0.187 };
 const studio = { lat: 5.710471, lng: -0.161357 };
 const closeZoom = 16;
+const directions = `https://www.google.com/maps/dir/?api=1&destination=${studio.lat},${studio.lng}`;
+const studioCard = `<div class="studio-pin-details"><h3>RIVERMINDSTYLE</h3><p class="eyebrow">By appointment</p><address>Vanilla Street<br>Adenta, Accra, Ghana</address><div class="studio-pin-hours"><span class="eyebrow">Hours</span><p>Every day, 9:00–17:45</p><p>A visit is arranged ahead.</p></div><a class="text-link" href="${directions}" target="_blank" rel="noopener noreferrer">Get directions</a></div>`;
 
 export function StudioMap({ focused, onSelect }: { focused: boolean; onSelect: () => void }) {
   const node = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
+  const popupRef = useRef<L.Popup | null>(null);
   const onSelectRef = useRef(onSelect);
+  const focusedRef = useRef(focused);
   onSelectRef.current = onSelect;
+  focusedRef.current = focused;
 
   useEffect(() => {
     const element = node.current;
@@ -44,13 +49,37 @@ export function StudioMap({ focused, onSelect }: { focused: boolean; onSelect: (
         iconAnchor: [20, 60],
       }),
     }).addTo(map);
-    marker.on("click", () => {
+    const popup = L.popup({
+      className: "studio-pin-card",
+      closeButton: true,
+      autoPan: true,
+      autoPanPaddingTopLeft: [24, 24],
+      autoPanPaddingBottomRight: [24, 80],
+      offset: [0, -66],
+      minWidth: 248,
+      maxWidth: 280,
+      closeOnClick: false,
+    }).setLatLng([studio.lat, studio.lng]).setContent(studioCard);
+    popup.on("add", () => {
+      popup.getElement()?.querySelector(".leaflet-popup-close-button")?.setAttribute("aria-label", "Close studio details");
+    });
+    popupRef.current = popup;
+    marker.on("click", (event) => {
+      L.DomEvent.stopPropagation(event);
+      if (focusedRef.current) {
+        if (popup.isOpen()) popup.close();
+        else popup.openOn(map);
+        return;
+      }
+      popup.close();
       map.flyTo([studio.lat, studio.lng], closeZoom, { duration: 1.4 });
       onSelectRef.current();
     });
+    map.on("click", () => popup.close());
     const frame = window.requestAnimationFrame(() => map.invalidateSize());
     return () => {
       window.cancelAnimationFrame(frame);
+      popupRef.current = null;
       mapRef.current = null;
       map.remove();
     };
@@ -60,7 +89,10 @@ export function StudioMap({ focused, onSelect }: { focused: boolean; onSelect: (
     const map = mapRef.current;
     if (!map) return;
     if (focused) map.flyTo([studio.lat, studio.lng], closeZoom, { duration: 1.4 });
-    else if (map.getZoom() !== 4) map.flyTo([region.lat, region.lng], 4, { duration: 1.4 });
+    else {
+      popupRef.current?.close();
+      if (map.getZoom() !== 4) map.flyTo([region.lat, region.lng], 4, { duration: 1.4 });
+    }
   }, [focused]);
 
   return <div ref={node} className="studio-map" role="region" aria-label="Map of the studio on Vanilla Street, Adenta" />;

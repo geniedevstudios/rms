@@ -18,6 +18,9 @@ import { Custom } from "../pages/custom/custom";
 import { CustomDesignPage } from "../pages/custom/custom-design";
 import { About } from "../pages/about/about";
 import { Journal } from "../pages/journal/journal";
+import { Contact, Delivery, Privacy, Terms } from "../pages/legal/legal";
+import { AccountPage } from "../pages/account/account-page";
+import { SavedPage } from "../pages/saved/saved-page";
 
 export function AppRoutes() {
   const route = useRoute();
@@ -44,6 +47,18 @@ export function AppRoutes() {
               ? "Custom"
               : pathname.startsWith("/journal")
               ? "The journal"
+              : pathname === "/privacy"
+                ? "Privacy"
+                : pathname === "/terms"
+                  ? "Terms"
+                  : pathname === "/contact"
+                    ? "Contact"
+                    : pathname === "/delivery"
+                      ? "Delivery & returns"
+                      : pathname === "/account"
+                        ? "Your account"
+                        : pathname === "/saved"
+                          ? "Saved pieces"
               : pathname === "/checkout"
                 ? "Checkout"
                 : pathname === "/orders"
@@ -86,6 +101,12 @@ export function AppRoutes() {
   if (pathname === "/about") return <About />;
   if (pathname === "/journal" || pathname.startsWith("/journal/"))
     return <Journal pathname={pathname} />;
+  if (pathname === "/privacy") return <Privacy />;
+  if (pathname === "/terms") return <Terms />;
+  if (pathname === "/contact") return <Contact />;
+  if (pathname === "/delivery") return <Delivery />;
+  if (pathname === "/account") return <AccountPage />;
+  if (pathname === "/saved") return <SavedPage />;
   return (
     <div className="empty-page">
       <span className="eyebrow">A DIFFERENT DIRECTION</span>

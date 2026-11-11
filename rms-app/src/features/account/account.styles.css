@@ -1,3 +1,13 @@
+.account-page {
+  padding-bottom: 80px;
+}
+.account-page .page-intro {
+  padding-bottom: 12px;
+}
+.account-page .account-panel {
+  max-width: 520px;
+  margin: 0 auto;
+}
 .account-panel {
   padding: 35px 28px;
 }
@@ -5,6 +15,10 @@
   width: 480px;
   max-width: 100%;
   margin-left: auto;
+}
+.account-page .account-panel.is-auth:not(.is-revealed) {
+  width: auto;
+  margin-right: auto;
 }
 .account-panel.is-revealed {
   flex: 1;

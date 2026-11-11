@@ -1,0 +1,16 @@
+.care-guide {
+  padding: 24px 28px 28px;
+}
+.care-guide > p {
+  font-size: 12px;
+  line-height: 1.9;
+  color: var(--muted);
+  margin: 16px 0 8px;
+}
+.care-guide li {
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--ink);
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}

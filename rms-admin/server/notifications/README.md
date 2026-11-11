@@ -18,12 +18,6 @@ Events have deterministic recipient-specific keys. Resend idempotency keys, pers
 
 Successful orders suppress pending abandoned/failed reminders for the same email. Empty carts suppress cart reminders. Recovery tokens expose only saved product selections, expire after 30 days, and never restore addresses or payment details. Reminder emails link to an explicit opt-out action. Stored notification and checkout rows contain customer contact information: restrict the database and define retention before launch.
 
-Tests use temporary directories, fake provider responses, and a controlled clock; they do not send mail or charge payments:
-
-```sh
-node server/notifications/service.test.mjs
-```
-
 Provider references: [Resend idempotency](https://resend.com/changelog/idempotency-keys), [Paystack verification statuses](https://paystack.com/docs/payments/verify-payments/).
 
 ## Sender identities and invitation branding

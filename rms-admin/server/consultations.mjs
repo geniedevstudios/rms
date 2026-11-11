@@ -114,6 +114,8 @@ export function toStored(item) {
     paid: item.paid === true,
     rescheduled: item.rescheduled === true,
     accessCode: item.accessCode || "",
+    meetLink: item.meetLink || "",
+    calendarEventId: item.calendarEventId || "",
   };
   return {
     id: item.id,
@@ -145,6 +147,8 @@ export function fromStored(item) {
       paid: meta.paid === true,
       rescheduled: meta.rescheduled === true,
       accessCode: meta.accessCode || "",
+      meetLink: meta.meetLink || "",
+      calendarEventId: meta.calendarEventId || "",
     };
   } catch {
     return { ...item, vision: raw };

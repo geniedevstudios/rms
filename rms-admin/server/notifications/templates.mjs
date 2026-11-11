@@ -13,7 +13,7 @@ const consultationMail = (kind) =>
   kind === "consultation-confirmed" ||
   kind === "consultation-rescheduled";
 function appointmentWhen(record, withTime) {
-  const value = withTime ? record.scheduledAt : record.appointment;
+  const value = withTime ? record.scheduledAt || record.appointment : record.scheduledAt || record.appointment;
   if (!value) return "";
   const day = String(value).slice(0, 10);
   const [year, month, date] = day.split("-").map(Number);
@@ -35,6 +35,43 @@ function appointmentWhen(record, withTime) {
     ...(withTime ? { hour: "numeric", minute: "2-digit", timeZone: "Africa/Accra" } : { timeZone: "UTC" }),
   }).format(stamp);
 }
+function accraDay(now) {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Africa/Accra",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(now);
+}
+function whenPhrase(record, now) {
+  const day = String(record.scheduledAt || record.appointment || "").slice(0, 10);
+  const today = accraDay(now);
+  const [year, month, date] = today.split("-").map(Number);
+  const tomorrow = new Date(Date.UTC(year, month - 1, date + 1)).toISOString().slice(0, 10);
+  const relation = day === today ? "today" : day === tomorrow ? "tomorrow" : "";
+  const written = appointmentWhen(record, false);
+  const clock = record.scheduledAt
+    ? new Intl.DateTimeFormat("en-GH", {
+        hour: "numeric",
+        minute: "2-digit",
+        timeZone: "Africa/Accra",
+      }).format(new Date(record.scheduledAt))
+    : "";
+  if (relation && clock) return `${clock} ${relation}`;
+  if (clock && written) return `${clock} on ${written}`;
+  return written || clock || "the arranged time";
+}
+function appointmentLead(kind, record, now) {
+  const when = whenPhrase(record, now);
+  const online = record.meeting === "Online meeting";
+  if (kind === "consultation-rescheduled")
+    return online
+      ? `The studio has moved your appointment. Kindly join the meeting at ${when}.`
+      : `The studio has moved your appointment to ${when} at the studio.`;
+  return online
+    ? `Kindly join the meeting at ${when}.`
+    : `Your appointment is confirmed for ${when} at the studio.`;
+}
 const paragraph = (value) =>
   `<p style="margin:14px 0 0;font:14px/1.7 Arial,Helvetica,sans-serif;color:#77746d;">${escapeHtml(value)}</p>`;
 export function notificationMessage(
@@ -43,6 +80,7 @@ export function notificationMessage(
   audience,
   config,
   imageSources = [],
+  now = new Date(),
 ) {
   const admin = audience === "admin";
   const titles = {
@@ -66,10 +104,8 @@ export function notificationMessage(
       "Your payment is confirmed. Your considered pieces are now in our hands, ready for their next chapter.",
     consultation:
       "Your payment of GH₵ 300 is confirmed. The day you asked for is with the studio. This is not yet a confirmed appointment. The studio may reschedule this day based on availability, and will email you when it is confirmed or if it needs to move.",
-    "consultation-confirmed":
-      "Your appointment is confirmed. The time on the day you asked for is below.",
-    "consultation-rescheduled":
-      "The studio has moved your appointment based on availability. The new day and time are below.",
+    "consultation-confirmed": appointmentLead("consultation-confirmed", record, now),
+    "consultation-rescheduled": appointmentLead("consultation-rescheduled", record, now),
     abandoned:
       "The pieces you chose are waiting. Return when you’re ready; we’ll check current prices and availability when you do.",
     failed:
@@ -131,7 +167,8 @@ export function notificationMessage(
       `Service: ${record.service}`,
       `Meeting: ${record.meeting}`,
       ...(when ? [`${whenLabel}: ${when}`] : []),
-      ...(record.vision ? [`Your vision: ${record.vision}`] : []),
+      ...(record.meetLink && kind !== "consultation" ? [`Google Meet: ${record.meetLink}`] : []),
+      ...(admin && record.vision ? [`Note: ${record.vision}`] : []),
     );
   }
   const products = (record.items || [])
@@ -148,7 +185,11 @@ export function notificationMessage(
     const when = appointmentWhen(record, kind !== "consultation" && Boolean(record.scheduledAt));
     const whenLabel =
       kind === "consultation-rescheduled" ? "New time" : record.scheduledAt ? "Time" : "Day";
-    details = `<div style="margin-top:26px;padding:22px;background:#f7f6f4;text-align:left;">${when ? paragraph(`${whenLabel}: ${when}`) : ""}${paragraph(`Service: ${record.service}`)}${paragraph(`Meeting: ${record.meeting}`)}${record.vision ? paragraph(record.vision) : ""}</div>`;
+    const meet =
+      record.meetLink && kind !== "consultation"
+        ? `<p style="margin:18px 0 0;font:14px/1.7 Arial,Helvetica,sans-serif;"><a href="${escapeHtml(record.meetLink)}" style="color:#4c2938;">Join the Google meeting</a></p>`
+        : "";
+    details = `<div style="margin-top:26px;padding:22px;background:#f7f6f4;text-align:left;">${when ? paragraph(`${whenLabel}: ${when}`) : ""}${paragraph(`Service: ${record.service}`)}${paragraph(`Meeting: ${record.meeting}`)}${meet}${admin && record.vision ? paragraph(`Note: ${record.vision}`) : ""}</div>`;
   }
   if (kind === "order") {
     if (record.discount) lines.push(`Subtotal: ${money(record.subtotal)}`, `Discount (${record.promoCode}): −${money(record.discount)}`);
@@ -161,7 +202,9 @@ export function notificationMessage(
       .filter(Boolean)
       .join(", ");
     if (address) lines.push(`Deliver to: ${address}`);
-    details = `<table role="presentation" width="100%" style="margin-top:22px;"><tr><td style="font:12px Arial;color:#77746d;">TOTAL PAID</td><td align="right" style="font:24px Georgia;color:#4c2938;">${money(record.total)}</td></tr></table>${address ? `<div style="margin-top:24px;padding:20px;background:#f7f6f4;text-align:left;"><p style="margin:0;font:9px Arial;letter-spacing:2px;color:#8a7d80;">DELIVER TO</p>${paragraph(record.name)}${paragraph(address)}${record.note ? paragraph(`Note: ${record.note}`) : ""}</div>` : ""}`;
+    if (admin && record.note) lines.push(`Note: ${record.note}`);
+    const deliveryNote = admin && record.note ? paragraph(`Note: ${record.note}`) : "";
+    details = `<table role="presentation" width="100%" style="margin-top:22px;"><tr><td style="font:12px Arial;color:#77746d;">TOTAL PAID</td><td align="right" style="font:24px Georgia;color:#4c2938;">${money(record.total)}</td></tr></table>${address || deliveryNote ? `<div style="margin-top:24px;padding:20px;background:#f7f6f4;text-align:left;">${address ? `<p style="margin:0;font:9px Arial;letter-spacing:2px;color:#8a7d80;">DELIVER TO</p>${paragraph(record.name)}${paragraph(address)}` : ""}${deliveryNote}</div>` : ""}`;
   }
   if (kind === "order" && record.discount)
     details = paragraph(`Subtotal: ${money(record.subtotal)} · Discount (${record.promoCode}): −${money(record.discount)}`) + details;
@@ -185,7 +228,7 @@ export function notificationMessage(
 <tr><td class="hero" height="240" align="center" valign="middle" background="cid:invitation-hero" bgcolor="#ecd8d7" role="img" aria-label="RIVERMINDSTYLE" style="height:240px;background-color:#ecd8d7;background-image:url('cid:invitation-hero');background-position:center;background-size:cover;background-repeat:no-repeat;">
 <!--[if gte mso 9]><v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:600px;height:240px;"><v:fill type="frame" src="cid:invitation-hero" color="#ecd8d7" aspect="atleast" /><v:textbox inset="0,0,0,0"><![endif]--><a href="${escapeHtml(base)}" aria-label="RIVERMINDSTYLE website" class="hero-link" style="display:block;height:240px;text-decoration:none;">&nbsp;</a><!--[if gte mso 9]></v:textbox></v:rect><![endif]--></td></tr>
 <tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td class="gutter" width="28" bgcolor="#ecd8d7">&nbsp;</td><td height="32" bgcolor="#ffffff">&nbsp;</td><td class="gutter" width="28" bgcolor="#ecd8d7">&nbsp;</td></tr><tr><td class="gutter" width="28">&nbsp;</td><td class="panel-padding" bgcolor="#ffffff" style="padding:0 32px 40px;">
-<p style="margin:0;font:9px Arial,sans-serif;font-weight:bold;letter-spacing:3px;text-align:center;color:#555149;">${eyebrow}</p><h1 class="headline" style="margin:12px 0 0;font:normal 34px/1.15 Georgia,'Times New Roman',serif;letter-spacing:-1px;color:#24231f;text-align:center;">${escapeHtml(title)}</h1><div style="text-align:center;">${paragraph(admin ? adminDetail : detail)}${paragraph(admin ? `${record.name || "Customer"} · ${record.email}${record.phone ? " · " + record.phone : ""}` : `Hello ${record.name || "there"},`)}${record.id ? `<p style="margin:20px 0 4px;font:10px Arial;letter-spacing:1.5px;color:#88847a;">${escapeHtml(record.id)}</p>` : ""}</div>
+<p style="margin:0;font:9px Arial,sans-serif;font-weight:bold;letter-spacing:3px;text-align:center;color:#555149;">${eyebrow}</p><h1 class="headline" style="margin:12px 0 0;font:normal 34px/1.15 Georgia,'Times New Roman',serif;letter-spacing:-1px;color:#24231f;text-align:center;">${escapeHtml(title)}</h1><div style="text-align:center;">${paragraph(admin ? `${record.name || "Customer"} · ${record.email}${record.phone ? " · " + record.phone : ""}` : `Hello ${record.name || "there"},`)}${paragraph(admin ? adminDetail : detail)}${record.id ? `<p style="margin:20px 0 4px;font:10px Arial;letter-spacing:1.5px;color:#88847a;">${escapeHtml(record.id)}</p>` : ""}</div>
 ${products ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:12px;">${products}</table>` : ""}${details}
 <table role="presentation" cellpadding="0" cellspacing="0" align="center" style="margin:28px auto 0;"><tr><td align="center" bgcolor="#4c2938"><a href="${escapeHtml(link)}" style="display:inline-block;padding:16px 32px;border:1px solid #4c2938;color:#fff;text-decoration:none;font:10px Arial;letter-spacing:2px;">${cta}</a></td></tr></table><p style="margin:22px 0 0;font:12px/1.7 Arial;color:#96928b;text-align:center;">${admin ? "A note from your RMS studio." : "Questions? Reply to this email. We’re here to help."}</p>${optout ? `<p style="text-align:center"><a href="${escapeHtml(optout)}" style="font:11px Arial;color:#88717c;">Stop cart reminders</a></p>` : ""}</td><td class="gutter" width="28">&nbsp;</td></tr></table></td></tr>
 <tr><td align="center" style="padding:32px 24px 0;font:16px/1.5 Georgia;color:#77746d;">Rooted in identity. Open to the world.</td></tr><tr><td align="center" style="padding:14px 24px 0;font:11px/1.6 Arial;color:#96928b;">Connect with us<br><a href="https://www.instagram.com/rivermindstyle_/" style="color:#77746d;text-decoration:none;">@rivermindstyle_</a></td></tr><tr><td align="center" style="padding:24px 40px 28px;"><div style="border-top:1px solid #dedbd5;padding-top:18px;font:10px/1.8 Arial;color:#96928b;">© ${new Date().getFullYear()} RIVERMINDSTYLE. All rights reserved.<br><a href="${escapeHtml(base)}" style="color:#77746d;text-decoration:none;">rivermindstyle.com</a></div></td></tr></table><!--[if mso]></td></tr></table><![endif]--></td></tr></table></body></html>`,
@@ -206,7 +249,7 @@ export function verificationMessage({ name, code, storefrontUrl }) {
 <tr><td class="hero" height="240" align="center" valign="middle" background="cid:invitation-hero" bgcolor="#ecd8d7" role="img" aria-label="RIVERMINDSTYLE" style="height:240px;background-color:#ecd8d7;background-image:url('cid:invitation-hero');background-position:center;background-size:cover;background-repeat:no-repeat;">
 <!--[if gte mso 9]><v:rect xmlns:v="urn:schemas-microsoft-com:vml" fill="true" stroke="false" style="width:600px;height:240px;"><v:fill type="frame" src="cid:invitation-hero" color="#ecd8d7" aspect="atleast" /><v:textbox inset="0,0,0,0"><![endif]--><a href="${escapeHtml(base)}" aria-label="RIVERMINDSTYLE website" class="hero-link" style="display:block;height:240px;text-decoration:none;">&nbsp;</a><!--[if gte mso 9]></v:textbox></v:rect><![endif]--></td></tr>
 <tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td class="gutter" width="28" bgcolor="#ecd8d7">&nbsp;</td><td height="32" bgcolor="#ffffff">&nbsp;</td><td class="gutter" width="28" bgcolor="#ecd8d7">&nbsp;</td></tr><tr><td class="gutter" width="28">&nbsp;</td><td class="panel-padding" bgcolor="#ffffff" style="padding:0 32px 40px;">
-<p style="margin:0;font:9px Arial,sans-serif;font-weight:bold;letter-spacing:3px;text-align:center;color:#555149;">YOUR RMS</p><h1 class="headline" style="margin:12px 0 0;font:normal 34px/1.15 Georgia,'Times New Roman',serif;letter-spacing:-1px;color:#24231f;text-align:center;">Confirm it's you.</h1><div style="text-align:center;">${paragraph(detail)}${paragraph(`Hello ${safeName},`)}<p style="margin:28px 0 0;font:32px/1 Georgia,'Times New Roman',serif;letter-spacing:10px;text-align:center;color:#24231f;">${escapeHtml(code)}</p></div>
+<p style="margin:0;font:9px Arial,sans-serif;font-weight:bold;letter-spacing:3px;text-align:center;color:#555149;">YOUR RMS</p><h1 class="headline" style="margin:12px 0 0;font:normal 34px/1.15 Georgia,'Times New Roman',serif;letter-spacing:-1px;color:#24231f;text-align:center;">Confirm it's you.</h1><div style="text-align:center;">${paragraph(`Hello ${safeName},`)}${paragraph(detail)}<p style="margin:28px 0 0;font:32px/1 Georgia,'Times New Roman',serif;letter-spacing:10px;text-align:center;color:#24231f;">${escapeHtml(code)}</p></div>
 <table role="presentation" cellpadding="0" cellspacing="0" align="center" style="margin:28px auto 0;"><tr><td align="center" bgcolor="#4c2938"><a href="${escapeHtml(base)}" style="display:inline-block;padding:16px 32px;border:1px solid #4c2938;color:#fff;text-decoration:none;font:10px Arial;letter-spacing:2px;">VISIT RIVERMINDSTYLE</a></td></tr></table><p style="margin:22px 0 0;font:12px/1.7 Arial;color:#96928b;text-align:center;">Questions? Reply to this email. We’re here to help.</p></td><td class="gutter" width="28">&nbsp;</td></tr></table></td></tr>
 <tr><td align="center" style="padding:32px 24px 0;font:16px/1.5 Georgia;color:#77746d;">Rooted in identity. Open to the world.</td></tr><tr><td align="center" style="padding:14px 24px 0;font:11px/1.6 Arial;color:#96928b;">Connect with us<br><a href="https://www.instagram.com/rivermindstyle_/" style="color:#77746d;text-decoration:none;">@rivermindstyle_</a></td></tr><tr><td align="center" style="padding:24px 40px 28px;"><div style="border-top:1px solid #dedbd5;padding-top:18px;font:10px/1.8 Arial;color:#96928b;">© ${new Date().getFullYear()} RIVERMINDSTYLE. All rights reserved.<br><a href="${escapeHtml(base)}" style="color:#77746d;text-decoration:none;">rivermindstyle.com</a></div></td></tr></table><!--[if mso]></td></tr></table><![endif]--></td></tr></table></body></html>`,
   };

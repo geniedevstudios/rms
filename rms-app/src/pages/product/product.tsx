@@ -7,6 +7,7 @@ import { Link } from "../../routing/link";
 import { money } from "../../lib/format-currency";
 import { ProductPurchase } from "../../features/products/product-purchase/product-purchase";
 import { Plus, ArrowUpRight, ArrowRight } from "lucide-react";
+import { collectionForProduct, collectionTitle } from "../../data/collections";
 import { products } from "../../data/products";
 import { ProductCard } from "../../features/products/product-card/product-card";
 import { ProductGallery, productFrames } from "../../features/products/product-gallery/product-gallery";
@@ -18,6 +19,8 @@ export function ProductPage({ product }: { product: Product }) {
     setColourId(pieceColourways(product)[0]?.id ?? "");
   }, [product.id]);
   const colourway = ways.find((way) => way.id === colourId) ?? ways[0];
+  const collection = collectionForProduct(product.id);
+  const collectionName = collection ? collectionTitle(collection) : "";
   const onSize = () => openDialog({ type: "size-guide" });
   if (!colourway) return null;
   return (
@@ -39,7 +42,11 @@ export function ProductPage({ product }: { product: Product }) {
           label="THE FULL LOOK"
         />
         <div className="product-info">
-          <span className="eyebrow">THE BECOMING COLLECTION</span>
+          {collection && collectionName && (
+            <Link to={`/collection/${collection.id}`} className="eyebrow">
+              {collectionName}
+            </Link>
+          )}
           <div className="product-title">
             <h1>{product.name}</h1>
             {product.tag && <span className="name-label">{product.tag}</span>}

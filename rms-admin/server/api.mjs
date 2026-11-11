@@ -33,10 +33,13 @@ import { serialTask } from "./serial-task.mjs";
 import { acceptOrder, createOrderStore, orderStatuses } from "./orders.mjs";
 import {
   acceptConsultation,
+  approveConsultation,
   consultationStatuses,
   createConsultationStore,
+  rescheduleConsultation,
   sameBooking,
 } from "./consultations.mjs";
+import { attachOnlineMeeting, exchangeAuthCode, googleAuthUrl, storeRefreshToken } from "./calendar.mjs";
 const root = resolve(import.meta.dirname, "..");
 const types = {
   ".jpg": "image/jpeg",
@@ -130,6 +133,7 @@ export function createApi({
   onWorkerCreated = () => {},
   supabase = null,
   worker = true,
+  calendar = null,
 } = {}) {
   const adminEmail = String(email || "").trim().toLowerCase();
   const inviteOwner = "rivermindstyle.operations@gmail.com";
@@ -213,6 +217,7 @@ export function createApi({
   const checkoutAttempts = new Map();
   const accountAttempts = new Map();
   const newsletterAttempts = new Map();
+  const calendarStates = new Map();
   const send = (res, status, data) => {
     res.writeHead(status, {
       "Content-Type": "application/json",
@@ -288,6 +293,30 @@ export function createApi({
     const hostHeader = req.headers["x-forwarded-host"] || req.headers.host;
     const host = Array.isArray(hostHeader) ? hostHeader[0] : hostHeader;
     return `${proto}://${host}`;
+  }
+  function calendarRedirect(req) {
+    return `${publicOrigin(req)}/api/cms/calendar/callback`;
+  }
+  function takeCalendarState(state) {
+    const found = calendarStates.get(state);
+    calendarStates.delete(state);
+    if (!found || found.expires <= Date.now()) return null;
+    return found;
+  }
+  function calendarPage(res, status, message) {
+    const text = String(message)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;");
+    res.writeHead(status, {
+      "Content-Type": "text/html; charset=utf-8",
+      "Cache-Control": "no-store",
+      "Referrer-Policy": "no-referrer",
+      "X-Content-Type-Options": "nosniff",
+    });
+    res.end(
+      `<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Google Calendar</title></head><body><p>${text}</p><p><a href="/#/consultations">Back to the studio</a></p></body></html>`,
+    );
   }
   function requireOwner(session) {
     if (!canGiveAccess(session.email))
@@ -372,6 +401,33 @@ export function createApi({
         });
         if (req.method === "HEAD" || !upstream.body) return res.end();
         return await pipeline(Readable.fromWeb(upstream.body), res);
+      }
+      if (path === "/api/cms/calendar/callback" && req.method === "GET") {
+        const query = new URL(req.url, "http://localhost").searchParams;
+        if (query.get("error"))
+          return calendarPage(res, 400, "Google did not give calendar access.");
+        const code = query.get("code") || "";
+        const pending = takeCalendarState(query.get("state") || "");
+        if (!code || !pending)
+          return calendarPage(res, 400, "This calendar connection expired. Start it again from the studio.");
+        if (!calendar?.clientId)
+          return calendarPage(res, 503, "Add the Google OAuth client, then connect the calendar again.");
+        try {
+          calendar.refreshToken = await exchangeAuthCode(calendar, code, pending.redirectUri);
+          await storeRefreshToken(calendar.refreshToken);
+        } catch (error) {
+          return calendarPage(
+            res,
+            error.status || 502,
+            error.status ? error.message : "Google did not connect the studio calendar.",
+          );
+        }
+        res.writeHead(302, {
+          Location: "/#/consultations",
+          "Cache-Control": "no-store",
+          "Referrer-Policy": "no-referrer",
+        });
+        return res.end();
       }
       if (path === "/api/cms/published" && req.method === "GET") {
         const s = await store.read();
@@ -597,6 +653,32 @@ export function createApi({
         return send(res, 200, await beginSession(res, person.email));
       }
       if (!session) throw new HttpError(401, "Please sign in to continue.");
+      if (path === "/api/cms/calendar" && req.method === "GET")
+        return send(res, 200, {
+          ready: Boolean(calendar?.clientId && calendar?.clientSecret),
+          connected: Boolean(calendar?.refreshToken),
+        });
+      if (path === "/api/cms/calendar/connect" && req.method === "GET") {
+        requireOwner(session);
+        if (!calendar?.clientId || !calendar?.clientSecret)
+          throw new HttpError(503, "Add the Google OAuth client, then connect the calendar.");
+        const state = randomBytes(32).toString("base64url");
+        const redirectUri = calendarRedirect(req);
+        for (const [key, value] of calendarStates)
+          if (value.expires <= Date.now()) calendarStates.delete(key);
+        calendarStates.set(state, { redirectUri, expires: Date.now() + 10 * 60 * 1000 });
+        res.writeHead(302, {
+          Location: googleAuthUrl({
+            clientId: calendar.clientId,
+            redirectUri,
+            state,
+            loginHint: calendar.id,
+          }),
+          "Cache-Control": "no-store",
+          "Referrer-Policy": "no-referrer",
+        });
+        return res.end();
+      }
       if (path === "/api/cms/notifications" && req.method === "GET") return send(res, 200, await notifications.status());
       if (path === "/api/cms/orders" && req.method === "GET")
         return send(res, 200, await orderBook.list());
@@ -618,14 +700,18 @@ export function createApi({
       );
       if (consultMatch && req.method === "PATCH") {
         const body = await jsonBody(req);
-        if (body?.action === "approve") {
-          const saved = await consultations.approve(consultMatch[1], body.scheduledAt);
-          await notifications.event("consultation-confirmed", saved);
-          return send(res, 200, saved);
-        }
-        if (body?.action === "reschedule") {
-          const saved = await consultations.reschedule(consultMatch[1], body.scheduledAt);
-          await notifications.event("consultation-rescheduled", saved);
+        if (body?.action === "approve" || body?.action === "reschedule") {
+          const current = await consultations.find(consultMatch[1]);
+          const next =
+            body.action === "approve"
+              ? approveConsultation(current, body.scheduledAt)
+              : rescheduleConsultation(current, body.scheduledAt);
+          const booked = await attachOnlineMeeting(next, calendar);
+          const saved = await consultations.save(booked);
+          await notifications.event(
+            body.action === "approve" ? "consultation-confirmed" : "consultation-rescheduled",
+            saved,
+          );
           return send(res, 200, saved);
         }
         if (!consultationStatuses.includes(body?.status))

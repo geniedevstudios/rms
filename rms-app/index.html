@@ -15,13 +15,29 @@
         z-index: 300;
         display: grid;
         place-items: center;
-        background: #ecd8d7;
-        animation: intro-leave 0.9s cubic-bezier(0.76, 0, 0.24, 1) 1.45s forwards;
+        background: #fff;
+      }
+      .intro.is-leaving {
+        animation: intro-leave 0.9s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+      }
+      .intro-lockup {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        animation: intro-rise 1.05s cubic-bezier(0.16, 1, 0.36, 1) both;
       }
       .intro img {
-        width: min(520px, 78vw);
+        width: min(220px, 42vw);
         height: auto;
-        animation: intro-rise 1.05s cubic-bezier(0.16, 1, 0.36, 1) both;
+      }
+      .intro p {
+        margin: 22px 0 0;
+        color: #000;
+        font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+        font-size: clamp(18px, 3.4vw, 28px);
+        font-weight: 500;
+        letter-spacing: 0.22em;
+        line-height: 1;
       }
       @keyframes intro-rise {
         from {
@@ -46,12 +62,10 @@
   </head>
   <body>
     <div class="intro" id="intro">
-      <img
-        src="/intro-logo.jpg"
-        alt="RIVERMINDSTYLE"
-        width="606"
-        height="372"
-      />
+      <div class="intro-lockup">
+        <img src="/intro-mark.png" alt="" width="970" height="840" />
+        <p>RIVERMINDSTYLE</p>
+      </div>
     </div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>

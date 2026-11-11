@@ -24,6 +24,7 @@ type Consultation = {
   rescheduled?: boolean;
   fee?: number;
   paid?: boolean;
+  meetLink?: string;
 };
 
 const stages: { id: ConsultationStatus; label: string }[] = [
@@ -57,6 +58,7 @@ export function StudioConsultations() {
   const [slot, setSlot] = useState("");
   const [saving, setSaving] = useState(false);
   const [problem, setProblem] = useState("");
+  const [calendar, setCalendar] = useState<{ ready: boolean; connected: boolean } | null>(null);
 
   useEffect(() => {
     let stop = false;
@@ -77,6 +79,11 @@ export function StudioConsultations() {
       }
     }
     void load();
+    void api<{ ready: boolean; connected: boolean }>("calendar")
+      .then((next) => {
+        if (!stop) setCalendar(next);
+      })
+      .catch(() => {});
     const timer = window.setInterval(() => void load(), 20000);
     return () => {
       stop = true;
@@ -120,6 +127,17 @@ export function StudioConsultations() {
         title="Appointments, as they arrive."
         description="See each request, the piece they have in mind, and where you are with it."
       />
+      {calendar && !calendar.connected && (
+        <p className="order-empty">
+          {calendar.ready ? (
+            <a className="button" href="/api/cms/calendar/connect">
+              Connect Google Calendar
+            </a>
+          ) : (
+            "Add the Google OAuth client in the studio environment, then connect the calendar."
+          )}
+        </p>
+      )}
       {problem && !open && <p className="error">{problem}</p>}
       {!items.length ? (
         <section className="panel">
@@ -209,6 +227,11 @@ export function StudioConsultations() {
                 <span>{open.email}</span>
                 <span>{open.phone}</span>
                 <span>{open.meeting}</span>
+                {open.meetLink && (
+                  <a href={open.meetLink} target="_blank" rel="noopener noreferrer">
+                    Join the Google meeting
+                  </a>
+                )}
               </section>
             </div>
             <section className="appointment-card appointment-day">

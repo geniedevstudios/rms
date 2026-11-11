@@ -3,7 +3,6 @@ import { type FormEvent, useEffect, useRef, useState } from "react";
 import { useWishlist } from "../wishlist/wishlist.context";
 import { useOrders } from "../orders/orders.context";
 import { useAccount } from "./account.context";
-import { useDialogs } from "../../components/dialogs/dialogs.context";
 import { Heart, Package, ArrowRight, ArrowLeft } from "lucide-react";
 import { Link } from "../../routing/link";
 
@@ -13,7 +12,6 @@ export function Account() {
   const { saved } = useWishlist();
   const { orders } = useOrders();
   const { customer, signup, login, verify, resend, logout } = useAccount();
-  const { openDialog } = useDialogs();
   const [mode, setMode] = useState<AuthMode | null>(null);
   const [revealed, setRevealed] = useState(false);
   const [pendingEmail, setPendingEmail] = useState("");
@@ -202,12 +200,9 @@ export function Account() {
               ? `Hello, ${customer.givenName}. Your saved pieces, bag, and orders are here.`
               : "Your saved pieces and orders are here. Sign in, or create an account, when you are ready."}
           </p>
-          <button
-            className="button outline full"
-            onClick={() => openDialog({ type: "wishlist" })}
-          >
+          <Link to="/saved" className="button outline full">
             View saved pieces ({saved.length}) <Heart size={16} />
-          </button>
+          </Link>
           <Link to="/orders" className="button outline full">
             Your orders ({orders.length}) <Package size={16} />
           </Link>

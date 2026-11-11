@@ -238,7 +238,8 @@ export function Collections() {
               <h3>Pieces in this collection</h3>
               <p className="muted">
                 Choose from your saved ready-to-wear products in the order
-                you’d like them to appear. Draft products appear on the
+                you’d like them to appear. A piece already in another
+                collection stays there. Draft products appear on the
                 storefront only after they are made active and published.
                 Made-to-order designs are managed separately.
               </p>
@@ -248,33 +249,49 @@ export function Collections() {
                 </p>
               )}
               <div className="product-checklist">
-                {content.products.map((p) => (
-                  <label key={p.id}>
-                    <input
-                      type="checkbox"
-                      checked={editing.productIds.includes(p.id)}
-                      onChange={(e) =>
-                        patch({
-                          productIds: e.target.checked
-                            ? [...editing.productIds, p.id]
-                            : editing.productIds.filter((id) => id !== p.id),
-                        })
-                      }
-                    />
-                    <Thumb src={p.image} />
-                    <span>
-                      {p.name}
-                      <small>
-                        {p.category}{p.status === "draft" ? " · Draft" : ""}
-                      </small>
-                    </span>
-                    {editing.productIds.includes(p.id) && (
-                      <span className="count">
-                        {editing.productIds.indexOf(p.id) + 1}
+                {content.products.map((p) => {
+                  const home = content.collections.find(
+                    (collection) =>
+                      collection.id !== original &&
+                      collection.productIds.includes(p.id),
+                  );
+                  const selected = editing.productIds.includes(p.id);
+                  const taken = Boolean(home) && !selected;
+                  const homeName = home
+                    ? home.title.map((line) => line.text.trim()).filter(Boolean).join(" ") || home.label
+                    : "";
+                  return (
+                    <label key={p.id} className={taken ? "is-taken" : undefined}>
+                      <input
+                        type="checkbox"
+                        checked={selected}
+                        disabled={taken}
+                        onChange={(e) => {
+                          if (taken) return;
+                          patch({
+                            productIds: e.target.checked
+                              ? [...editing.productIds, p.id]
+                              : editing.productIds.filter((id) => id !== p.id),
+                          });
+                        }}
+                      />
+                      <Thumb src={p.image} />
+                      <span>
+                        {p.name}
+                        <small>
+                          {p.category}
+                          {p.status === "draft" ? " · Draft" : ""}
+                          {taken ? ` · In ${homeName}` : ""}
+                        </small>
                       </span>
-                    )}
-                  </label>
-                ))}
+                      {selected && (
+                        <span className="count">
+                          {editing.productIds.indexOf(p.id) + 1}
+                        </span>
+                      )}
+                    </label>
+                  );
+                })}
               </div>
             </div>
           </div>

@@ -212,6 +212,74 @@ main > .about-hero:first-child > div {
 .studio-map .leaflet-control-attribution {
   display: none;
 }
+.studio-pin-card .leaflet-popup-content-wrapper {
+  padding: 0;
+  border-radius: 2px;
+  background: #fff;
+  color: #1a1a1a;
+  box-shadow: 0 16px 40px rgba(28, 24, 20, 0.22);
+}
+.studio-pin-card .leaflet-popup-content {
+  margin: 0;
+  width: 260px !important;
+}
+.studio-pin-card .leaflet-popup-tip {
+  background: #fff;
+}
+.studio-pin-card .leaflet-popup-close-button {
+  top: 12px;
+  right: 12px;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  font-size: 18px;
+  line-height: 22px;
+  color: #8a847c;
+}
+.studio-pin-details {
+  padding: 22px 36px 20px 22px;
+}
+.studio-pin-details h3 {
+  margin: 0 0 8px;
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 26px;
+  font-weight: 500;
+  letter-spacing: -0.4px;
+}
+.studio-pin-card .leaflet-popup-content p {
+  margin: 0;
+}
+.studio-pin-details .eyebrow {
+  margin-bottom: 14px;
+  color: #8a847c;
+}
+.studio-pin-details address {
+  font-style: normal;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #3c3834;
+}
+.studio-pin-hours {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid #ece7e1;
+}
+.studio-pin-hours .eyebrow {
+  margin-bottom: 6px;
+}
+.studio-pin-card .studio-pin-hours p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #5c564f;
+}
+.studio-pin-card .studio-pin-hours p + p {
+  margin-top: 2px;
+}
+.studio-pin-details .text-link {
+  margin-top: 18px;
+  color: #1a1a1a;
+}
 @media (max-width: 760px) {
   .about-hero {
     grid-template-columns: 1fr;

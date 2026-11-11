@@ -26,4 +26,5 @@ export type Product = {
   tag?: string;
   leadDays?: number;
   newArrival?: boolean;
+  bestSeller?: boolean;
 };

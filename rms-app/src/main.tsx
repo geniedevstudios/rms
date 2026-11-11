@@ -9,7 +9,7 @@ import "@fontsource/playfair-display/600.css";
 import "@fontsource/playfair-display/400-italic.css";
 import "./styles/global.css";
 import { loadPublishedContent, watchPublishedContent } from "./content/content";
-import { watchIntro } from "./intro";
+import { revealIntro, watchIntro } from "./intro";
 
 watchIntro();
 
@@ -20,5 +20,6 @@ async function mountStorefront() {
   ReactDOM.createRoot(document.getElementById("root")!).render(
     <React.StrictMode><App /></React.StrictMode>,
   );
+  revealIntro();
 }
 void mountStorefront();

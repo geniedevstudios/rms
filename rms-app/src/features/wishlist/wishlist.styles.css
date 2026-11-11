@@ -1,3 +1,11 @@
+.saved-page .page-intro {
+  padding-bottom: 20px;
+}
+.saved-page .saved-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 25px;
+  padding: 0 0 80px;
+}
 .saved-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -12,4 +20,11 @@
   position: static;
   transform: none;
   width: 100%;
+}
+@media (max-width: 760px) {
+  .saved-page .saved-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 28px 14px;
+    padding-bottom: 40px;
+  }
 }

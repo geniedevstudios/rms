@@ -42,7 +42,7 @@ export function Catalog({
             fabric: "",
             status: "draft",
             availableSizes: [],
-            ...(custom ? { leadDays: 21 } : { newArrival: false }),
+            ...(custom ? { leadDays: 21 } : { newArrival: false, bestSeller: false }),
           },
     );
   }
@@ -85,8 +85,13 @@ export function Catalog({
         availableSizes: lead.availableSizes,
         stock: lead.stock,
       };
-      if (custom) delete saved.newArrival;
-      else saved.newArrival = Boolean(editing.newArrival);
+      if (custom) {
+        delete saved.newArrival;
+        delete saved.bestSeller;
+      } else {
+        saved.newArrival = Boolean(editing.newArrival);
+        saved.bestSeller = Boolean(editing.bestSeller);
+      }
       if (original) c[key] = c[key].map(p => p.id === original ? saved : p);
       else c[key].push(saved);
     });
@@ -223,6 +228,9 @@ export function Catalog({
                   {!custom && p.newArrival && (
                     <span className="badge">New arrival</span>
                   )}
+                  {!custom && p.bestSeller && (
+                    <span className="badge">Best seller</span>
+                  )}
                 </td>
                 <td>
                   <button
@@ -323,14 +331,24 @@ export function Catalog({
                 </Field>
               )}
               {!custom && (
-                <label className="checkbox arrival-choice">
-                  <input
-                    type="checkbox"
-                    checked={Boolean(editing.newArrival)}
-                    onChange={(e) => patch({ newArrival: e.target.checked })}
-                  />
-                  New arrival — header menu and the New arrivals page
-                </label>
+                <div className="piece-flags">
+                  <label className="checkbox">
+                    <input
+                      type="checkbox"
+                      checked={Boolean(editing.newArrival)}
+                      onChange={(e) => patch({ newArrival: e.target.checked })}
+                    />
+                    New arrival — header menu and the New arrivals page
+                  </label>
+                  <label className="checkbox">
+                    <input
+                      type="checkbox"
+                      checked={Boolean(editing.bestSeller)}
+                      onChange={(e) => patch({ bestSeller: e.target.checked })}
+                    />
+                    Best seller — the Best sellers section on the homepage
+                  </label>
+                </div>
               )}
               <Field label="Availability">
                 <SelectMenu
