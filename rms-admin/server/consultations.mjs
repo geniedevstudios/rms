@@ -199,7 +199,15 @@ export function createConsultationStore(directory) {
 
   return {
     list() {
-      return mutate(async () => (await read()).filter((item) => item.paid !== false));
+      return mutate(async () =>
+        (await read())
+          .filter((item) => item.paid !== false)
+          .sort(
+            (a, b) =>
+              (Date.parse(b.requestedAt || b.date) || 0) -
+              (Date.parse(a.requestedAt || a.date) || 0),
+          ),
+      );
     },
     find(id) {
       return mutate(async () => (await read()).find((item) => item.id === id) || null);

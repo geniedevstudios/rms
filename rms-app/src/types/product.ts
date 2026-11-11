@@ -27,4 +27,5 @@ export type Product = {
   leadDays?: number;
   newArrival?: boolean;
   bestSeller?: boolean;
+  featured?: boolean;
 };

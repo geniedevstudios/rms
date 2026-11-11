@@ -42,7 +42,7 @@ export function Catalog({
             fabric: "",
             status: "draft",
             availableSizes: [],
-            ...(custom ? { leadDays: 21 } : { newArrival: false, bestSeller: false }),
+            ...(custom ? { leadDays: 21 } : { newArrival: false, bestSeller: false, featured: false }),
           },
     );
   }
@@ -88,16 +88,18 @@ export function Catalog({
       if (custom) {
         delete saved.newArrival;
         delete saved.bestSeller;
+        delete saved.featured;
       } else {
         saved.newArrival = Boolean(editing.newArrival);
         saved.bestSeller = Boolean(editing.bestSeller);
+        saved.featured = Boolean(editing.featured);
       }
       if (original) c[key] = c[key].map(p => p.id === original ? saved : p);
       else c[key].push(saved);
     });
     setEditing(null);
   }
-  const visible = list.filter(
+  const visible = [...list].reverse().filter(
     (p) =>
       (category === "All categories" || p.category === category) &&
       `${p.name} ${(p.colourways ?? [{ color: p.color }]).map((way) => way.color).join(" ")}`.toLowerCase().includes(query.toLowerCase()),
@@ -231,6 +233,9 @@ export function Catalog({
                   {!custom && p.bestSeller && (
                     <span className="badge">Best seller</span>
                   )}
+                  {!custom && p.featured && (
+                    <span className="badge">Featured</span>
+                  )}
                 </td>
                 <td>
                   <button
@@ -347,6 +352,14 @@ export function Catalog({
                       onChange={(e) => patch({ bestSeller: e.target.checked })}
                     />
                     Best seller — the Best sellers section on the homepage
+                  </label>
+                  <label className="checkbox">
+                    <input
+                      type="checkbox"
+                      checked={Boolean(editing.featured)}
+                      onChange={(e) => patch({ featured: e.target.checked })}
+                    />
+                    Feature on homepage — the row above Find your expression
                   </label>
                 </div>
               )}

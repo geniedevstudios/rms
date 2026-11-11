@@ -113,6 +113,26 @@ export function Home() {
           )}
         </div>
       </section>
+      {products.some((product) => product.featured) && (
+        <section className="section featured-pieces" id="featured">
+          <div className="section-heading">
+            <div>
+              <span className="eyebrow">FEATURED</span>
+              <h2>From the studio</h2>
+            </div>
+            <Link to="/shop" className="text-link">
+              Explore our shop <ArrowRight size={15} />
+            </Link>
+          </div>
+          <div className="product-grid">
+            {products
+              .filter((product) => product.featured)
+              .map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+          </div>
+        </section>
+      )}
       <section className="section category-section">
         <div className="section-heading">
           <div>

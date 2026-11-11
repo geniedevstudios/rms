@@ -80,7 +80,9 @@ export function MediaPicker({
 }) {
   const { state } = useContent();
   const [query, setQuery] = useState("");
-  const assets = state.media.filter(
+  const assets = [...state.media]
+    .sort((a, b) => (Date.parse(b.createdAt) || 0) - (Date.parse(a.createdAt) || 0))
+    .filter(
     (m) =>
       (!kind || m.type === kind) &&
       m.name.toLowerCase().includes(query.toLowerCase()),

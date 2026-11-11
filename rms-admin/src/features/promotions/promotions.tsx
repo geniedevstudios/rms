@@ -53,7 +53,7 @@ export function Promotions() {
       <div className="promotion-section-heading"><div><span className="eyebrow">01 / THE OFFER</span><h2>Promo codes</h2><p className="muted">One code per order, across ready-to-wear and made-to-order pieces.</p></div>
         <button className="button" onClick={() => edit()}><Plus size={16} /> Create code</button></div>
       {!settings.codes.length ? <Empty title="Your first offer starts here." description="Create a percentage or fixed-amount discount for checkout." /> :
-        <div className="promotion-code-list">{settings.codes.map(code => {
+        <div className="promotion-code-list">{[...settings.codes].reverse().map(code => {
           const expired = !!code.expiresOn && code.expiresOn < new Date().toISOString().slice(0, 10);
           return <div className="promotion-code" key={code.code}>
             <div><strong>{code.code}</strong><p>{code.type === "percentage" ? `${code.value}%` : `GH₵ ${code.value.toFixed(2)}`} off{code.minimumSpend ? ` · Spend GH₵ ${code.minimumSpend.toFixed(2)}` : " · No minimum spend"}</p><small>{code.expiresOn ? `Expires ${code.expiresOn} at the end of the day (Ghana time)` : "No expiry date"}</small></div>

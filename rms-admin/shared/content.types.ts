@@ -37,6 +37,7 @@ export type Product = {
   leadDays?: number;
   newArrival?: boolean;
   bestSeller?: boolean;
+  featured?: boolean;
   status: "active" | "draft";
 };
 export type Journal = {

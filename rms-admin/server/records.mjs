@@ -273,7 +273,9 @@ export function createRecords(client) {
           .select("id, placed_at, email, name, phone, status, total, paid, items, address, record")
           .order("placed_at", { ascending: false });
         if (error) throw unavailable(error);
-        return (data || []).map(orderFrom);
+        return (data || [])
+          .map(orderFrom)
+          .sort((a, b) => (Date.parse(b.date) || 0) - (Date.parse(a.date) || 0));
       },
       async record(order) {
         const { data: existing, error: readError } = await client
@@ -329,7 +331,14 @@ export function createRecords(client) {
           .select(consultationColumns)
           .order("date", { ascending: false });
         if (error) throw unavailable(error);
-        return (data || []).map(consultationFrom).filter((item) => item.paid !== false);
+        return (data || [])
+          .map(consultationFrom)
+          .filter((item) => item.paid !== false)
+          .sort(
+            (a, b) =>
+              (Date.parse(b.requestedAt || b.date) || 0) -
+              (Date.parse(a.requestedAt || a.date) || 0),
+          );
       },
       async find(id) {
         const { data, error } = await client

@@ -21,7 +21,9 @@ export function MediaLibrary() {
   const [alt, setAlt] = useState("");
   const [busy, setBusy] = useState(false);
   const [confirm, setConfirm] = useState(false);
-  const assets = state.media.filter(
+  const assets = [...state.media]
+    .sort((a, b) => (Date.parse(b.createdAt) || 0) - (Date.parse(a.createdAt) || 0))
+    .filter(
     (m) =>
       (filter === "all" || m.type === filter) &&
       m.name.toLowerCase().includes(query.toLowerCase()),

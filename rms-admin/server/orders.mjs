@@ -108,7 +108,11 @@ export function createOrderStore(directory) {
   }
 
   return {
-    list: read,
+    list() {
+      return read().then((orders) =>
+        [...orders].sort((a, b) => (Date.parse(b.date) || 0) - (Date.parse(a.date) || 0)),
+      );
+    },
     record(order) { return mutate(async () => {
       const orders = await read();
       const existing = orders.find((entry) => entry.id === order.id);

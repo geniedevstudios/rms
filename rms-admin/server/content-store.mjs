@@ -238,6 +238,10 @@ export function validateContent(c, media) {
       "Choose whether a piece is a best seller.",
     );
     check(
+      p.featured === undefined || typeof p.featured === "boolean",
+      "Choose whether a piece is featured on the homepage.",
+    );
+    check(
       p.image && image(p.image) && image(p.hoverImage),
       "Product photography must be images.",
     );

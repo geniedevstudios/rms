@@ -127,7 +127,7 @@ export function Collections() {
         }
       />
       <div className="collection-cards">
-        {content.collections.map((c) => (
+        {[...content.collections].reverse().map((c) => (
           <section className="panel collection-tile" key={c.id}>
             <Thumb src={c.image} alt={c.imageAlt} />
             <div>
