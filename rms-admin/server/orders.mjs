@@ -129,6 +129,14 @@ export function createOrderStore(directory) {
       order.stockTaken = true;
       await write(orders);
     }); },
+    update(order) { return mutate(async () => {
+      const orders = await read();
+      const index = orders.findIndex((entry) => entry.id === order.id);
+      if (index === -1) throw new HttpError(404, "That order is not in the studio.");
+      orders[index] = order;
+      await write(orders);
+      return order;
+    }); },
     setStatus(id, status) { return mutate(async () => {
       const orders = await read();
       const order = orders.find((entry) => entry.id === id);

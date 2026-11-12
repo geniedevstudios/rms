@@ -202,9 +202,25 @@ export function notificationMessage(
       .filter(Boolean)
       .join(", ");
     if (address) lines.push(`Deliver to: ${address}`);
+    if (record.shipping?.carrier)
+      lines.push(
+        `Delivery: ${record.shipping.carrier}${record.shipping.service ? ` · ${record.shipping.service}` : ""} · ${money(record.shipping.cedis)}`,
+      );
+    if (record.shipping?.trackingNumber)
+      lines.push(
+        `Tracking: ${record.shipping.trackingNumber}${record.shipping.trackingUrl ? ` ${record.shipping.trackingUrl}` : ""}`,
+      );
     if (admin && record.note) lines.push(`Note: ${record.note}`);
     const deliveryNote = admin && record.note ? paragraph(`Note: ${record.note}`) : "";
-    details = `<table role="presentation" width="100%" style="margin-top:22px;"><tr><td style="font:12px Arial;color:#77746d;">TOTAL PAID</td><td align="right" style="font:24px Georgia;color:#4c2938;">${money(record.total)}</td></tr></table>${address || deliveryNote ? `<div style="margin-top:24px;padding:20px;background:#f7f6f4;text-align:left;">${address ? `<p style="margin:0;font:9px Arial;letter-spacing:2px;color:#8a7d80;">DELIVER TO</p>${paragraph(record.name)}${paragraph(address)}` : ""}${deliveryNote}</div>` : ""}`;
+    const carrier = record.shipping?.carrier
+      ? paragraph(`Delivery: ${record.shipping.carrier}${record.shipping.service ? ` · ${record.shipping.service}` : ""} · ${money(record.shipping.cedis)}`)
+      : "";
+    const tracking = record.shipping?.trackingNumber
+      ? record.shipping.trackingUrl
+        ? `<p style="margin:14px 0 0;font:14px/1.7 Arial,Helvetica,sans-serif;"><a href="${escapeHtml(record.shipping.trackingUrl)}" style="color:#4c2938;">Track ${escapeHtml(record.shipping.trackingNumber)}</a></p>`
+        : paragraph(`Tracking: ${record.shipping.trackingNumber}`)
+      : "";
+    details = `<table role="presentation" width="100%" style="margin-top:22px;"><tr><td style="font:12px Arial;color:#77746d;">TOTAL PAID</td><td align="right" style="font:24px Georgia;color:#4c2938;">${money(record.total)}</td></tr></table>${address || deliveryNote ? `<div style="margin-top:24px;padding:20px;background:#f7f6f4;text-align:left;">${address ? `<p style="margin:0;font:9px Arial;letter-spacing:2px;color:#8a7d80;">DELIVER TO</p>${paragraph(record.name)}${paragraph(address)}` : ""}${carrier}${tracking}${deliveryNote}</div>` : ""}`;
   }
   if (kind === "order" && record.discount)
     details = paragraph(`Subtotal: ${money(record.subtotal)} · Discount (${record.promoCode}): −${money(record.discount)}`) + details;

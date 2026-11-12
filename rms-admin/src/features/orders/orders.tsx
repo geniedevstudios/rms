@@ -11,7 +11,7 @@ type StudioOrder = {
   email: string;
   name: string;
   phone: string;
-  address: { street: string; city: string; country: string };
+  address: { street: string; city: string; country: string; state?: string; zip?: string };
   note?: string;
   items: {
     productId: string;
@@ -27,6 +27,16 @@ type StudioOrder = {
   discount?: number;
   promoCode?: string;
   status: OrderStatus;
+  shipping?: {
+    carrier?: string;
+    service?: string;
+    cedis?: number;
+    trackingNumber?: string;
+    trackingUrl?: string;
+    labelUrl?: string;
+    status?: string;
+    error?: string;
+  };
 };
 
 const stages: { id: OrderStatus; label: string }[] = [
@@ -216,6 +226,12 @@ export function StudioOrders() {
                   </div>
                 ))}
                 {!!open.discount && <div className="order-total"><span>Discount · {open.promoCode}</span><span>−{money(open.discount)}</span></div>}
+                {!!open.shipping?.cedis && (
+                  <div className="order-total">
+                    <span>Delivery · {open.shipping.carrier}</span>
+                    <span>{money(open.shipping.cedis)}</span>
+                  </div>
+                )}
                 <div className="order-total">
                   <span>Total</span>
                   <strong>{money(open.total)}</strong>
@@ -228,9 +244,30 @@ export function StudioOrders() {
                   <span>{open.email}</span>
                   <span>{open.phone}</span>
                   <span>
-                    {open.address.street}, {open.address.city},{" "}
+                    {open.address.street}, {open.address.city}
+                    {open.address.state ? `, ${open.address.state}` : ""}
+                    {open.address.zip ? ` ${open.address.zip}` : ""},{" "}
                     {open.address.country}
                   </span>
+                  {open.shipping?.carrier && (
+                    <span>
+                      {open.shipping.carrier}
+                      {open.shipping.service ? ` · ${open.shipping.service}` : ""}
+                    </span>
+                  )}
+                  {open.shipping?.trackingUrl && (
+                    <a href={open.shipping.trackingUrl} target="_blank" rel="noopener noreferrer">
+                      Track {open.shipping.trackingNumber || "the parcel"}
+                    </a>
+                  )}
+                  {open.shipping?.labelUrl && (
+                    <a href={open.shipping.labelUrl} target="_blank" rel="noopener noreferrer">
+                      Open the label
+                    </a>
+                  )}
+                  {open.shipping?.status === "unbought" && open.shipping.error && (
+                    <span>{open.shipping.error}</span>
+                  )}
                 </section>
                 <section
                   className={`order-card order-note${open.note ? "" : " is-empty"}`}

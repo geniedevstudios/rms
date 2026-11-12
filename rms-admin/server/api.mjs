@@ -40,6 +40,7 @@ import {
   sameBooking,
 } from "./consultations.mjs";
 import { attachOnlineMeeting, exchangeAuthCode, googleAuthUrl, storeRefreshToken } from "./calendar.mjs";
+import { createShippo, shippingCountries } from "./shippo.mjs";
 const root = resolve(import.meta.dirname, "..");
 const types = {
   ".jpg": "image/jpeg",
@@ -134,6 +135,7 @@ export function createApi({
   supabase = null,
   worker = true,
   calendar = null,
+  shippo = null,
 } = {}) {
   const adminEmail = String(email || "").trim().toLowerCase();
   const inviteOwner = "rivermindstyle.operations@gmail.com";
@@ -168,7 +170,7 @@ export function createApi({
   const admins = createAdminStore(directory, adminEmail, records?.admins ?? null);
   const orderBook = records?.orders ?? createOrderStore(directory);
   const consultations = records?.consultations ?? createConsultationStore(directory);
-  const notifications = createNotifications({ directory, config: { ...notificationsConfig, apiKey: mail?.apiKey, from: mail?.from, adminEmail: notificationsConfig.adminEmail || adminEmail }, contentStore: store, orderBook, remote: records?.mail ?? null });
+  const notifications = createNotifications({ directory, config: { ...notificationsConfig, apiKey: mail?.apiKey, from: mail?.from, adminEmail: notificationsConfig.adminEmail || adminEmail }, contentStore: store, orderBook, remote: records?.mail ?? null, shippo });
   const secureCookie = process.env.COOKIE_SECURE === "true" || process.env.VERCEL === "1" ? "; Secure" : "";
   if (worker) {
     const notificationTimer = setInterval(() => { void notifications.tick().catch((error) => console.error("RMS email worker could not finish. Pending messages will retry.", error?.stack || error?.message || error)); }, 10000);
@@ -552,6 +554,13 @@ export function createApi({
           return send(res, 200, saved);
         }
         return send(res, 200, existing);
+      }
+      if (path === "/api/cms/shipping/countries" && req.method === "GET")
+        return send(res, 200, { countries: shippingCountries() });
+      if (path === "/api/cms/shipping/rates" && req.method === "POST") {
+        guard(checkoutAttempts, req.socket.remoteAddress, 40);
+        if (!shippo?.enabled) throw new HttpError(503, "Delivery prices are not available yet.");
+        return send(res, 200, { rates: await shippo.rates(await jsonBody(req)) });
       }
       if (path === "/api/cms/checkouts" && req.method === "POST") {
         guard(checkoutAttempts, req.socket.remoteAddress, 120);

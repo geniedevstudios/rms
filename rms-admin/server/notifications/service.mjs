@@ -5,6 +5,7 @@ import { HttpError } from "../content-store.mjs";
 import { serialTask } from "../serial-task.mjs";
 import { buildNotificationMessage } from "./message.mjs";
 import { quoteCheckout } from "../promotions.mjs";
+import { countryCode, countryName } from "../shippo.mjs";
 import { consultationFee } from "../consultations.mjs";
 import { readJsonIfPresent } from "../studio-db.mjs";
 const HOUR = 3600000;
@@ -73,6 +74,7 @@ export function createNotifications({
   remote = null,
   fetchImpl = fetch,
   now = () => Date.now(),
+  shippo = null,
 }) {
   const file = resolve(directory, "notifications.json");
   const serial = serialTask();
@@ -209,7 +211,9 @@ export function createNotifications({
         // Recheck offers before starting payment; initiated payments keep their quoted amount.
         const { published } = await contentStore.read();
         const current = quoteCheckout(published, order, now());
-        if (current.total !== order.total || now() - order.updated > 15 * 60000)
+        const delivery = Math.round(Number(order.shipping?.cedis || 0) * 100);
+        const total = (Math.round(current.total * 100) + delivery) / 100;
+        if (total !== order.total || now() - order.updated > 15 * 60000)
           throw new HttpError(400, "Your checkout has changed. Review your bag and try again.");
         if (order.total <= 0) throw new HttpError(400, "Add pieces to your bag.");
         const response = await fetchImpl("https://api.paystack.co/transaction/initialize", {
@@ -273,7 +277,29 @@ export function createNotifications({
           402,
           "Payment has not been confirmed for this order.",
         );
-      const saved = await serial(async () => persistOrder(await read(), order));
+      let saved = await serial(async () => persistOrder(await read(), order));
+      if (saved.shipping?.rateId && shippo?.enabled) {
+        try {
+          const label = await shippo.buy(saved.shipping.rateId);
+          saved = { ...saved, shipping: { ...saved.shipping, ...label } };
+        } catch (error) {
+          saved = {
+            ...saved,
+            shipping: {
+              ...saved.shipping,
+              status: "unbought",
+              error: error.status ? error.message : "The delivery label could not be bought.",
+            },
+          };
+        }
+        if (typeof orderBook.update === "function") {
+          try {
+            saved = await orderBook.update(saved);
+          } catch {
+            /* The paid order is already recorded. */
+          }
+        }
+      }
       void service.tick({ deliverOnly: true }).catch(() => {});
       return saved;
     },
@@ -350,6 +376,21 @@ export function createNotifications({
           throw new HttpError(400, "Enter a valid email.");
         const { published } = await contentStore.read();
         const quote = quoteCheckout(published, body, now());
+        const destination = body.address || {};
+        const code = countryCode(destination.country);
+        let shipping = null;
+        if (body.reference && !code) throw new HttpError(400, "Choose a delivery country.");
+        if (code && code !== "GH") {
+          if (!body.reference) {
+            /* A draft can be saved before a carrier is chosen. */
+          } else if (!shippo?.enabled) {
+            throw new HttpError(503, "Delivery prices are not available yet.");
+          } else {
+            shipping = shippo.quoted(body.rateId, destination, quote.items.reduce((sum, item) => sum + item.quantity, 0));
+            if (!shipping) throw new HttpError(400, "Choose a delivery option again.");
+          }
+        }
+        const total = (Math.round(quote.total * 100) + Math.round(Number(shipping?.cedis || 0) * 100)) / 100;
         if (body.reference && !/^RMS-[A-Z0-9]{8,24}$/.test(body.reference))
           throw new HttpError(400, "Invalid payment reference.");
         if (body.reference && data.checkouts.some(c => c.references?.some(a => a.reference === body.reference)))
@@ -372,13 +413,21 @@ export function createNotifications({
             city: String(
               body.address?.city ?? current?.address?.city ?? "",
             ).slice(0, 80),
-            country: String(
+            state: String(
+              body.address?.state ?? current?.address?.state ?? "",
+            ).slice(0, 80),
+            zip: String(
+              body.address?.zip ?? current?.address?.zip ?? "",
+            ).slice(0, 20),
+            country: countryName(code) || String(
               body.address?.country ?? current?.address?.country ?? "Ghana",
             ).slice(0, 80),
           },
           note: String(body.note ?? current?.note ?? "").slice(0, 500),
           reminderConsent: body.reminderConsent === true,
           ...quote,
+          total,
+          ...(shipping ? { shipping } : {}),
           updated: now(),
           cancelled: false,
         };
@@ -406,7 +455,7 @@ export function createNotifications({
           )
           .forEach((j) => (j.next = now() + 24 * HOUR));
         await write(data);
-        return { saved: true, subtotal: quote.subtotal, discount: quote.discount, total: quote.total, promoCode: quote.promoCode };
+        return { saved: true, subtotal: quote.subtotal, discount: quote.discount, total, promoCode: quote.promoCode, delivery: shipping?.cedis || 0 };
       });
     },
     recover(token) {

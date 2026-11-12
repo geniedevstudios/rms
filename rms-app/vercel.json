@@ -2,8 +2,6 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "rewrites": [
-    { "source": "/media/:path*", "destination": "/api/proxy?forward=/media/:path*" },
-    { "source": "/uploads/:path*", "destination": "/api/proxy?forward=/uploads/:path*" },
     { "source": "/api/cms/:path*", "destination": "/api/proxy?forward=/api/cms/:path*" },
     { "source": "/((?!api/|assets/).*)", "destination": "/index.html" }
   ]

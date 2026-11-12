@@ -30,6 +30,7 @@ export function saveCheckout(
   items: CartItem[],
   reference?: string,
   promoCode = "",
+  rateId = "",
 ) {
   clearTimeout(pendingDrafts.get(form));
   const data = new FormData(form);
@@ -41,8 +42,11 @@ export function saveCheckout(
     address: {
       street: String(data.get("street-address") || ""),
       city: String(data.get("address-level2") || ""),
-      country: String(data.get("country") || "Ghana"),
+      state: String(data.get("address-level1") || ""),
+      zip: String(data.get("postal-code") || ""),
+      country: String(data.get("country") || "GH"),
     },
+    rateId,
     note: String(data.get("note") || ""),
     reminderConsent: data.get("reminderConsent") === "on",
     items,

@@ -3,10 +3,12 @@ import { resolve } from "node:path";
 import { createApi, serveFile } from "./api.mjs";
 import { cloudinaryConfig } from "./cloudinary.mjs";
 import { calendarConfig } from "./calendar.mjs";
+import { createShippo } from "./shippo.mjs";
 const api = createApi({
   production: true,
   cloudinary: cloudinaryConfig(),
   calendar: calendarConfig(),
+  shippo: createShippo(),
   supabase: {
     url: process.env.SUPABASE_URL,
     secret: process.env.SUPABASE_SECRET_KEY,

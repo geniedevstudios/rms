@@ -7,7 +7,7 @@ import {
 } from "../../features/checkout-followup/checkout-followup";
 import "./checkout.styles.css";
 import { PromoCodeField, usePromoCode } from "../../features/promotions/promo-code";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useCart } from "../../features/cart/cart.context";
 import { useOrders } from "../../features/orders/orders.context";
 import { go } from "../../routing/navigation";
@@ -27,6 +27,12 @@ import {
 export function Checkout() {
   useEffect(() => {
     void preparePaystack().catch(() => undefined);
+    void fetch("/api/cms/shipping/countries")
+      .then((response) => (response.ok ? response.json() : null))
+      .then((body: { countries?: { code: string; name: string }[] } | null) => {
+        if (body?.countries?.length) setCountries(body.countries);
+      })
+      .catch(() => undefined);
   }, []);
   const { items: bag, subtotal, clearCart, restoreCart } = useCart();
   const promo = usePromoCode(bag, subtotal);
@@ -34,6 +40,75 @@ export function Checkout() {
   const [paying, setPaying] = useState(false);
   const [error, setError] = useState("");
   const [recoveryNotice, setRecoveryNotice] = useState("");
+  const [countries, setCountries] = useState<{ code: string; name: string }[]>([
+    { code: "GH", name: "Ghana" },
+  ]);
+  const [country, setCountry] = useState("GH");
+  const [rates, setRates] = useState<
+    { id: string; carrier: string; service: string; days: number | null; cedis: number }[]
+  >([]);
+  const [rateId, setRateId] = useState("");
+  const [quoting, setQuoting] = useState(false);
+  const [shippingError, setShippingError] = useState("");
+  const abroad = country !== "GH";
+  const selected = rates.find((rate) => rate.id === rateId) || null;
+  const due =
+    (Math.round(promo.total * 100) + Math.round((selected?.cedis || 0) * 100)) / 100;
+  const formRef = useRef<HTMLFormElement>(null);
+  const quoteTimer = useRef<number | undefined>(undefined);
+  const pieceKey = bag.map((item) => `${item.productId}:${item.quantity}`).join("|");
+  async function loadRates(form: HTMLFormElement, code: string) {
+    const data = new FormData(form);
+    const address = {
+      street: String(data.get("street-address") || "").trim(),
+      city: String(data.get("address-level2") || "").trim(),
+      state: String(data.get("address-level1") || "").trim(),
+      zip: String(data.get("postal-code") || "").trim(),
+      country: code,
+    };
+    const name = `${data.get("given-name") || ""} ${data.get("family-name") || ""}`.trim();
+    const phone = String(data.get("tel") || "").trim();
+    const email = String(data.get("email") || "").trim();
+    if (!address.street || !address.city || !address.zip || !name || !phone || !email) return;
+    setQuoting(true);
+    setShippingError("");
+    setRates([]);
+    setRateId("");
+    try {
+      const response = await fetch("/api/cms/shipping/rates", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          phone,
+          email,
+          address,
+          pieces: bag.reduce((sum, item) => sum + item.quantity, 0),
+        }),
+      });
+      const body = await response.json();
+      if (!response.ok)
+        throw new Error(body.error || "Delivery prices could not be checked.");
+      const next = Array.isArray(body.rates) ? body.rates : [];
+      setRates(next);
+      if (!next.length) setShippingError("No carrier can deliver to this address yet.");
+    } catch (reason) {
+      setShippingError(
+        reason instanceof Error ? reason.message : "Delivery prices could not be checked.",
+      );
+    } finally {
+      setQuoting(false);
+    }
+  }
+  function scheduleRates(form: HTMLFormElement, code = country) {
+    window.clearTimeout(quoteTimer.current);
+    if (code === "GH") return;
+    quoteTimer.current = window.setTimeout(() => void loadRates(form, code), 700);
+  }
+  useEffect(() => {
+    if (!abroad || !formRef.current) return;
+    scheduleRates(formRef.current, country);
+  }, [pieceKey, abroad, country]);
   useEffect(() => {
     const query = new URLSearchParams(location.hash.split("?")[1] || "");
     const token = query.get("recovery");
@@ -106,8 +181,9 @@ export function Checkout() {
     setPaying(true);
     setError("");
     try {
-      const saved = await saveCheckout(form, items, reference, promo.quote?.promoCode);
-      if (saved.total !== promo.total)
+      if (abroad && !rateId) throw new Error("Choose a delivery option.");
+      const saved = await saveCheckout(form, items, reference, promo.quote?.promoCode, rateId);
+      if (saved.total !== due)
         throw new Error("The price has changed. Refresh your bag or reapply your promo code before paying.");
       paymentStarted = true;
       const paidReference = await startPaystack({
@@ -163,8 +239,13 @@ export function Checkout() {
       </div>
       <div className="checkout-layout">
         <form
+          ref={formRef}
           onBlur={(event) => rememberCheckout(event.currentTarget, bag)}
-          onChange={(event) => rememberCheckout(event.currentTarget, bag)}
+          onChange={(event) => {
+            rememberCheckout(event.currentTarget, bag);
+            const code = String(new FormData(event.currentTarget).get("country") || country);
+            scheduleRates(event.currentTarget, code);
+          }}
           onSubmit={(e) => {
             e.preventDefault();
             void complete(e.currentTarget);
@@ -221,11 +302,29 @@ export function Checkout() {
                 name="country"
                 label="Country"
                 autoComplete="country-name"
-                defaultValue="Ghana"
-                options={[{ value: "Ghana", label: "Ghana" }]}
+                value={country}
+                onChange={(value) => {
+                  setCountry(value);
+                  setRates([]);
+                  setRateId("");
+                  setShippingError("");
+                }}
+                options={countries.map((item) => ({ value: item.code, label: item.name }))}
               />
             </div>
           </div>
+          {abroad && (
+            <div className="form-row">
+              <label>
+                State or region
+                <input name="address-level1" autoComplete="address-level1" required />
+              </label>
+              <label>
+                Postal code
+                <input name="postal-code" autoComplete="postal-code" required />
+              </label>
+            </div>
+          )}
           <label>
             Phone number
             <input
@@ -247,16 +346,45 @@ export function Checkout() {
             />
           </label>
           <h2>03 / Delivery & payment</h2>
-          <div className="demo-delivery">
-            <Check size={18} />
-            <div>
-              <strong>Delivery · Complimentary</strong>
-              <p>Pay the order total with Paystack.</p>
+          {abroad ? (
+            <div className="delivery-options">
+              {rates.map((rate) => (
+                <button
+                  type="button"
+                  key={rate.id}
+                  className={`delivery-option${rate.id === rateId ? " is-selected" : ""}`}
+                  onClick={() => setRateId(rate.id)}
+                >
+                  <span>
+                    <strong>{rate.carrier}</strong>
+                    <p>
+                      {rate.service}
+                      {rate.days ? ` · ${rate.days} day${rate.days === 1 ? "" : "s"}` : ""}
+                    </p>
+                  </span>
+                  <strong>{money(rate.cedis)}</strong>
+                </button>
+              ))}
+              {!rates.length && (
+                <p className="delivery-status">
+                  {quoting
+                    ? "Checking DHL, UPS, and FedEx."
+                    : shippingError || "Add the address to see delivery prices."}
+                </p>
+              )}
             </div>
-          </div>
+          ) : (
+            <div className="demo-delivery">
+              <Check size={18} />
+              <div>
+                <strong>Delivery · Complimentary</strong>
+                <p>Pay the order total with Paystack.</p>
+              </div>
+            </div>
+          )}
           {error && <p className="form-error">{error}</p>}
-          <button type="submit" className="button dark full" disabled={paying || promo.busy}>
-            {paying ? "Waiting for Paystack" : `Pay ${money(promo.total)}`}{" "}
+          <button type="submit" className="button dark full" disabled={paying || promo.busy || quoting || (abroad && !rateId)}>
+            {paying ? "Waiting for Paystack" : `Pay ${money(due)}`}{" "}
             <ArrowRight size={17} />
           </button>
         </form>
@@ -285,11 +413,17 @@ export function Checkout() {
             {promo.quote && <div><span>Discount · {promo.quote.promoCode}</span><span>−{money(promo.quote.discount)}</span></div>}
             <div>
               <span>Delivery</span>
-              <span>Complimentary</span>
+              <span>
+                {abroad
+                  ? selected
+                    ? `${selected.carrier} · ${money(selected.cedis)}`
+                    : "Choose a carrier"
+                  : "Complimentary"}
+              </span>
             </div>
             <div className="checkout-total">
               <strong>Total</strong>
-              <strong>{money(promo.total)}</strong>
+              <strong>{money(due)}</strong>
             </div>
           </div>
         </aside>

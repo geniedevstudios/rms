@@ -4,6 +4,7 @@ import react from "@vitejs/plugin-react";
 import { createApi } from "./server/api.mjs";
 import { cloudinaryConfig } from "./server/cloudinary.mjs";
 import { calendarConfig } from "./server/calendar.mjs";
+import { createShippo } from "./server/shippo.mjs";
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
   return {
@@ -29,6 +30,7 @@ export default defineConfig(({ mode }) => {
               },
               email: env.RMS_ADMIN_EMAIL || undefined,
               calendar: calendarConfig(env),
+              shippo: createShippo(env),
               resend:
                 env.RESEND_API_KEY && env.RESEND_FROM
                   ? { apiKey: env.RESEND_API_KEY, from: env.RESEND_FROM }

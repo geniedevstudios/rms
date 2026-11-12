@@ -303,6 +303,11 @@ export function createRecords(client) {
         const { error: writeError } = await client.from("orders").update(orderRow(order)).eq("id", id);
         if (writeError) throw unavailable(writeError);
       },
+      async update(order) {
+        const { error } = await client.from("orders").update(orderRow(order)).eq("id", order.id);
+        if (error) throw unavailable(error);
+        return order;
+      },
       async setStatus(id, status) {
         const { data, error } = await client
           .from("orders")

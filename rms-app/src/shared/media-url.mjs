@@ -1,12 +1,18 @@
+/** Public Cloudinary cloud already used in seed and live delivery URLs. */
+const cloudHost = "https://res.cloudinary.com/hr5xa7o9";
+
 const delivery =
   /^https:\/\/res\.cloudinary\.com\/[a-z0-9-]+\/(image|video)\/upload\/([A-Za-z0-9][A-Za-z0-9_./-]*)(?:\?.*)?$/i;
+const localMedia =
+  /^\/media\/(image|video)\/([A-Za-z0-9][A-Za-z0-9_.,/-]*)$/i;
 
-/** A same-site path for a hosted photograph or film. Other addresses stay as they are. */
+/** Deliver photographs and films from Cloudinary. Same-site /media paths expand there. */
 export function toWebsiteMedia(url) {
   if (typeof url !== "string") return url;
-  const match = delivery.exec(url);
-  if (!match || match[2].includes("..")) return url;
-  return `/media/${match[1].toLowerCase()}/${match[2]}`;
+  if (delivery.test(url)) return url;
+  const local = localMedia.exec(url);
+  if (!local || local[2].includes("..")) return url;
+  return `${cloudHost}/${local[1].toLowerCase()}/upload/${local[2]}`;
 }
 
 const imageThumb = "c_fill,w_480,h_600,q_auto,f_auto";
@@ -23,12 +29,13 @@ export function libraryThumb(url, video = false) {
     const kind = video ? "video" : cloud[2].toLowerCase();
     return `${cloud[1]}${kind}/upload/${step}/${path}`;
   }
-  const local = /^\/media\/(image|video)\/(.+)$/i.exec(url);
-  if (!local) return url;
+  const local = localMedia.exec(url);
+  if (!local || local[2].includes("..")) return url;
   const path = local[2];
-  if (path.startsWith("c_fill,") || path.startsWith("so_0,")) return url;
+  if (path.startsWith("c_fill,") || path.startsWith("so_0,"))
+    return `${cloudHost}/${local[1].toLowerCase()}/upload/${path}`;
   const kind = video ? "video" : local[1].toLowerCase();
-  return `/media/${kind}/${step}/${path}`;
+  return `${cloudHost}/${kind}/upload/${step}/${path}`;
 }
 
 export function rewriteMedia(value) {
