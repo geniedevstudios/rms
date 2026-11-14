@@ -12,7 +12,7 @@
       .intro {
         position: fixed;
         inset: 0;
-        z-index: 300;
+        z-index: 500;
         display: grid;
         place-items: center;
         background: #fff;
@@ -20,11 +20,17 @@
       .intro.is-leaving {
         animation: intro-leave 0.9s cubic-bezier(0.76, 0, 0.24, 1) forwards;
       }
+      .intro--route.is-leaving {
+        animation-duration: 0.45s;
+      }
       .intro-lockup {
         display: flex;
         flex-direction: column;
         align-items: center;
-        animation: intro-rise 1.05s cubic-bezier(0.16, 1, 0.36, 1) both;
+        animation: intro-rise 0.5s cubic-bezier(0.16, 1, 0.36, 1) both;
+      }
+      .intro--route .intro-lockup {
+        animation-duration: 0.3s;
       }
       .intro img {
         width: min(220px, 42vw);
@@ -41,10 +47,17 @@
       }
       @keyframes intro-rise {
         from {
-          transform: translateY(100vh);
+          transform: translateY(16px);
+          opacity: 0.8;
         }
         to {
           transform: translateY(0);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .intro-lockup,
+        .intro--route .intro-lockup {
+          animation: none;
         }
       }
       @keyframes intro-leave {
@@ -57,17 +70,18 @@
       name="description"
       content="RIVERMINDSTYLE. Considered silhouettes, expressive femininity. Discover a wardrobe for becoming."
     />
+    <link rel="preload" href="/intro-mark.png" as="image" />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <title>RIVERMINDSTYLE — A wardrobe for becoming</title>
   </head>
   <body>
-    <div class="intro" id="intro">
+    <div class="intro" id="intro" aria-hidden="true">
       <div class="intro-lockup">
         <img src="/intro-mark.png" alt="" width="970" height="840" />
         <p>RIVERMINDSTYLE</p>
       </div>
     </div>
-    <div id="root"></div>
+    <div id="root" inert></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

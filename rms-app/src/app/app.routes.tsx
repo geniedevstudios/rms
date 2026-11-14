@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
+import { showRouteIntro } from "../intro";
 import { ArrowRight } from "lucide-react";
 import { useRoute } from "../routing/use-route";
 import { Link } from "../routing/link";
@@ -24,6 +25,12 @@ import { SavedPage } from "../pages/saved/saved-page";
 
 export function AppRoutes() {
   const route = useRoute();
+  const previousRoute = useRef(route);
+  useLayoutEffect(() => {
+    if (previousRoute.current === route) return;
+    previousRoute.current = route;
+    showRouteIntro();
+  }, [route]);
   const [pathname, search = ""] = route.split("?");
   const params = new URLSearchParams(search);
   const product = products.find(
