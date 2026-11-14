@@ -4,6 +4,8 @@ import { ArrowRight } from "lucide-react";
 import { useRoute } from "../routing/use-route";
 import { Link } from "../routing/link";
 import { customPath, productPath } from "../routing/navigation";
+import { siteContent } from "../content/content";
+import { collections, collectionTitle } from "../data/collections";
 import { products } from "../data/products";
 import { customDesigns } from "../data/custom-designs";
 import { useOrders } from "../features/orders/orders.context";
@@ -23,6 +25,23 @@ import { Contact, Delivery, Privacy, Terms } from "../pages/legal/legal";
 import { AccountPage } from "../pages/account/account-page";
 import { SavedPage } from "../pages/saved/saved-page";
 
+const pageTitles = new Map([
+  ["/", "Home"],
+  ["/shop", "Shop"],
+  ["/collection", "Collections"],
+  ["/custom", "Custom"],
+  ["/about", "Our World"],
+  ["/journal", "Journal"],
+  ["/checkout", "Checkout"],
+  ["/orders", "Your Orders"],
+  ["/privacy", "Privacy Policy"],
+  ["/terms", "Terms & Conditions"],
+  ["/contact", "Contact"],
+  ["/delivery", "Delivery & Returns"],
+  ["/account", "Your Account"],
+  ["/saved", "Saved Pieces"],
+]);
+
 export function AppRoutes() {
   const route = useRoute();
   const previousRoute = useRef(route);
@@ -40,43 +59,29 @@ export function AppRoutes() {
     (design) => pathname === customPath(design.id),
   );
   const { orders } = useOrders();
+  const collection = pathname.startsWith("/collection/")
+    ? collections.find((item) => pathname === `/collection/${item.id}`)
+    : undefined;
+  const story = pathname.startsWith("/journal/")
+    ? siteContent.journals.find(
+        (item) => item.status === "published" && pathname === `/journal/${item.id}`,
+      )
+    : undefined;
+  const pageTitle =
+    product?.name ||
+    customDesign?.name ||
+    (collection && collectionTitle(collection)) ||
+    story?.title ||
+    pageTitles.get(pathname) ||
+    (pathname.startsWith("/confirmation/CST-")
+      ? "Appointment Confirmation"
+      : pathname.startsWith("/confirmation/")
+        ? "Order Confirmation"
+        : "Page Not Found");
+
   useEffect(() => {
-    const pageTitle =
-      product?.name ||
-      customDesign?.name ||
-      (pathname === "/shop"
-        ? "The wardrobe"
-        : pathname === "/about"
-          ? "Our world"
-          : pathname.startsWith("/collection")
-            ? "Collections"
-            : pathname === "/custom"
-              ? "Custom"
-              : pathname.startsWith("/journal")
-              ? "The journal"
-              : pathname === "/privacy"
-                ? "Privacy"
-                : pathname === "/terms"
-                  ? "Terms"
-                  : pathname === "/contact"
-                    ? "Contact"
-                    : pathname === "/delivery"
-                      ? "Delivery & returns"
-                      : pathname === "/account"
-                        ? "Your account"
-                        : pathname === "/saved"
-                          ? "Saved pieces"
-              : pathname === "/checkout"
-                ? "Checkout"
-                : pathname === "/orders"
-                  ? "Your orders"
-                  : pathname.startsWith("/confirmation/CST-")
-                    ? "Appointment"
-                    : pathname.startsWith("/confirmation/")
-                      ? "Order confirmation"
-                  : "A wardrobe for becoming");
-    document.title = `RIVERMINDSTYLE — ${pageTitle}`;
-  }, [pathname, product, customDesign]);
+    document.title = `${pageTitle} | RIVERMINDSTYLE`;
+  }, [pageTitle]);
 
   if (pathname === "/") return <Home />;
   if (pathname === "/shop")
