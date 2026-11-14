@@ -18,6 +18,8 @@ import {
   HttpError,
 } from "./content-store.mjs";
 import { uploadToCloudinary, destroyCloudinary } from "./cloudinary.mjs";
+import { prepareR2Upload, inspectR2Upload, deleteR2Media } from "./r2.mjs";
+import { isR2Media } from "../shared/media-url.mjs";
 import {
   createAdminStore,
   normalizeEmail,
@@ -129,6 +131,7 @@ export function createApi({
   email = process.env.RMS_ADMIN_EMAIL,
   production = false,
   cloudinary = null,
+  r2 = null,
   resend = null,
   notificationsConfig = notificationConfig(),
   onWorkerCreated = () => {},
@@ -347,7 +350,8 @@ export function createApi({
     if (
       image &&
       !image.startsWith("https://res.cloudinary.com/") &&
-      !image.startsWith("/uploads/")
+      !image.startsWith("/uploads/") &&
+      !isR2Media(image)
     )
       throw new HttpError(400, "Choose a photo from your studio.");
     return { name, image };
@@ -815,7 +819,27 @@ export function createApi({
           return send(res, 200, await writeProfile(profile));
         return send(res, 200, await admins.updateProfile(session.email, profile));
       }
+      if (path === "/api/cms/media/prepare" && req.method === "POST") {
+        if (!r2) return send(res, 200, { provider: "legacy" });
+        const body = await jsonBody(req);
+        const purpose = body.purpose;
+        if (purpose !== "media" && purpose !== "profile")
+          throw new HttpError(400, "Choose a valid upload destination.");
+        const upload = await prepareR2Upload(r2, body, session.email, purpose);
+        return send(res, 200, { provider: "r2", ...upload });
+      }
+      if (path === "/api/cms/media/complete" && req.method === "POST") {
+        if (!r2) throw new HttpError(503, "R2 uploads are unavailable.");
+        const { receipt, purpose } = await jsonBody(req);
+        if (purpose !== "media" && purpose !== "profile")
+          throw new HttpError(400, "Choose a valid upload destination.");
+        const asset = await inspectR2Upload(r2, receipt, session.email, purpose, mediaType);
+        if (purpose === "profile") return send(res, 201, { url: asset.url });
+        const state = await store.addMedia(asset);
+        return send(res, 201, { asset, state });
+      }
       if (path === "/api/cms/profile/photo" && req.method === "POST") {
+        if (r2) throw new HttpError(409, "Refresh the admin before uploading.");
         const dir = resolve(directory, "uploads");
         await mkdir(dir, { recursive: true });
         const id = randomUUID();
@@ -878,6 +902,7 @@ export function createApi({
         return send(res, 200, await store.discard(b.revision));
       }
       if (path === "/api/cms/upload" && req.method === "POST") {
+        if (r2) throw new HttpError(409, "Refresh the admin before uploading.");
         const dir = resolve(directory, "uploads");
         await mkdir(dir, { recursive: true });
         const id = randomUUID();
@@ -961,6 +986,8 @@ export function createApi({
         const state = await store.removeMedia(match[1]);
         if (asset?.url.startsWith("/uploads/"))
           await unlink(resolve(directory, asset.url.slice(1))).catch(() => {});
+        else if (asset && isR2Media(asset.url))
+          await deleteR2Media(r2, asset.url).catch(() => {});
         else if (asset)
           await destroyCloudinary(asset.url, cloudinary).catch(() => {});
         return send(res, 200, state);

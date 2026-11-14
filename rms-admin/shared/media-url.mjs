@@ -15,6 +15,19 @@ export function toWebsiteMedia(url) {
   return `${cloudHost}/${local[1].toLowerCase()}/upload/${local[2]}`;
 }
 
+export function isR2Media(url) {
+  return typeof url === "string" && /^https:\/\/media\.rivermindstyle\.com\/rms\/(?:media|profile|migrated)\//.test(url);
+}
+
+/** Content-addressed migration files can be shared by multiple records. */
+export function isDeletableMedia(url) {
+  return typeof url === "string" && (
+    url.startsWith("/uploads/") ||
+    url.startsWith("https://res.cloudinary.com/") ||
+    (isR2Media(url) && url.startsWith("https://media.rivermindstyle.com/rms/media/"))
+  );
+}
+
 const imageThumb = "c_fill,w_480,h_600,q_auto,f_auto";
 const videoThumb = "so_0,c_fill,w_480,h_600,q_auto,f_jpg";
 

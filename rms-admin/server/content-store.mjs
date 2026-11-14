@@ -4,7 +4,7 @@ import { randomUUID } from "node:crypto";
 import { validatePromotions } from "./promotions.mjs";
 import { productSizes } from "../shared/product-sizes.mjs";
 import { orderedStock, reduceStock, stockError } from "../shared/stock.mjs";
-import { rewriteMedia } from "../shared/media-url.mjs";
+import { isDeletableMedia, rewriteMedia } from "../shared/media-url.mjs";
 import { references } from "../shared/references.mjs";
 import { readJsonIfPresent } from "./studio-db.mjs";
 export { references };
@@ -497,7 +497,7 @@ export function createContentStore(directory, { sync = null, remote = null } = {
       }),
     addMedia: (asset) =>
       transact((s) => {
-        s.media.unshift(asset);
+        if (!s.media.some((item) => item.id === asset.id)) s.media.unshift(asset);
         return "Uploaded " + asset.name;
       }),
     editMedia: (id, alt) =>
@@ -528,8 +528,7 @@ export function createContentStore(directory, { sync = null, remote = null } = {
         const asset = s.media.find((m) => m.id === id);
         if (!asset) throw new HttpError(404, "Media not found.");
         check(
-          asset.url.startsWith("/uploads/") ||
-            asset.url.startsWith("https://res.cloudinary.com/"),
+          isDeletableMedia(asset.url),
           "Original storefront assets cannot be deleted.",
         );
         check(

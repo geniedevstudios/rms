@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { ArrowUpRight, LogOut, Settings, Upload } from "lucide-react";
 import { useContent } from "../../app/content.context";
-import { api } from "../../lib/api";
+import { api, uploadProfilePhoto } from "../../lib/api";
 import { Field, Modal } from "../ui";
 import "./studio-shell.styles.css";
 
@@ -88,20 +88,7 @@ export function StudioShell({
     setProfileError("");
     try {
       let image = draft.image;
-      if (photo) {
-        const response = await fetch("/api/cms/profile/photo", {
-          method: "POST",
-          headers: {
-            "Content-Type": photo.type || "application/octet-stream",
-            "X-File-Name": encodeURIComponent(photo.name),
-          },
-          body: photo,
-        });
-        const uploaded = await response.json();
-        if (!response.ok)
-          throw new Error(uploaded.error || "That photo could not be saved.");
-        image = uploaded.url;
-      }
+      if (photo) image = await uploadProfilePhoto(photo);
       const saved = await api<Profile>("profile", {
         method: "PUT",
         body: JSON.stringify({ name, image }),

@@ -2,11 +2,13 @@ import { createServer } from "node:http";
 import { resolve } from "node:path";
 import { createApi, serveFile } from "./api.mjs";
 import { cloudinaryConfig } from "./cloudinary.mjs";
+import { r2Config } from "./r2.mjs";
 import { calendarConfig } from "./calendar.mjs";
 import { createShippo } from "./shippo.mjs";
 const api = createApi({
   production: true,
   cloudinary: cloudinaryConfig(),
+  r2: r2Config(),
   calendar: calendarConfig(),
   shippo: createShippo(),
   supabase: {

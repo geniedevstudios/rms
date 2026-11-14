@@ -10,6 +10,7 @@ import {
   formatDate,
 } from "../../components/ui";
 import { UploadButton } from "./media-picker";
+import { isDeletableMedia } from "../../../shared/media-url.mjs";
 import { api } from "../../lib/api";
 import { references } from "../../../shared/references.mjs";
 import type { AdminState, Media } from "../../../shared/content.types";
@@ -195,10 +196,7 @@ export function MediaLibrary() {
               disabled={
                 busy ||
                 usedIn.length > 0 ||
-                !(
-                  selected.url.startsWith("/uploads/") ||
-                  selected.url.startsWith("https://res.cloudinary.com/")
-                )
+                !isDeletableMedia(selected.url)
               }
               onClick={() => setConfirm(true)}
             >
