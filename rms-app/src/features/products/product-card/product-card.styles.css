@@ -20,30 +20,6 @@
 .product-image:focus-visible img {
   transform: scale(1.025);
 }
-.save-button {
-  position: absolute;
-  right: 8px;
-  top: 8px;
-  background: rgba(249, 248, 245, 0.88);
-  width: 32px;
-  height: 32px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 50%;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s, background 0.2s;
-}
-.product-image-wrap:hover .save-button,
-.product-image:focus-visible ~ .save-button,
-.save-button:focus-visible {
-  opacity: 1;
-  pointer-events: auto;
-}
-.save-button:hover {
-  background: white;
-}
 .quick-view {
   position: absolute;
   bottom: 0;
@@ -114,9 +90,6 @@
 @media (max-width: 760px) {
   .product-image {
     aspect-ratio: 3/4.3;
-  }
-  .save-button {
-    display: none;
   }
   .product-details {
     margin-top: 13px;

@@ -1,17 +1,15 @@
 import "./product-card.styles.css";
 import { type Product } from "../../../types/product";
-import { useSavedProduct } from "../../wishlist/use-saved-product";
 import { useDialogs } from "../../../components/dialogs/dialogs.context";
 import { Link } from "../../../routing/link";
 import { piecePath } from "../../../routing/navigation";
-import { Heart, ArrowUpRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { money } from "../../../lib/format-currency";
 import { HoverImage } from "../../../components/hover-image/hover-image";
 import { pieceColour } from "../colour";
 import { pieceColourways } from "../../../data/size-guide";
 export function ProductCard({ product }: { product: Product }) {
   const { openDialog } = useDialogs();
-  const { isSaved, toggleSavedProduct: onSave } = useSavedProduct(product.id);
   const colour = pieceColour(product);
   const colours = pieceColourways(product).filter((way) => way.color.trim());
   return (
@@ -28,14 +26,6 @@ export function ProductCard({ product }: { product: Product }) {
             }
           />
         </Link>
-        <button
-          className={`save-button ${isSaved ? "is-saved" : ""}`}
-          aria-label={`${isSaved ? "Unsave" : "Save"} ${product.name}`}
-          aria-pressed={isSaved}
-          onClick={onSave}
-        >
-          <Heart size={17} fill={isSaved ? "currentColor" : "none"} />
-        </button>
         <button
           type="button"
           className="quick-view"
