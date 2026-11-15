@@ -37,7 +37,7 @@ main > .about-hero:first-child > div {
 }
 .founder {
   display: grid;
-  grid-template-columns: 0.9fr 1.1fr;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
   gap: 8%;
   align-items: center;
   margin: 0 4.5% 0;
@@ -47,9 +47,13 @@ main > .about-hero:first-child > div {
   object-position: center 32%;
   background: #8a8a8a;
 }
+.founder-story {
+  container-type: inline-size;
+}
 .founder h2 {
-  font-size: clamp(52px, 5vw, 76px);
-  letter-spacing: -2px;
+  font-size: min(clamp(52px, 5vw, 76px), 9cqi);
+  letter-spacing: -0.035em;
+  white-space: nowrap;
   line-height: 0.95;
   margin: 16px 0 14px;
 }
@@ -312,7 +316,7 @@ main > .about-hero:first-child > div {
     height: 470px;
   }
   .founder {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 32px;
     margin: 0 5% 0;
   }
@@ -339,7 +343,7 @@ main > .about-hero:first-child > div {
     height: 480px;
   }
   .founder h2 {
-    font-size: 56px;
+    font-size: min(56px, 9cqi);
     margin: 14px 0 12px;
   }
   .founder-story p {

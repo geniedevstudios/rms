@@ -1,6 +1,7 @@
 import { notificationConfig } from "./server/notifications/service.mjs";
 import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
+import { forwardReceivedEmail } from "./api/resend-forward.js";
 import { createApi } from "./server/api.mjs";
 import { cloudinaryConfig } from "./server/cloudinary.mjs";
 import { r2Config } from "./server/r2.mjs";
@@ -14,6 +15,9 @@ export default defineConfig(({ mode }) => {
       {
         name: "rms-content-api",
         configureServer(server) {
+          server.middlewares.use("/api/resend-forward", (req, res) =>
+            forwardReceivedEmail(req, res, env),
+          );
           let worker;
           server.middlewares.use(
             createApi({

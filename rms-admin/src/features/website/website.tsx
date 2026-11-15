@@ -1,5 +1,6 @@
 import { useState } from "react";
 import defaults from "../../../shared/default-content.json";
+import { aboutFilmCopy } from "../../../shared/about-film-copy";
 import { ArrowUp, ArrowDown, ArrowUpRight, Plus, Trash2, Image } from "lucide-react";
 import { useContent } from "../../app/content.context";
 import type { Content } from "../../../shared/content.types";
@@ -79,7 +80,7 @@ const imageryGuide = [
     title: "Opening portrait",
     page: "Our world",
     pages: ["Our world"],
-    where: "Beside “An expression of you.”",
+    where: "Beside the opening story on Our World.",
   },
   {
     id: "founder",
@@ -197,7 +198,7 @@ export function Website({
   const [editorialError, setEditorialError] = useState("");
   const films = {
     home: content.films?.home ?? defaults.films.home,
-    about: content.films?.about ?? defaults.films.about,
+    about: aboutFilmCopy(content.films?.about),
   };
   const [filmEdit, setFilmEdit] = useState<"home" | "about" | null>(null);
   const [filmDraft, setFilmDraft] = useState<FilmCopy>(films.home);

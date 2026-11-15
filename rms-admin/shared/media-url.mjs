@@ -34,6 +34,13 @@ const videoThumb = "so_0,c_fill,w_480,h_600,q_auto,f_jpg";
 /** A small preview for library grids. The stored address stays unchanged. */
 export function libraryThumb(url, video = false) {
   if (typeof url !== "string" || !url) return url;
+  if (!video && isR2Media(url)) {
+    const image = new URL(url);
+    if (/\.(?:jpe?g|png|webp|gif)$/i.test(image.pathname)) {
+      return image.origin + "/cdn-cgi/image/width=480,quality=80,format=auto,onerror=redirect" +
+        image.pathname + image.search;
+    }
+  }
   const step = video ? videoThumb : imageThumb;
   const cloud = /^(https:\/\/res\.cloudinary\.com\/[^/]+\/)(image|video)\/upload\/(.+)$/i.exec(url);
   if (cloud) {

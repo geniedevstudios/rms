@@ -228,6 +228,10 @@ export function validateContent(c, media) {
         (!p.tag || text(p.tag, 100)),
       "Product descriptions are too long.",
     );
+    check(
+      p.careInstructions === undefined || text(p.careInstructions, 1000),
+      "Care instructions must be no more than 1,000 characters.",
+    );
     check(["active", "draft"].includes(p.status), "Choose a product status.");
     check(
       p.newArrival === undefined || typeof p.newArrival === "boolean",

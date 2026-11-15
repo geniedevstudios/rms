@@ -107,29 +107,31 @@ export function MediaPicker({
       <p className="muted">
         Images up to 15 MB · MP4 and WebM videos up to 100 MB
       </p>
-      <div className="picker-grid">
-        {assets.map((m) => (
-          <button
-            type="button"
-            key={m.id}
-            className="media-choice"
-            onClick={() => {
-              onSelect(m);
-              onClose();
-            }}
-          >
-            <Thumb src={m.url} video={m.type === "video"} alt={m.alt} />
-            <span>{m.name}</span>
-            <Check size={15} />
-          </button>
-        ))}
+      <div className="media-picker-results" role="region" aria-label="Media files" tabIndex={0}>
+        <div className="picker-grid">
+          {assets.map((m) => (
+            <button
+              type="button"
+              key={m.id}
+              className="media-choice"
+              onClick={() => {
+                onSelect(m);
+                onClose();
+              }}
+            >
+              <Thumb src={m.url} video={m.type === "video"} alt={m.alt} />
+              <span>{m.name}</span>
+              <Check size={15} />
+            </button>
+          ))}
+        </div>
+        {!assets.length && (
+          <Empty
+            title="No matching files"
+            description="Try a different search, or upload new media."
+          />
+        )}
       </div>
-      {!assets.length && (
-        <Empty
-          title="No matching files"
-          description="Try a different search, or upload new media."
-        />
-      )}
     </Modal>
   );
 }

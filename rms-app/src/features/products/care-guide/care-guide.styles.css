@@ -5,12 +5,11 @@
   font-size: 12px;
   line-height: 1.9;
   color: var(--muted);
-  margin: 16px 0 8px;
 }
-.care-guide li {
-  font-size: 12px;
-  line-height: 1.7;
-  color: var(--ink);
-  padding: 12px 0;
-  border-bottom: 1px solid var(--line);
+.care-guide > p + p {
+  margin-top: 12px;
+}
+.piece-care-instructions {
+  white-space: pre-line;
+  overflow-wrap: anywhere;
 }

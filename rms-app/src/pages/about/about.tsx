@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { mediaSlot, siteContent } from "../../content/content";
-import defaults from "../../shared/default-content.json";
+import { aboutFilmCopy } from "../../shared/about-film-copy";
 import "../../components/editorial/editorial.styles.css";
 import "./about.styles.css";
 import { useDialogs } from "../../components/dialogs/dialogs.context";
@@ -12,23 +12,21 @@ export function About() {
   const { openDialog } = useDialogs();
   const onFilm = () => openDialog({ type: "film", place: "about" });
   const [atStudio, setAtStudio] = useState(false);
-  const film = siteContent.films?.about?.title
-    ? siteContent.films.about
-    : defaults.films.about;
+  const film = aboutFilmCopy(siteContent.films?.about);
   return (
     <>
       <section className="about-hero">
         <div>
-          <span className="eyebrow">THE WORLD OF RIVERMINDSTYLE</span>
+          <span className="eyebrow">OUR STORY</span>
           <h1>
-            An expression
+            A considered
             <br />
-            of <em>you.</em>
+            <em>way to dress.</em>
           </h1>
           <p>
-            We believe the most compelling style begins with a sense of self.
-            Not a formula, a fleeting moment or an expectation. A feeling of
-            being entirely your own.
+            Rivermindstyle is an Accra-based fashion house rooted in a considered
+            approach to dressing. Our collections explore the relationship
+            between clothing, personal style and the way women move through life.
           </p>
         </div>
         <img
@@ -37,17 +35,17 @@ export function About() {
         />
       </section>
       <section className="manifesto">
-        <span className="eyebrow">OUR POINT OF VIEW</span>
+        <span className="eyebrow">OUR APPROACH</span>
         <h2>
-          Rooted in identity.
+          Softness
           <br />
-          <em>Open to the world.</em>
+          <em>with structure.</em>
         </h2>
         <p className="manifesto-body">
-          RIVERMINDSTYLE explores the meeting of strength and softness. An
-          African perspective, expressed through considered silhouettes,
-          thoughtful detail and a contemporary eye. A wardrobe that leaves room
-          for the individual.
+          We create distinctive womenswear defined by clean silhouettes,
+          thoughtful construction and considered details. Our designs bring
+          together form, texture and shape to create pieces that feel both
+          expressive and enduring.
         </p>
       </section>
       <section className="film-section about-film">
@@ -79,50 +77,47 @@ export function About() {
         />
       </section>
       <section className="manifesto">
-        <span className="eyebrow">BEHIND THE HOUSE</span>
+        <span className="eyebrow">OUR PHILOSOPHY</span>
         <h2>
-          One eye.
+          Style
           <br />
-          <em>A whole wardrobe.</em>
+          <em>in motion.</em>
         </h2>
         <p className="manifesto-body">
-          The clothes begin with a person. RIVERMINDSTYLE is shaped by the
-          woman who founded it, from the first line of a silhouette to the
-          quiet left for the wearer.
+          Inspired by the nature of a river, our philosophy is centred on
+          movement, evolution and the beauty of becoming. We believe in a
+          style that is intentional, adaptable and distinctly personal.
         </p>
       </section>
       <section className="founder">
         <img
           src={mediaSlot("founder").src}
-          alt={mediaSlot("founder").alt}
+          alt={mediaSlot("founder").alt.replace(
+            /\bMirriam Elsa\b(?! Kurankyi\b)/,
+            "Mirriam Elsa Kurankyi",
+          )}
         />
         <div className="founder-story">
           <span className="eyebrow">THE FOUNDER</span>
-          <h2>Mirriam Elsa</h2>
-          <p className="founder-role">Owner of RIVERMINDSTYLE</p>
+          <h2>Mirriam Elsa Kurankyi</h2>
+          <p className="founder-role">Founder of RIVERMINDSTYLE</p>
           <p>
-            RIVERMINDSTYLE began with Mirriam Elsa. She wanted clothes that hold a
-            woman’s own presence, not a borrowed one. Strength and softness, in
-            the same line. An African way of seeing, made quietly and worn in
-            the world.
-          </p>
-          <p>
-            The house still follows her eye. Each piece is considered for the
-            woman inside it, with room to move and room to become. This is her
-            point of view, offered as a wardrobe.
+            Mirriam founded Rivermindstyle in October 2021 with an appreciation
+            for thoughtful design. Her approach to womenswear leaves room for
+            each wearer to express her own style.
           </p>
         </div>
       </section>
       <section className="manifesto studio-break">
-        <span className="eyebrow">VISIT</span>
+        <span className="eyebrow">BY APPOINTMENT</span>
         <h2>
-          Find the studio.
+          Visit the
           <br />
-          <em>Vanilla Street.</em>
+          <em>Accra studio.</em>
         </h2>
         <p className="manifesto-body">
-          The house is in Adenta, Accra. A visit is arranged ahead, any day
-          from 9:00 to 17:45.
+          You’ll find us on Vanilla Street in Adenta. Visits are by appointment,
+          daily from 9:00 to 17:45.
         </p>
       </section>
       <section className="studio-locator" aria-label="Studio location">

@@ -902,10 +902,20 @@ textarea::placeholder {
   align-items: start;
   align-content: start;
   gap: 14px;
-  max-height: 55vh;
-  overflow: auto;
-  overscroll-behavior: contain;
   padding: 3px;
+}
+.modal[open]:has(> .media-picker-results) {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.modal:has(> .media-picker-results) > :not(.media-picker-results) {
+  flex-shrink: 0;
+}
+.media-picker-results {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 .media-choice {
   display: block;
@@ -1493,6 +1503,10 @@ td {
     margin-left: 0;
   }
 }
+/* Keep scrolling inside the open dialog, including at its scroll boundaries. */
+html:has(.modal[open]) {
+  overflow: hidden;
+}
 .modal {
   width: min(560px, calc(100vw - 30px));
   max-height: 90svh;
@@ -1503,26 +1517,13 @@ td {
   background: #fffdfa;
   box-shadow: 0 30px 100px #242e2926;
   overflow: auto;
+  overscroll-behavior: contain;
 }
 .modal.wide {
   width: min(930px, calc(100vw - 30px));
 }
 .modal::backdrop {
   background: #242a2294;
-}
-.modal:has(.picker-grid) {
-  display: flex;
-  flex-direction: column;
-  height: min(90svh, 860px);
-  overflow: hidden;
-}
-.modal:has(.picker-grid) .picker-grid {
-  flex: 1 1 auto;
-  min-height: 0;
-  max-height: none;
-  overflow: auto;
-  align-items: start;
-  align-content: start;
 }
 .modal-heading {
   display: flex;

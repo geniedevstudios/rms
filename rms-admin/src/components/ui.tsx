@@ -129,7 +129,7 @@ export function Thumb({
           </>
         ) : (
           <>
-            <img src={preview} alt={alt} loading="lazy" decoding="async" />
+            <img src={preview} alt={alt} loading="lazy" />
             {video && <Film className="video-badge" size={18} />}
           </>
         )

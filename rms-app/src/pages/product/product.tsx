@@ -5,6 +5,7 @@ import { useDialogs } from "../../components/dialogs/dialogs.context";
 import { pieceColourways } from "../../data/size-guide";
 import { Link } from "../../routing/link";
 import { money } from "../../lib/format-currency";
+import { PieceCare } from "../../features/products/care-guide/care-guide";
 import { ProductPurchase } from "../../features/products/product-purchase/product-purchase";
 import { Plus, ArrowUpRight, ArrowRight } from "lucide-react";
 import { collectionForProduct, collectionTitle } from "../../data/collections";
@@ -59,9 +60,7 @@ export function ProductPage({ product }: { product: Product }) {
               <summary>
                 Details & care <Plus size={14} />
               </summary>
-              <p>
-                {product.fabric}.
-              </p>
+              <PieceCare piece={product} />
             </details>
             <details>
               <summary>

@@ -21,10 +21,12 @@ export function Catalog({
   const [category, setCategory] = useState("All categories");
   const [editing, setEditing] = useState<Product | null>(null);
   const [original, setOriginal] = useState<string | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const [error, setError] = useState("");
   const list = custom ? content.customDesigns : content.products;
   function open(product?: Product) {
     setOriginal(product?.id || null);
+    setConfirmDelete(false);
     setError("");
     setEditing(
       product
@@ -76,6 +78,7 @@ export function Catalog({
       const saved: Product = {
         ...editing,
         id,
+        careInstructions: editing.careInstructions?.trim() || undefined,
         colourways,
         color: lead.color,
         swatch: lead.swatch,
@@ -98,6 +101,21 @@ export function Catalog({
       else c[key].push(saved);
     });
     setEditing(null);
+  }
+  function remove() {
+    if (!original) return;
+    update((draft) => {
+      if (custom) {
+        draft.customDesigns = draft.customDesigns.filter((piece) => piece.id !== original);
+      } else {
+        draft.products = draft.products.filter((piece) => piece.id !== original);
+        for (const collection of draft.collections) {
+          collection.productIds = collection.productIds.filter((id) => id !== original);
+        }
+      }
+    });
+    setEditing(null);
+    setConfirmDelete(false);
   }
   const visible = [...list].reverse().filter(
     (p) =>
@@ -307,10 +325,21 @@ export function Catalog({
                   onChange={(e) => patch({ description: e.target.value })}
                 />
               </Field>
-              <Field label="Fabric & care">
+              <Field label="Fabric">
                 <input
                   value={editing.fabric}
                   onChange={(e) => patch({ fabric: e.target.value })}
+                />
+              </Field>
+              <Field
+                label="Care instructions"
+                hint="Add instructions specific to this piece. Leave blank to use standard care."
+              >
+                <textarea
+                  rows={4}
+                  maxLength={1000}
+                  value={editing.careInstructions ?? ""}
+                  onChange={(e) => patch({ careInstructions: e.target.value })}
                 />
               </Field>
             </div>
@@ -411,17 +440,31 @@ export function Catalog({
               {error}
             </p>
           )}
-          <div className="modal-actions">
-            <button
-              className="button secondary"
-              onClick={() => setEditing(null)}
-            >
-              Cancel
-            </button>
-            <button className="button" onClick={save}>
-              Apply to draft
-            </button>
-          </div>
+          {confirmDelete ? (
+            <div className="delete-confirm">
+              <p>Delete “{editing.name}” from the draft catalogue? Publish the draft to remove it from the storefront.</p>
+              <button type="button" className="text-button" onClick={() => setConfirmDelete(false)}>
+                Keep piece
+              </button>
+              <button type="button" className="button" onClick={remove}>
+                Confirm deletion
+              </button>
+            </div>
+          ) : (
+            <div className="modal-actions">
+              {original && (
+                <button type="button" className="button secondary danger" onClick={() => setConfirmDelete(true)}>
+                  Delete {custom ? "design" : "product"}
+                </button>
+              )}
+              <button type="button" className="button secondary" onClick={() => setEditing(null)}>
+                Cancel
+              </button>
+              <button type="button" className="button" onClick={save}>
+                Apply to draft
+              </button>
+            </div>
+          )}
         </Modal>
       )}
         </>

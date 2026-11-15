@@ -15,10 +15,18 @@
   color: var(--muted);
   margin-bottom: 16px;
 }
-.legal-body a {
+.legal-body a,
+.legal-inline-link {
   color: var(--ink);
   text-decoration: underline;
   text-underline-offset: 3px;
+}
+.legal-inline-link {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
 }
 @media (max-width: 760px) {
   .legal-body {

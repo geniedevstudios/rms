@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Plus, ArrowUpRight, ArrowRight } from "lucide-react";
 import { pieceColourways } from "../../data/size-guide";
 import { customDesigns, type CustomDesign } from "../../data/custom-designs";
+import { PieceCare } from "../../features/products/care-guide/care-guide";
 import { ProductPurchase } from "../../features/products/product-purchase/product-purchase";
 import { useDialogs } from "../../components/dialogs/dialogs.context";
 import { money } from "../../lib/format-currency";
@@ -47,10 +48,8 @@ export function CustomDesignPage({ design }: { design: CustomDesign }) {
               <summary>
                 Details & care <Plus size={14} />
               </summary>
-              <p>
-                {design.fabric}. Cut to your measurements once the size is
-                confirmed.
-              </p>
+              <PieceCare piece={design} />
+              <p>Cut to your measurements once the size is confirmed.</p>
             </details>
             <details>
               <summary>

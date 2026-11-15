@@ -23,6 +23,7 @@ export type Product = {
   gallery?: string[];
   description: string;
   fabric: string;
+  careInstructions?: string;
   tag?: string;
   leadDays?: number;
   newArrival?: boolean;

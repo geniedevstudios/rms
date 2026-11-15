@@ -1,27 +1,27 @@
 import "./care-guide.styles.css";
+import type { Product } from "../../../types/product";
 
-const notes = [
-  "Wash on a cool, gentle cycle, or by hand.",
-  "Keep pieces of a similar colour together.",
-  "Avoid bleach.",
-  "Dry away from direct sun, and reshape the piece while it is still damp.",
-  "Steam, or iron on the reverse, at the heat the label allows.",
-  "Hang to store, with a little room between pieces.",
-];
+const standardCare = "Dry clean or machine wash at 30°C on a gentle cycle.";
+
+export function PieceCare({ piece }: { piece: Pick<Product, "careInstructions" | "fabric"> }) {
+  const fabric = piece.fabric.replace(/\s*·\s*specialist clean\.?\s*$/i, "").trim();
+
+  return (
+    <>
+      {fabric && <p>{fabric}</p>}
+      <p className="piece-care-instructions">{piece.careInstructions?.trim() || standardCare}</p>
+    </>
+  );
+}
 
 export function CareGuide() {
   return (
     <div className="care-guide">
-      <span className="eyebrow">A LITTLE GUIDANCE</span>
+      <p>{standardCare}</p>
       <p>
-        Always follow the care label sewn into your garment. These notes are
-        general, and the label on the piece comes first.
+        For garment-specific care, check Details &amp; care on the product page
+        and follow the care label sewn into your garment.
       </p>
-      <ul>
-        {notes.map((note) => (
-          <li key={note}>{note}</li>
-        ))}
-      </ul>
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import { type ReactNode } from "react";
+import { useDialogs } from "../../components/dialogs/dialogs.context";
 import { Link } from "../../routing/link";
 import "./legal.styles.css";
 
@@ -157,6 +158,7 @@ export function Contact() {
 }
 
 export function Delivery() {
+  const { openDialog } = useDialogs();
   return (
     <NotePage
       eyebrow="CLIENT CARE"
@@ -174,6 +176,41 @@ export function Delivery() {
           heading: "Made for you",
           body: [
             "Ready-to-wear leaves as it is shown. A made-to-order piece begins once your measurements are confirmed, and the time is shown on that piece.",
+          ],
+        },
+        {
+          heading: "Returns & Exchanges",
+          body: [
+            <>
+              If you wish to exchange an item, please contact us via{" "}
+              <a href="mailto:hello@rivermindstyle.com">email</a> or{" "}
+              <a href="https://wa.me/233544248058" target="_blank" rel="noopener noreferrer">WhatsApp</a>{" "}
+              within five days of receiving your order. Kindly include your
+              order number and specify the item you wish to exchange.
+            </>,
+            "Once your request has been reviewed and approved, the item must be returned within 10 business days, following the instructions provided by our team. Returns received outside this period will not be accepted.",
+            "All return shipping costs are the responsibility of the client.",
+            "To qualify for an exchange, items must be returned in their original condition: unworn, unwashed, clean and unaltered, with all original tags attached and packaging intact.",
+            "Every returned item is subject to inspection. Rivermindstyle reserves the right to decline exchanges for items that do not meet these conditions.",
+            <>
+              We encourage clients to consult our{" "}
+              <button
+                type="button"
+                className="legal-inline-link"
+                onClick={() => openDialog({ type: "size-guide" })}
+              >
+                Size Guide
+              </button>{" "}
+              before placing an order. A fit preference or sizing issue arising
+              from the size selected does not, in itself, constitute a product
+              defect.
+            </>,
+          ],
+        },
+        {
+          heading: "Exchanges & Store Credit",
+          body: [
+            "Approved change-of-mind or fit-related returns will be handled through an exchange or store credit, subject to availability and approval. No cash refunds will be issued for these returns. Rivermindstyle does offer exchanges or store credit for items on Sale.",
           ],
         },
         {

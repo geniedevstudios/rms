@@ -35,12 +35,12 @@
       "caption": "THE ART OF MAKING"
     },
     "about": {
-      "eyebrow": "THE MAKING OF A SILHOUETTE",
-      "title": "Thoughtful\nby *nature.*",
-      "description": "Form. Texture. Movement. An exploration of the details that make a piece feel personal.",
-      "buttonLabel": "Watch the atelier study",
+      "eyebrow": "ATELIER FILM",
+      "title": "How a piece\n*takes shape.*",
+      "description": "A closer look at the lines, textures and details that give each piece its shape and character.",
+      "buttonLabel": "Watch the atelier film",
       "note": "",
-      "caption": "THE ART OF MAKING"
+      "caption": "FORM, TEXTURE & SHAPE"
     }
   },
   "slots": [
@@ -97,7 +97,7 @@
       "label": "Founder portrait",
       "group": "Our world",
       "src": "https://res.cloudinary.com/hr5xa7o9/image/upload/v1793754722/rms/original-mimi.jpg",
-      "alt": "Mirriam Elsa, owner of RIVERMINDSTYLE",
+      "alt": "Mirriam Elsa Kurankyi, founder of RIVERMINDSTYLE",
       "description": "The founder story portrait."
     },
     {
