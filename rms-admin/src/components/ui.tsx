@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { X, Image as ImageIcon, Film, ArrowUpRight } from "lucide-react";
 import { libraryThumb } from "../../shared/media-url.mjs";
 export function PageHeading({
@@ -106,6 +106,37 @@ export function Empty({
     </div>
   );
 }
+function VideoFrame({ src, alt }: { src: string; alt: string }) {
+  const ref = useRef<HTMLVideoElement>(null);
+  const [nearViewport, setNearViewport] = useState(false);
+
+  useEffect(() => {
+    if (nearViewport || !ref.current) return;
+    if (typeof IntersectionObserver === "undefined") {
+      setNearViewport(true);
+      return;
+    }
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry.isIntersecting) return;
+      setNearViewport(true);
+      observer.disconnect();
+    }, { rootMargin: "200px" });
+    observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [nearViewport]);
+
+  return (
+    <video
+      ref={ref}
+      src={nearViewport ? `${src.split("#")[0]}#t=0.1` : undefined}
+      aria-label={alt || undefined}
+      muted
+      playsInline
+      preload="metadata"
+    />
+  );
+}
 export function Thumb({
   src,
   alt = "",
@@ -118,21 +149,24 @@ export function Thumb({
   className?: string;
 }) {
   const preview = libraryThumb(src, video);
-  const still = video && preview !== src;
+  const [failedPreview, setFailedPreview] = useState<string>();
+  const useVideoFrame = video && (preview === src || failedPreview === preview);
   return (
     <div className={`thumb ${className}`}>
       {src ? (
-        video && !still ? (
-          <>
-            <video src={src} muted playsInline preload="none" />
-            <Film className="video-badge" size={18} />
-          </>
-        ) : (
-          <>
-            <img src={preview} alt={alt} loading="lazy" />
-            {video && <Film className="video-badge" size={18} />}
-          </>
-        )
+        <>
+          {useVideoFrame ? (
+            <VideoFrame key={src} src={src} alt={alt} />
+          ) : (
+            <img
+              src={preview}
+              alt={alt}
+              loading="lazy"
+              onError={video ? () => setFailedPreview(preview) : undefined}
+            />
+          )}
+          {video && <Film className="video-badge" size={18} />}
+        </>
       ) : (
         <ImageIcon size={24} />
       )}

@@ -1,8 +1,9 @@
 import { useRef, useState } from "react";
-import { Upload, Check, ImagePlus } from "lucide-react";
+import { Upload, Check, ImagePlus, ChevronDown } from "lucide-react";
 import { Modal, Thumb, Empty } from "../../components/ui";
 import { useContent } from "../../app/content.context";
 import { upload } from "../../lib/api";
+import { chooseDriveFiles, downloadDriveFiles, drivePickerConfigured, loadDrivePicker } from "./drive-picker";
 import type { Media } from "../../../shared/content.types";
 export function UploadButton({
   onUploaded,
@@ -12,35 +13,62 @@ export function UploadButton({
   kind?: "image" | "video";
 }) {
   const input = useRef<HTMLInputElement>(null);
-  const [progress, setProgress] = useState<number | null>(null);
+  const menu = useRef<HTMLDetailsElement>(null);
+  const [status, setStatus] = useState("");
+  const [driveReady, setDriveReady] = useState(false);
   const { accept, notify, setError } = useContent();
-  async function process(files: FileList | null) {
+  const images = "image/jpeg,image/png,image/webp,image/gif";
+  const videos = "video/mp4,video/webm";
+  const mimeTypes = kind === "image" ? images : kind === "video" ? videos : images + "," + videos;
+
+  async function process(files: Iterable<File> | AsyncIterable<File>) {
+    for await (const file of files) {
+      if (kind && !file.type.startsWith(kind + "/")) throw new Error(`Choose a ${kind} file.`);
+      if (file.size > (file.type.startsWith("image/") ? 15 : 100) * 1024 * 1024) {
+        throw new Error("Images must be under 15 MB and videos under 100 MB.");
+      }
+      setStatus("Uploading 0%");
+      const state = await upload(file, (progress) => setStatus(`Uploading ${progress}%`));
+      accept(state);
+      onUploaded?.(state.media[0]);
+    }
+    notify("Upload complete. Your media is ready to use.");
+  }
+
+  async function fromDevice(files: FileList | null) {
     if (!files?.length) return;
     setError("");
-    setProgress(0);
     try {
-      for (const file of Array.from(files)) {
-        if (kind && !file.type.startsWith(kind + "/"))
-          throw new Error(`Choose a ${kind} file.`);
-        if (
-          file.size >
-          (file.type.startsWith("image/") ? 15 : 100) * 1024 * 1024
-        )
-          throw new Error(
-            "Images must be under 15 MB and videos under 100 MB.",
-          );
-        const state = await upload(file, setProgress);
-        accept(state);
-        onUploaded?.(state.media[0]);
-      }
-      notify("Upload complete. Your media is ready to use.");
-    } catch (e) {
-      setError((e as Error).message);
+      await process(Array.from(files));
+    } catch (error) {
+      setError((error as Error).message);
     } finally {
-      setProgress(null);
+      setStatus("");
       if (input.current) input.current.value = "";
     }
   }
+
+  async function fromDrive() {
+    if (menu.current) menu.current.open = false;
+    setError("");
+    setStatus("Opening Google Drive…");
+    try {
+      const selection = await chooseDriveFiles(mimeTypes, !onUploaded);
+      if (!selection?.ids.length) return;
+      setStatus("Importing from Google Drive…");
+      await process(downloadDriveFiles(selection.ids, selection.token, mimeTypes));
+    } catch (error) {
+      setError((error as Error).message);
+    } finally {
+      setStatus("");
+    }
+  }
+
+  function openDevicePicker() {
+    if (menu.current) menu.current.open = false;
+    input.current?.click();
+  }
+
   return (
     <>
       <input
@@ -48,24 +76,50 @@ export function UploadButton({
         type="file"
         hidden
         multiple={!onUploaded}
-        accept={
-          kind === "image"
-            ? "image/jpeg,image/png,image/webp,image/gif"
-            : kind === "video"
-              ? "video/mp4,video/webm"
-              : "image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm"
-        }
-        onChange={(e) => void process(e.target.files)}
+        accept={mimeTypes}
+        onChange={(event) => void fromDevice(event.target.files)}
       />
-      <button
-        type="button"
-        className="button"
-        disabled={progress !== null}
-        onClick={() => input.current?.click()}
-      >
-        <Upload size={15} />
-        {progress === null ? "Upload media" : `Uploading ${progress}%`}
-      </button>
+      {drivePickerConfigured && !status ? (
+        <details
+          ref={menu}
+          className="upload-sources"
+          onToggle={(event) => {
+            if (event.currentTarget.open && !driveReady) {
+              void loadDrivePicker()
+                .then(() => setDriveReady(true))
+                .catch((error: Error) => {
+                  if (menu.current) menu.current.open = false;
+                  setError(error.message);
+                });
+            }
+          }}
+          onBlur={(event) => {
+            if (event.relatedTarget && !event.currentTarget.contains(event.relatedTarget)) {
+              event.currentTarget.open = false;
+            }
+          }}
+          onKeyDown={(event) => {
+            if (event.key !== "Escape" || !event.currentTarget.open) return;
+            event.preventDefault();
+            event.stopPropagation();
+            event.currentTarget.open = false;
+            event.currentTarget.querySelector("summary")?.focus();
+          }}
+        >
+          <summary className="button">
+            <Upload size={15} /> Upload media <ChevronDown size={14} />
+          </summary>
+          <div className="upload-source-options">
+            <button type="button" onClick={openDevicePicker}>From your device</button>
+            <button type="button" onClick={() => void fromDrive()} disabled={!driveReady}>Google Drive</button>
+          </div>
+        </details>
+      ) : (
+        <button type="button" className="button" disabled={Boolean(status)} onClick={openDevicePicker}>
+          <Upload size={15} />
+          {status || "Upload media"}
+        </button>
+      )}
     </>
   );
 }

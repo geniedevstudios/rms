@@ -34,11 +34,15 @@ const videoThumb = "so_0,c_fill,w_480,h_600,q_auto,f_jpg";
 /** A small preview for library grids. The stored address stays unchanged. */
 export function libraryThumb(url, video = false) {
   if (typeof url !== "string" || !url) return url;
-  if (!video && isR2Media(url)) {
-    const image = new URL(url);
-    if (/\.(?:jpe?g|png|webp|gif)$/i.test(image.pathname)) {
-      return image.origin + "/cdn-cgi/image/width=480,quality=80,format=auto,onerror=redirect" +
-        image.pathname + image.search;
+  if (isR2Media(url)) {
+    const asset = new URL(url);
+    if (video && /\.mp4$/i.test(asset.pathname)) {
+      asset.hash = "";
+      return `${asset.origin}/cdn-cgi/media/mode=frame,time=0s,width=480,format=jpg/${asset.href}`;
+    }
+    if (!video && /\.(?:jpe?g|png|webp|gif)$/i.test(asset.pathname)) {
+      return asset.origin + "/cdn-cgi/image/width=480,quality=80,format=auto,onerror=redirect" +
+        asset.pathname + asset.search;
     }
   }
   const step = video ? videoThumb : imageThumb;

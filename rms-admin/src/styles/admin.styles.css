@@ -895,6 +895,42 @@ textarea::placeholder {
 .media-tile:hover {
   border-color: #a0ae8c;
 }
+.upload-sources {
+  position: relative;
+  z-index: 2;
+}
+.upload-sources > summary {
+  width: max-content;
+  list-style: none;
+}
+.upload-sources > summary::-webkit-details-marker {
+  display: none;
+}
+.upload-source-options {
+  position: absolute;
+  inset: calc(100% + 6px) 0 auto auto;
+  min-width: 100%;
+  padding: 5px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fffdfa;
+  box-shadow: 0 6px 20px #242e291a;
+}
+.upload-source-options > button {
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  white-space: nowrap;
+  width: 100%;
+}
+.upload-source-options > button:hover:not(:disabled),
+.upload-source-options > button:focus-visible {
+  background: #f3e4e8;
+}
 .picker-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
