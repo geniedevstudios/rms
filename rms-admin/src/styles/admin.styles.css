@@ -1631,8 +1631,23 @@ td {
   }
 }
 /* Keep scrolling inside the open dialog, including at its scroll boundaries. */
-html:has(.modal[open]) {
+html:has(.modal[open]),
+html.drive-picker-open {
   overflow: hidden;
+  overscroll-behavior: none;
+}
+/* Google positions its dialog relative to the page by default. */
+.drive-picker-open .picker-dialog {
+  position: fixed !important;
+  inset: 50% auto auto 50% !important;
+  margin: 0;
+  transform: translate(-50%, -50%);
+}
+.drive-picker-open .picker-dialog-bg {
+  position: fixed !important;
+  inset: 0 !important;
+  width: auto !important;
+  height: auto !important;
 }
 .modal {
   width: min(560px, calc(100vw - 30px));

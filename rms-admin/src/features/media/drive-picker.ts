@@ -107,50 +107,57 @@ export async function chooseDriveFiles(mimeTypes: string, multiple: boolean) {
   const token = await getAccessToken();
   if (!token) return null;
 
-  const items = await new Promise<DriveItem[]>((resolve, reject) => {
-    const view = new picker.DocsView()
-      .setIncludeFolders(true)
-      .setMimeTypes(mimeTypes)
-      .setMode(picker.DocsViewMode.LIST);
-    const builder = new picker.PickerBuilder()
-      .addView(view)
-      .setTitle("Choose media from Google Drive")
-      .enableFeature(picker.Feature.NAV_HIDDEN)
-      .setAppId(projectNumber)
-      .setDeveloperKey(apiKey)
-      .setOAuthToken(token)
-      .setOrigin(window.location.origin)
-      .setSelectableMimeTypes(mimeTypes);
-    if (multiple) builder.enableFeature(picker.Feature.MULTISELECT_ENABLED);
+  const view = new picker.DocsView()
+    .setIncludeFolders(true)
+    .setMimeTypes(mimeTypes)
+    .setMode(picker.DocsViewMode.LIST);
+  const builder = new picker.PickerBuilder()
+    .addView(view)
+    .setTitle("Choose media from Google Drive")
+    .enableFeature(picker.Feature.NAV_HIDDEN)
+    .setAppId(projectNumber)
+    .setDeveloperKey(apiKey)
+    .setOAuthToken(token)
+    .setOrigin(window.location.origin)
+    .setSelectableMimeTypes(mimeTypes);
+  if (multiple) builder.enableFeature(picker.Feature.MULTISELECT_ENABLED);
 
-    const openDialogs = [...document.querySelectorAll<HTMLDialogElement>("dialog:modal")];
-    const focused = document.activeElement;
-    function restoreDialogs() {
-      for (const dialog of openDialogs) {
-        if (dialog.isConnected && !dialog.open) dialog.showModal();
-      }
-      if (focused instanceof HTMLElement && focused.isConnected) focused.focus();
-    }
+  const openDialogs = [...document.querySelectorAll<HTMLDialogElement>("dialog:modal")];
+  const focused = document.activeElement;
+  const root = document.documentElement;
+  let dialog: ReturnType<PickerBuilder["build"]> | undefined;
 
-    const dialog = builder.setCallback(({ action, docs }) => {
-      if (action !== picker.Action.PICKED && action !== picker.Action.CANCEL && action !== picker.Action.ERROR) return;
-      dialog.dispose();
-      restoreDialogs();
-      if (action === picker.Action.ERROR) reject(new Error("Google Drive could not open. Please try again."));
-      else resolve(action === picker.Action.PICKED ? (docs ?? []).map(({ id, name }) => ({ id, name: name || "Drive file" })) : []);
-    }).build();
-
-    // Google Picker mounts on the document body, outside Studio's modal top layer.
+  // Google attaches its picker to the body, outside Studio's native modal layer.
+  // Lock the page before closing those dialogs so the picker owns scrolling.
+  root.classList.add("drive-picker-open");
+  try {
     for (const openDialog of [...openDialogs].reverse()) openDialog.close();
-    try {
+    const items = await new Promise<DriveItem[]>((resolve, reject) => {
+      dialog = builder.setCallback(({ action, docs }) => {
+        if (action === picker.Action.PICKED) {
+          resolve((docs ?? []).map(({ id, name }) => ({ id, name: name || "Drive file" })));
+        } else if (action === picker.Action.CANCEL) {
+          resolve([]);
+        } else if (action === picker.Action.ERROR) {
+          reject(new Error("Google Drive could not open. Please try again."));
+        }
+      }).build();
       dialog.setVisible(true);
-    } catch (error) {
-      dialog.dispose();
-      restoreDialogs();
-      reject(error);
+    });
+    return { items, token };
+  } finally {
+    try {
+      dialog?.dispose();
+    } finally {
+      root.classList.remove("drive-picker-open");
+      for (const openDialog of openDialogs) {
+        if (openDialog.isConnected && !openDialog.open) openDialog.showModal();
+      }
+      if (focused instanceof HTMLElement && focused.isConnected) {
+        focused.focus({ preventScroll: true });
+      }
     }
-  });
-  return { items, token };
+  }
 }
 
 export async function downloadDriveFile(id: string, token: string, mimeTypes: string, signal?: AbortSignal) {
