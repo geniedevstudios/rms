@@ -93,16 +93,16 @@ export function About() {
         <img
           src={mediaSlot("founder").src}
           alt={mediaSlot("founder").alt.replace(
-            /\bMirriam Elsa\b(?! Kurankyi\b)/,
-            "Mirriam Elsa Kurankyi",
+            /\bMirriam Elsa(?: Kurankyi)?\b/i,
+            "Mimi Elsa",
           )}
         />
         <div className="founder-story">
           <span className="eyebrow">THE FOUNDER</span>
-          <h2>Mirriam Elsa Kurankyi</h2>
+          <h2>Mimi Elsa</h2>
           <p className="founder-role">Founder of RIVERMINDSTYLE</p>
           <p>
-            Mirriam founded Rivermindstyle in October 2021 with an appreciation
+            Mimi founded Rivermindstyle in October 2021 with an appreciation
             for thoughtful design. Her approach to womenswear leaves room for
             each wearer to express her own style.
           </p>

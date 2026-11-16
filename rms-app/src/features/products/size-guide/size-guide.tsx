@@ -10,11 +10,12 @@ export function SizeGuide() {
         part of your waist. Measurements below are in inches.
       </p>
       <table>
-        <caption>RIVERMINDSTYLE · UK sizes 6–20 · Measurements in inches</caption>
+        <caption>RIVERMINDSTYLE · UK sizes 6–22 · Measurements in inches</caption>
         <thead>
           <tr>
             <th scope="col">Size</th>
             <th scope="col">UK</th>
+            <th scope="col">US</th>
             <th scope="col">Bust</th>
             <th scope="col">Waist</th>
             <th scope="col">Hip</th>
@@ -26,10 +27,11 @@ export function SizeGuide() {
             <tr key={row.uk}>
               <td title={group.label}>{group.size}</td>
               <th scope="row">{row.uk}</th>
+              <td>{row.us}</td>
               <td>{row.bust}</td>
               <td>{row.waist}</td>
               <td>{row.hip}</td>
-              <td>{row.pantsLength}</td>
+              <td>{row.pantsLength ?? "—"}</td>
             </tr>
           )))}
         </tbody>

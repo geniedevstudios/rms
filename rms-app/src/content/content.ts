@@ -114,6 +114,7 @@ export async function loadPublishedContent(origin = "", strict = false) {
 }
 
 export function watchPublishedContent() {
+  let connected = false;
   const pull = async () => {
     await readLiveStorefront();
   };
@@ -133,7 +134,12 @@ export function watchPublishedContent() {
       },
     )
     .subscribe((status) => {
-      if (status === "SUBSCRIBED") void pull();
+      if (status !== "SUBSCRIBED") return;
+
+      // A reconnect can miss stock updates that keep the same published revision.
+      const needsRefresh = connected || !hasPublishedContent;
+      connected = true;
+      if (needsRefresh) void pull();
     });
   return () => {
     void supabase.removeChannel(channel);

@@ -14,7 +14,6 @@ import { Transform } from "node:stream";
 import { createWriteStream } from "node:fs";
 import {
   createContentStore,
-  publicContent,
   HttpError,
 } from "./content-store.mjs";
 import { uploadToCloudinary, destroyCloudinary } from "./cloudinary.mjs";
@@ -436,11 +435,7 @@ export function createApi({
         return res.end();
       }
       if (path === "/api/cms/published" && req.method === "GET") {
-        const s = await store.read();
-        return send(res, 200, {
-          content: publicContent(s.published),
-          revision: s.publishedRevision,
-        });
+        return send(res, 200, await store.readPublished());
       }
       if (path === "/api/cms/orders" && req.method === "POST") {
         const clear = guard(orderAttempts, req.socket.remoteAddress, 20);

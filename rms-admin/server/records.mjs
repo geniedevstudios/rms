@@ -118,6 +118,15 @@ export function createRecords(client) {
 
   return {
     catalogue: {
+      async loadPublished() {
+        const { data, error } = await client
+          .from("catalogue")
+          .select("published:document->published,publishedRevision:document->publishedRevision")
+          .eq("id", "draft")
+          .maybeSingle();
+        if (error) throw unavailable(error);
+        return data;
+      },
       async load() {
         const { data, error } = await client
           .from("catalogue")

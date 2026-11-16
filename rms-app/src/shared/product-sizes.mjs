@@ -2,9 +2,11 @@ import sizeGuide from "./size-guide.json" with { type: "json" };
 
 export const productSizes = sizeGuide.map(group => group.size);
 
-// Existing products keep their sizes until an admin explicitly edits availability.
+// Products without saved availability predate the XXL size.
+const originalSizes = ["S", "M", "L", "XL"];
+
 export function availableSizes(product) {
-  return product.availableSizes ?? productSizes;
+  return product.availableSizes ?? originalSizes;
 }
 
 export function isSizeAvailable(product, size) {

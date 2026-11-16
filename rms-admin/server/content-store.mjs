@@ -468,6 +468,13 @@ export function createContentStore(directory, { sync = null, remote = null } = {
   }
   return {
     read,
+    async readPublished() {
+      const state = remote ? await remote.loadPublished() : await read();
+      return {
+        content: publicContent(state?.published ?? seed),
+        revision: state?.publishedRevision ?? 0,
+      };
+    },
     save: (draft, expected) =>
       transact((s) => {
         revision(s, expected);
