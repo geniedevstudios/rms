@@ -28,11 +28,13 @@ export function Modal({
   children,
   onClose,
   wide = false,
+  dismissible = true,
 }: {
   title: string;
   children: ReactNode;
   onClose: () => void;
   wide?: boolean;
+  dismissible?: boolean;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   useEffect(() => {
@@ -43,9 +45,12 @@ export function Modal({
       ref={ref}
       aria-label={title}
       className={`modal ${wide ? "wide" : ""}`}
-      onCancel={onClose}
+      onCancel={(event) => {
+        if (dismissible) onClose();
+        else event.preventDefault();
+      }}
       onClick={(e) => {
-        if (e.target === e.currentTarget) {
+        if (dismissible && e.target === e.currentTarget) {
           const r = e.currentTarget.getBoundingClientRect();
           if (
             e.clientX < r.left ||
@@ -62,6 +67,7 @@ export function Modal({
         <button
           className="icon-button"
           onClick={onClose}
+          disabled={!dismissible}
           aria-label="Close dialog"
         >
           <X size={20} />

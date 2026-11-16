@@ -11,15 +11,18 @@ type PickerView = {
   setMode(value: string): PickerView;
 };
 
+export type DriveItem = { id: string; name: string };
+
 type PickerBuilder = {
   addView(view: PickerView): PickerBuilder;
   setAppId(id: string): PickerBuilder;
   setDeveloperKey(key: string): PickerBuilder;
   setOAuthToken(token: string): PickerBuilder;
   setOrigin(origin: string): PickerBuilder;
+  setTitle(title: string): PickerBuilder;
   setSelectableMimeTypes(value: string): PickerBuilder;
   enableFeature(feature: string): PickerBuilder;
-  setCallback(callback: (result: { action: string; docs?: { id: string }[] }) => void): PickerBuilder;
+  setCallback(callback: (result: { action: string; docs?: DriveItem[] }) => void): PickerBuilder;
   build(): { setVisible(value: boolean): void; dispose(): void };
 };
 
@@ -39,7 +42,7 @@ const googleWindow = window as Window & {
       DocsView: new () => PickerView;
       DocsViewMode: { LIST: string };
       PickerBuilder: new () => PickerBuilder;
-      Feature: { MULTISELECT_ENABLED: string };
+      Feature: { MULTISELECT_ENABLED: string; NAV_HIDDEN: string };
       Action: { PICKED: string; CANCEL: string; ERROR: string };
     };
   };
@@ -104,13 +107,15 @@ export async function chooseDriveFiles(mimeTypes: string, multiple: boolean) {
   const token = await getAccessToken();
   if (!token) return null;
 
-  const ids = await new Promise<string[]>((resolve, reject) => {
+  const items = await new Promise<DriveItem[]>((resolve, reject) => {
     const view = new picker.DocsView()
       .setIncludeFolders(true)
       .setMimeTypes(mimeTypes)
       .setMode(picker.DocsViewMode.LIST);
     const builder = new picker.PickerBuilder()
       .addView(view)
+      .setTitle("Choose media from Google Drive")
+      .enableFeature(picker.Feature.NAV_HIDDEN)
       .setAppId(projectNumber)
       .setDeveloperKey(apiKey)
       .setOAuthToken(token)
@@ -132,7 +137,7 @@ export async function chooseDriveFiles(mimeTypes: string, multiple: boolean) {
       dialog.dispose();
       restoreDialogs();
       if (action === picker.Action.ERROR) reject(new Error("Google Drive could not open. Please try again."));
-      else resolve(action === picker.Action.PICKED ? (docs ?? []).map(({ id }) => id) : []);
+      else resolve(action === picker.Action.PICKED ? (docs ?? []).map(({ id, name }) => ({ id, name: name || "Drive file" })) : []);
     }).build();
 
     // Google Picker mounts on the document body, outside Studio's modal top layer.
@@ -145,25 +150,23 @@ export async function chooseDriveFiles(mimeTypes: string, multiple: boolean) {
       reject(error);
     }
   });
-  return { ids, token };
+  return { items, token };
 }
 
-export async function* downloadDriveFiles(ids: string[], token: string, mimeTypes: string) {
-  const accepted = mimeTypes.split(",");
+export async function downloadDriveFile(id: string, token: string, mimeTypes: string, signal?: AbortSignal) {
   const headers = { Authorization: `Bearer ${token}` };
-  for (const id of ids) {
-    const url = `https://www.googleapis.com/drive/v3/files/${encodeURIComponent(id)}`;
-    const metadata = await fetch(`${url}?supportsAllDrives=true&fields=name,mimeType,size,capabilities(canDownload)`, { headers });
-    if (!metadata.ok) throw new Error("Google Drive could not read the selected file.");
-    const { name, mimeType, size, capabilities } = await metadata.json();
-    if (!accepted.includes(mimeType)) throw new Error(`${name} is an unsupported file type.`);
-    if (capabilities?.canDownload === false) throw new Error(`Your Google account cannot download ${name}.`);
-    const bytes = Number(size);
-    if (!Number.isSafeInteger(bytes) || bytes < 1 || bytes > (mimeType.startsWith("image/") ? 15 : 100) * 1024 * 1024) {
-      throw new Error(`${name} exceeds the upload limit or is empty.`);
-    }
-    const response = await fetch(`${url}?alt=media&supportsAllDrives=true`, { headers });
-    if (!response.ok) throw new Error(`Google Drive could not download ${name}.`);
-    yield new File([await response.arrayBuffer()], name, { type: mimeType });
+  const options = { headers, signal };
+  const url = `https://www.googleapis.com/drive/v3/files/${encodeURIComponent(id)}`;
+  const metadata = await fetch(`${url}?supportsAllDrives=true&fields=name,mimeType,size,capabilities(canDownload)`, options);
+  if (!metadata.ok) throw new Error("Google Drive could not read the selected file.");
+  const { name, mimeType, size, capabilities } = await metadata.json();
+  if (!mimeTypes.split(",").includes(mimeType)) throw new Error(`${name} is an unsupported file type.`);
+  if (capabilities?.canDownload === false) throw new Error(`Your Google account cannot download ${name}.`);
+  const bytes = Number(size);
+  if (!Number.isSafeInteger(bytes) || bytes < 1 || bytes > (mimeType.startsWith("image/") ? 15 : 100) * 1024 * 1024) {
+    throw new Error(`${name} exceeds the upload limit or is empty.`);
   }
+  const response = await fetch(`${url}?alt=media&supportsAllDrives=true`, options);
+  if (!response.ok) throw new Error(`Google Drive could not download ${name}.`);
+  return new File([await response.blob()], name, { type: mimeType });
 }

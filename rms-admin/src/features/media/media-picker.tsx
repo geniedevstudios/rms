@@ -3,7 +3,8 @@ import { Upload, Check, ImagePlus, ChevronDown } from "lucide-react";
 import { Modal, Thumb, Empty } from "../../components/ui";
 import { useContent } from "../../app/content.context";
 import { upload } from "../../lib/api";
-import { chooseDriveFiles, downloadDriveFiles, drivePickerConfigured, loadDrivePicker } from "./drive-picker";
+import { chooseDriveFiles, drivePickerConfigured, loadDrivePicker } from "./drive-picker";
+import { DriveImportReview } from "./drive-import-review";
 import type { Media } from "../../../shared/content.types";
 export function UploadButton({
   onUploaded,
@@ -16,30 +17,29 @@ export function UploadButton({
   const menu = useRef<HTMLDetailsElement>(null);
   const [status, setStatus] = useState("");
   const [driveReady, setDriveReady] = useState(false);
+  const [driveSelection, setDriveSelection] = useState<Awaited<ReturnType<typeof chooseDriveFiles>>>(null);
   const { accept, notify, setError } = useContent();
   const images = "image/jpeg,image/png,image/webp,image/gif";
   const videos = "video/mp4,video/webm";
   const mimeTypes = kind === "image" ? images : kind === "video" ? videos : images + "," + videos;
 
-  async function process(files: Iterable<File> | AsyncIterable<File>) {
-    for await (const file of files) {
-      if (kind && !file.type.startsWith(kind + "/")) throw new Error(`Choose a ${kind} file.`);
-      if (file.size > (file.type.startsWith("image/") ? 15 : 100) * 1024 * 1024) {
-        throw new Error("Images must be under 15 MB and videos under 100 MB.");
-      }
-      setStatus("Uploading 0%");
-      const state = await upload(file, (progress) => setStatus(`Uploading ${progress}%`));
-      accept(state);
-      onUploaded?.(state.media[0]);
+  async function uploadFile(file: File) {
+    if (kind && !file.type.startsWith(kind + "/")) throw new Error(`Choose a ${kind} file.`);
+    if (file.size > (file.type.startsWith("image/") ? 15 : 100) * 1024 * 1024) {
+      throw new Error("Images must be under 15 MB and videos under 100 MB.");
     }
-    notify("Upload complete. Your media is ready to use.");
+    setStatus("Uploading 0%");
+    const state = await upload(file, (progress) => setStatus(`Uploading ${progress}%`));
+    accept(state);
+    onUploaded?.(state.media[0]);
   }
 
   async function fromDevice(files: FileList | null) {
     if (!files?.length) return;
     setError("");
     try {
-      await process(Array.from(files));
+      for (const file of files) await uploadFile(file);
+      notify("Upload complete. Your media is ready to use.");
     } catch (error) {
       setError((error as Error).message);
     } finally {
@@ -54,9 +54,7 @@ export function UploadButton({
     setStatus("Opening Google Drive…");
     try {
       const selection = await chooseDriveFiles(mimeTypes, !onUploaded);
-      if (!selection?.ids.length) return;
-      setStatus("Importing from Google Drive…");
-      await process(downloadDriveFiles(selection.ids, selection.token, mimeTypes));
+      if (selection?.items.length) setDriveSelection(selection);
     } catch (error) {
       setError((error as Error).message);
     } finally {
@@ -79,6 +77,21 @@ export function UploadButton({
         accept={mimeTypes}
         onChange={(event) => void fromDevice(event.target.files)}
       />
+      {driveSelection && (
+        <DriveImportReview
+          selection={driveSelection}
+          mimeTypes={mimeTypes}
+          onClose={() => setDriveSelection(null)}
+          onUpload={async (file) => {
+            try {
+              await uploadFile(file);
+            } finally {
+              setStatus("");
+            }
+          }}
+          onComplete={() => notify("Upload complete. Your media is ready to use.")}
+        />
+      )}
       {drivePickerConfigured && !status ? (
         <details
           ref={menu}
