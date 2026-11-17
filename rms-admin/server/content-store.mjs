@@ -4,7 +4,7 @@ import { randomUUID } from "node:crypto";
 import { validatePromotions } from "./promotions.mjs";
 import { productSizes } from "../shared/product-sizes.mjs";
 import { orderedStock, reduceStock, stockError } from "../shared/stock.mjs";
-import { isDeletableMedia, rewriteMedia } from "../shared/media-url.mjs";
+import { canRemoveMediaFromLibrary, isDeletableMedia, rewriteMedia } from "../shared/media-url.mjs";
 import { references } from "../shared/references.mjs";
 import { readJsonIfPresent } from "./studio-db.mjs";
 export { references };
@@ -534,22 +534,28 @@ export function createContentStore(directory, { sync = null, remote = null } = {
       );
       return state;
     },
-    removeMedia: (id) =>
-      transact((s) => {
+    removeMedia: async (id) => {
+      let fileToDelete;
+      const state = await transact((s) => {
         const asset = s.media.find((m) => m.id === id);
         if (!asset) throw new HttpError(404, "Media not found.");
         check(
-          isDeletableMedia(asset.url),
-          "Original storefront assets cannot be deleted.",
+          canRemoveMediaFromLibrary(asset.url),
+          "Original storefront assets cannot be removed from the library.",
         );
+        const remaining = s.media.filter((m) => m.id !== id);
+        const shared = remaining.some((m) => m.url === asset.url);
         check(
-          ![...references(s.draft), ...references(s.published)].some(
+          shared || ![...references(s.draft), ...references(s.published)].some(
             (r) => r.url === asset.url,
           ),
           "This file is still used in a draft or on the published storefront. Replace it there first.",
         );
-        s.media = s.media.filter((m) => m.id !== id);
+        if (!shared && isDeletableMedia(asset.url)) fileToDelete = asset.url;
+        s.media = remaining;
         return "Removed " + asset.name;
-      }),
+      });
+      return { state, fileToDelete };
+    },
   };
 }

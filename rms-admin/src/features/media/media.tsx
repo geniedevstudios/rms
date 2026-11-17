@@ -10,7 +10,7 @@ import {
   formatDate,
 } from "../../components/ui";
 import { UploadButton } from "./media-picker";
-import { isDeletableMedia } from "../../../shared/media-url.mjs";
+import { canRemoveMediaFromLibrary, isDeletableMedia } from "../../../shared/media-url.mjs";
 import { api } from "../../lib/api";
 import { references } from "../../../shared/references.mjs";
 import type { AdminState, Media } from "../../../shared/content.types";
@@ -54,7 +54,7 @@ export function MediaLibrary() {
       accept(
         await api<AdminState>("media/" + selected.id, { method: "DELETE" }),
       );
-      notify("Media removed.");
+      notify("Removed from the media library.");
       setSelected(null);
       setConfirm(false);
     } catch (e) {
@@ -67,7 +67,7 @@ export function MediaLibrary() {
   const usedIn = selected
     ? [
         ...new Set(
-          [content, state.published].flatMap((entry) =>
+          [content, state.draft, state.published].flatMap((entry) =>
             references(entry)
               .filter((ref) => ref.url === selected.url)
               .map((ref) => ref.label),
@@ -75,6 +75,12 @@ export function MediaLibrary() {
         ),
       ]
     : [];
+  const hasAnotherEntry = !!selected && state.media.some(
+    (asset) => asset.id !== selected.id && asset.url === selected.url,
+  );
+  const canRemove = canRemoveMediaFromLibrary(selected?.url);
+  const keepFile = hasAnotherEntry || !isDeletableMedia(selected?.url);
+  const blockedByPlacement = usedIn.length > 0 && !hasAnotherEntry;
   return (
     <>
       <PageHeading
@@ -186,21 +192,20 @@ export function MediaLibrary() {
           </Field>
           {usedIn.length > 0 && (
             <p className="inline-note">
-              <Check size={14} /> Used in {usedIn.join(", ")}. Replace it there
-              before deleting.
+              <Check size={14} /> Used in {usedIn.join(", ")}.{" "}
+              {blockedByPlacement
+                ? "Replace it in the saved draft and published site before removing it."
+                : "The other library entry will keep these placements working."}
             </p>
           )}
+          {!canRemove && <p className="inline-note">This original storefront asset is protected.</p>}
           <div className="modal-actions">
             <button
               className="button secondary danger"
-              disabled={
-                busy ||
-                usedIn.length > 0 ||
-                !isDeletableMedia(selected.url)
-              }
+              disabled={busy || blockedByPlacement || !canRemove}
               onClick={() => setConfirm(true)}
             >
-              <Trash2 size={14} /> Delete
+              <Trash2 size={14} /> {keepFile ? "Remove from library" : "Delete"}
             </button>
             <button
               className="button"
@@ -212,7 +217,9 @@ export function MediaLibrary() {
           </div>
           {confirm && (
             <div className="delete-confirm">
-              <p>Permanently delete this uploaded file?</p>
+              <p>{keepFile
+                ? "Remove this entry from the media library? The stored file will stay available."
+                : "Permanently delete this uploaded file?"}</p>
               <button className="text-button" onClick={() => setConfirm(false)}>
                 Keep file
               </button>
@@ -221,7 +228,7 @@ export function MediaLibrary() {
                 disabled={busy}
                 onClick={() => void remove()}
               >
-                Delete file
+                {keepFile ? "Remove entry" : "Delete file"}
               </button>
             </div>
           )}

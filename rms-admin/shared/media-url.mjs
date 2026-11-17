@@ -19,13 +19,18 @@ export function isR2Media(url) {
   return typeof url === "string" && /^https:\/\/media\.rivermindstyle\.com\/rms\/(?:media|profile|migrated)\//.test(url);
 }
 
-/** Content-addressed migration files can be shared by multiple records. */
+/** Whether the backing file can be deleted after removing its last library entry. */
 export function isDeletableMedia(url) {
   return typeof url === "string" && (
     url.startsWith("/uploads/") ||
     url.startsWith("https://res.cloudinary.com/") ||
     (isR2Media(url) && url.startsWith("https://media.rivermindstyle.com/rms/media/"))
   );
+}
+
+/** Migrated files may be shared outside this library, so only remove their entries. */
+export function canRemoveMediaFromLibrary(url) {
+  return isDeletableMedia(url) || (isR2Media(url) && url.startsWith("https://media.rivermindstyle.com/rms/migrated/"));
 }
 
 const imageThumb = "c_fill,w_480,h_600,q_auto,f_auto";

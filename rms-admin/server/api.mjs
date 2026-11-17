@@ -976,15 +976,13 @@ export function createApi({
         return send(res, 200, await store.editMedia(match[1], b.alt));
       }
       if (match && req.method === "DELETE") {
-        const before = await store.read();
-        const asset = before.media.find((m) => m.id === match[1]);
-        const state = await store.removeMedia(match[1]);
-        if (asset?.url.startsWith("/uploads/"))
-          await unlink(resolve(directory, asset.url.slice(1))).catch(() => {});
-        else if (asset && isR2Media(asset.url))
-          await deleteR2Media(r2, asset.url).catch(() => {});
-        else if (asset)
-          await destroyCloudinary(asset.url, cloudinary).catch(() => {});
+        const { state, fileToDelete } = await store.removeMedia(match[1]);
+        if (fileToDelete?.startsWith("/uploads/"))
+          await unlink(resolve(directory, fileToDelete.slice(1))).catch(() => {});
+        else if (fileToDelete && isR2Media(fileToDelete))
+          await deleteR2Media(r2, fileToDelete).catch(() => {});
+        else if (fileToDelete)
+          await destroyCloudinary(fileToDelete, cloudinary).catch(() => {});
         return send(res, 200, state);
       }
       throw new HttpError(404, "Not found.");
