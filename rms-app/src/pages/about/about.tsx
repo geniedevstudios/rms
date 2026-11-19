@@ -100,9 +100,8 @@ export function About() {
         <div className="founder-story">
           <span className="eyebrow">THE FOUNDER</span>
           <h2>Mimi Elsa</h2>
-          <p className="founder-role">Founder of RIVERMINDSTYLE</p>
           <p>
-            Mimi founded Rivermindstyle in October 2021 with an appreciation
+            Elsa founded Rivermindstyle in October 2021 with an appreciation
             for thoughtful design. Her approach to womenswear leaves room for
             each wearer to express her own style.
           </p>
@@ -117,7 +116,7 @@ export function About() {
         </h2>
         <p className="manifesto-body">
           You’ll find us on Vanilla Street in Adenta. Visits are by appointment,
-          daily from 9:00 to 17:45.
+          Monday–Saturday from 10 am to 6 pm.
         </p>
       </section>
       <section className="studio-locator" aria-label="Studio location">
@@ -148,7 +147,7 @@ export function About() {
             </address>
             <div className="studio-hours">
               <span className="eyebrow">Hours</span>
-              <p>Every day, 9:00–17:45</p>
+              <p>Monday–Saturday, 10 am–6 pm</p>
               <p>A visit is arranged ahead.</p>
             </div>
             <Link to="/custom" className="text-link">

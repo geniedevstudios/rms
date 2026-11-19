@@ -103,7 +103,7 @@ export function notificationMessage(
     order:
       "Your payment is confirmed. Your considered pieces are now in our hands, ready for their next chapter.",
     consultation:
-      "Your payment of GH₵ 300 is confirmed. The day you asked for is with the studio. This is not yet a confirmed appointment. The studio may reschedule this day based on availability, and will email you when it is confirmed or if it needs to move.",
+      `Your payment of ${money(record.fee || 300)} is confirmed. The day you asked for is with the studio. This is not yet a confirmed appointment. The studio may reschedule this day based on availability, and will email you when it is confirmed or if it needs to move.`,
     "consultation-confirmed": appointmentLead("consultation-confirmed", record, now),
     "consultation-rescheduled": appointmentLead("consultation-rescheduled", record, now),
     abandoned:

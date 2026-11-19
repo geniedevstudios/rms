@@ -327,7 +327,7 @@ export function createNotifications({
       const paid =
         payment.status === "success" &&
         payment.currency === "GHS" &&
-        Number(payment.amount) === consultationFee * 100 &&
+        Number(payment.amount) === (booking.fee || consultationFee) * 100 &&
         String(payment.customer?.email || "").toLowerCase() === booking.email;
       if (!paid)
         throw new HttpError(402, "Payment has not been confirmed for this appointment.");

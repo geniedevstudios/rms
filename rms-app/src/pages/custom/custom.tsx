@@ -11,6 +11,7 @@ import { rememberAppointment } from "../confirmation/appointment";
 import { go } from "../../routing/navigation";
 import {
   accraToday,
+  nextStudioDay,
   WheelDatePicker,
 } from "../../shared/wheel-picker.tsx";
 import { CustomDesignCard } from "./custom-design-card";
@@ -19,7 +20,7 @@ const services = ["Styling consultation", "Bespoke tailoring"];
 
 function comingDay() {
   const [year, month, date] = accraToday().split("-").map(Number);
-  return new Date(Date.UTC(year, month - 1, date + 1)).toISOString().slice(0, 10);
+  return nextStudioDay(new Date(Date.UTC(year, month - 1, date + 1)).toISOString().slice(0, 10));
 }
 
 export function Custom() {
@@ -236,7 +237,9 @@ export function Custom() {
               <span>Preferred day</span>
               <WheelDatePicker value={day} onChange={setDay} />
               <p className="custom-note">
-                The studio may reschedule this day based on availability. You’ll
+                Appointments are Monday–Saturday, 10 am–6 pm, Ghana time.
+                The last appointment starts at 5 pm. The studio may reschedule
+                this day based on availability. You’ll
                 get an email when it is confirmed, or if it needs to move.
               </p>
             </div>

@@ -1,7 +1,7 @@
 import type { Product } from "../types/product";
 import { siteContent } from "../content/content";
 export type CustomDesign = Product & { leadDays: number };
-export const consultationFee = 300;
+export const consultationFee = 500;
 
 function activeDesigns(): CustomDesign[] {
   return siteContent.customDesigns

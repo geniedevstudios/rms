@@ -7,7 +7,7 @@ import { readJsonIfPresent } from "./studio-db.mjs";
 
 export const consultationStatuses = ["requested", "confirmed", "completed"];
 export const consultationServices = ["Styling consultation", "Bespoke tailoring"];
-export const consultationFee = 300;
+export const consultationFee = 500;
 const meetings = ["Online meeting", "Atelier visit"];
 const mark = "rms-booking:";
 const times = ["00", "15", "30", "45"];
@@ -45,8 +45,10 @@ export function acceptScheduled(value, now = new Date()) {
   const day = parseDay(value.slice(0, 10));
   const hour = Number(value.slice(11, 13));
   const minute = value.slice(14, 16);
-  if (!day || hour < 9 || hour > 17 || !times.includes(minute))
-    throw new HttpError(400, "Choose a studio time between 9:00 and 17:45.");
+  // Appointments last one hour and must finish by the 18:00 closing time.
+  if (!day || new Date(day + "T12:00:00Z").getUTCDay() === 0 ||
+      hour < 10 || hour * 60 + Number(minute) > 17 * 60 || !times.includes(minute))
+    throw new HttpError(400, "Choose Monday–Saturday, with a start time from 10:00 to 17:00. The studio closes at 18:00.");
   const stamp = Date.parse(`${value}:00.000Z`);
   if (!Number.isFinite(stamp) || stamp < now.getTime() + 30 * 60 * 1000)
     throw new HttpError(400, "Choose a coming day and time.");
@@ -72,6 +74,8 @@ export function acceptConsultation(body, now = new Date()) {
   const year = Number(appointment.slice(0, 4));
   if (!appointment || appointment < today || year < start || year >= start + 10)
     throw new HttpError(400, "Choose a coming day.");
+  if (new Date(appointment + "T12:00:00Z").getUTCDay() === 0)
+    throw new HttpError(400, "Choose Monday–Saturday. The studio is closed on Sundays.");
   if (!name || !phone || !consultationServices.includes(service) || !meetings.includes(meeting))
     throw new HttpError(400, "Add the appointment details.");
   return {
@@ -119,7 +123,7 @@ export function toStored(item) {
   };
   return {
     id: item.id,
-    date: meta.scheduledAt || (meta.appointment ? `${meta.appointment}T09:00:00.000Z` : meta.requestedAt),
+    date: meta.scheduledAt || (meta.appointment ? `${meta.appointment}T10:00:00.000Z` : meta.requestedAt),
     name: item.name,
     email: item.email,
     phone: item.phone,

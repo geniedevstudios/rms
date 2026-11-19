@@ -93,7 +93,7 @@ export function Terms() {
         {
           heading: "Appointments",
           body: [
-            "A styling consultation or bespoke appointment is GH₵ 300. Paying holds the request. It is not yet a confirmed time.",
+            "A styling consultation or bespoke appointment is GH₵ 500. Paying holds the request. It is not yet a confirmed time.",
             "The studio confirms a time on the day you asked for, and may move it when that day is not available.",
           ],
         },
@@ -107,7 +107,7 @@ export function Terms() {
         {
           heading: "The studio",
           body: [
-            "The house is on Vanilla Street, Adenta, Accra. A visit is arranged ahead. Hours are every day, 9:00–17:45.",
+            "The house is on Vanilla Street, Adenta, Accra. A visit is arranged ahead. Hours are Monday–Saturday, 10 am–6 pm.",
           ],
         },
         {
@@ -141,7 +141,7 @@ export function Contact() {
         {
           heading: "The studio",
           body: [
-            "Vanilla Street, Adenta, Accra, Ghana. Every day, 9:00–17:45. A visit is arranged ahead.",
+            "Vanilla Street, Adenta, Accra, Ghana. Monday–Saturday, 10 am–6 pm. A visit is arranged ahead.",
             <Link to="/about" className="text-link">Find the studio</Link>,
           ],
         },

@@ -6,7 +6,7 @@ const region = { lat: 5.6037, lng: -0.187 };
 const studio = { lat: 5.710471, lng: -0.161357 };
 const closeZoom = 16;
 const directions = `https://www.google.com/maps/dir/?api=1&destination=${studio.lat},${studio.lng}`;
-const studioCard = `<div class="studio-pin-details"><h3>RIVERMINDSTYLE</h3><p class="eyebrow">By appointment</p><address>Vanilla Street<br>Adenta, Accra, Ghana</address><div class="studio-pin-hours"><span class="eyebrow">Hours</span><p>Every day, 9:00–17:45</p><p>A visit is arranged ahead.</p></div><a class="text-link" href="${directions}" target="_blank" rel="noopener noreferrer">Get directions</a></div>`;
+const studioCard = `<div class="studio-pin-details"><h3>RIVERMINDSTYLE</h3><p class="eyebrow">By appointment</p><address>Vanilla Street<br>Adenta, Accra, Ghana</address><div class="studio-pin-hours"><span class="eyebrow">Hours</span><p>Monday–Saturday, 10 am–6 pm</p><p>A visit is arranged ahead.</p></div><a class="text-link" href="${directions}" target="_blank" rel="noopener noreferrer">Get directions</a></div>`;
 
 export function StudioMap({ focused, onSelect }: { focused: boolean; onSelect: () => void }) {
   const node = useRef<HTMLDivElement>(null);

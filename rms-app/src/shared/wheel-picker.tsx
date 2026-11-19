@@ -16,7 +16,7 @@ const months = [
   "November",
   "December",
 ];
-const hours = Array.from({ length: 9 }, (_, index) => String(index + 9).padStart(2, "0"));
+const hours = Array.from({ length: 8 }, (_, index) => String(index + 10).padStart(2, "0"));
 const minutes = ["00", "15", "30", "45"];
 
 export function accraToday() {
@@ -31,6 +31,14 @@ export function accraToday() {
 function shiftDay(day: string, count: number) {
   const [year, month, date] = day.split("-").map(Number);
   return new Date(Date.UTC(year, month - 1, date + count)).toISOString().slice(0, 10);
+}
+
+function isStudioDay(day: string) {
+  return new Date(day + "T12:00:00Z").getUTCDay() !== 0;
+}
+
+export function nextStudioDay(day: string) {
+  return isStudioDay(day) ? day : shiftDay(day, 1);
 }
 
 function daysInMonth(year: number, month: number) {
@@ -77,7 +85,11 @@ function clampDate(year: string, month: string, date: string) {
 }
 
 function studioTimes(day: string) {
-  const slots = hours.flatMap((hour) => minutes.map((minute) => ({ hour, minute })));
+  if (!isStudioDay(day)) return [];
+  // Leave one hour before the studio closes at 18:00.
+  const slots = hours.flatMap((hour) => minutes
+    .filter((minute) => Number(hour) * 60 + Number(minute) <= 17 * 60)
+    .map((minute) => ({ hour, minute })));
   const today = accraToday();
   if (day > today) return slots;
   if (day < today) return [];
@@ -233,8 +245,9 @@ export function WheelDatePicker({
   const today = accraToday();
   const startYear = Number(today.slice(0, 4));
   const years = Array.from({ length: yearSpan }, (_, index) => String(startYear + index));
-  const picked = timeOnly ? chosen : { ...chosen, ...clampDate(chosen.year, chosen.month, chosen.date) };
-  const day = timeOnly ? value.slice(0, 10) : `${picked.year}-${picked.month}-${picked.date}`;
+  const clamped = clampDate(chosen.year, chosen.month, chosen.date);
+  const day = timeOnly ? value.slice(0, 10) : nextStudioDay(`${clamped.year}-${clamped.month}-${clamped.date}`);
+  const picked = timeOnly ? chosen : { ...chosen, year: day.slice(0, 4), month: day.slice(5, 7), date: day.slice(8, 10) };
   const slot = timed ? nearestTime(day, picked.hour, picked.minute) : { hour: picked.hour, minute: picked.minute };
   const monthStart = Number(picked.year) === startYear ? Number(today.slice(5, 7)) : 1;
   const monthOptions = months
@@ -247,7 +260,7 @@ export function WheelDatePicker({
       : 1;
   const dates = Array.from({ length: dayCount - dayStart + 1 }, (_, index) =>
     String(dayStart + index).padStart(2, "0"),
-  );
+  ).filter((date) => isStudioDay(`${picked.year}-${picked.month}-${date}`));
   const slots = timed ? studioTimes(day) : [];
   const hourOptions = [...new Set(slots.map((item) => item.hour))].map((hour) => ({
     value: hour,
@@ -270,7 +283,7 @@ export function WheelDatePicker({
       return;
     }
     const date = clampDate(merged.year, merged.month, merged.date);
-    const nextDay = `${date.year}-${date.month}-${date.date}`;
+    const nextDay = nextStudioDay(`${date.year}-${date.month}-${date.date}`);
     if (!timed) {
       onChange(nextDay);
       return;
@@ -344,7 +357,8 @@ export function WheelDatePicker({
       </div>
       <p className="wheel-readout">
         {timed && slots.length === 0
-          ? "This day has passed."
+          ? !isStudioDay(day) ? "The studio is closed on Sundays. Choose another day."
+            : "No appointment times remain on this day. Choose another day."
           : formatWheelValue(timed ? `${day}T${slot.hour}:${slot.minute}` : day, timed)}
       </p>
     </div>
