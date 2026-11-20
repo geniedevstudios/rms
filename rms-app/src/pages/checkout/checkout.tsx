@@ -18,6 +18,9 @@ import { findPiece } from "../../data/catalog";
 import { resolveColourway } from "../../data/size-guide";
 import { pieceLine } from "../../features/products/colour";
 import { money } from "../../lib/format-currency";
+import { CurrencyNote } from "../../features/currency/currency-select";
+import { useMoney } from "../../features/currency/currency.context";
+import { useAccount } from "../../features/account/account.context";
 import {
   paymentReference,
   preparePaystack,
@@ -35,6 +38,8 @@ export function Checkout() {
       .catch(() => undefined);
   }, []);
   const { items: bag, subtotal, clearCart, restoreCart } = useCart();
+  const shown = useMoney();
+  const { customer } = useAccount();
   const promo = usePromoCode(bag, subtotal);
   const { placeOrder } = useOrders();
   const [paying, setPaying] = useState(false);
@@ -109,6 +114,19 @@ export function Checkout() {
     if (!abroad || !formRef.current) return;
     scheduleRates(formRef.current, country);
   }, [pieceKey, abroad, country]);
+  // Signed-in customers get their email and name filled in. Anything already typed stays.
+  useEffect(() => {
+    const form = formRef.current;
+    if (!customer || !form) return;
+    const fill = (name: string, value: string) => {
+      const field = form.elements.namedItem(name);
+      if (field instanceof HTMLInputElement && !field.value) field.value = value;
+    };
+    fill("email", customer.email);
+    fill("given-name", customer.givenName);
+    fill("family-name", customer.familyName);
+    if (abroad) scheduleRates(form, country);
+  }, [customer, bag.length > 0]);
   useEffect(() => {
     const query = new URLSearchParams(location.hash.split("?")[1] || "");
     const token = query.get("recovery");
@@ -362,7 +380,7 @@ export function Checkout() {
                       {rate.days ? ` · ${rate.days} day${rate.days === 1 ? "" : "s"}` : ""}
                     </p>
                   </span>
-                  <strong>{money(rate.cedis)}</strong>
+                  <strong>{shown(rate.cedis)}</strong>
                 </button>
               ))}
               {!rates.length && (
@@ -383,8 +401,9 @@ export function Checkout() {
             </div>
           )}
           {error && <p className="form-error">{error}</p>}
+          <CurrencyNote charge={money(due)} />
           <button type="submit" className="button dark full" disabled={paying || promo.busy || quoting || (abroad && !rateId)}>
-            {paying ? "Waiting for Paystack" : `Pay ${money(due)}`}{" "}
+            {paying ? "Waiting for Paystack" : `Pay ${shown(due)}`}{" "}
             <ArrowRight size={17} />
           </button>
         </form>
@@ -399,7 +418,7 @@ export function Checkout() {
                 <div>
                   <h3>{p.name}</h3>
                   <p>{pieceLine(item.color || colourway?.color, item.size, item.quantity)}</p>
-                  <span>{money(p.price * item.quantity)}</span>
+                  <span>{shown(p.price * item.quantity)}</span>
                 </div>
               </div>
             );
@@ -408,22 +427,22 @@ export function Checkout() {
           <div className="checkout-totals">
             <div>
               <span>Subtotal</span>
-              <span>{money(promo.quote?.subtotal ?? subtotal)}</span>
+              <span>{shown(promo.quote?.subtotal ?? subtotal)}</span>
             </div>
-            {promo.quote && <div><span>Discount · {promo.quote.promoCode}</span><span>−{money(promo.quote.discount)}</span></div>}
+            {promo.quote && <div><span>Discount · {promo.quote.promoCode}</span><span>−{shown(promo.quote.discount)}</span></div>}
             <div>
               <span>Delivery</span>
               <span>
                 {abroad
                   ? selected
-                    ? `${selected.carrier} · ${money(selected.cedis)}`
+                    ? `${selected.carrier} · ${shown(selected.cedis)}`
                     : "Choose a carrier"
                   : "Complimentary"}
               </span>
             </div>
             <div className="checkout-total">
               <strong>Total</strong>
-              <strong>{money(due)}</strong>
+              <strong>{shown(due)}</strong>
             </div>
           </div>
         </aside>

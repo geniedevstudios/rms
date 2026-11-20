@@ -1,6 +1,7 @@
 import "./footer.styles.css";
 import { useDialogs } from "../dialogs/dialogs.context";
 import { Link } from "../../routing/link";
+import { CurrencySelect } from "../../features/currency/currency-select";
 import { ArrowUp } from "lucide-react";
 export function Footer() {
   const { openDialog } = useDialogs();
@@ -16,6 +17,10 @@ export function Footer() {
           <span className="eyebrow">
             ROOTED IN IDENTITY. OPEN TO THE WORLD.
           </span>
+          <div className="footer-currency">
+            <span className="eyebrow">CURRENCY</span>
+            <CurrencySelect variant="pills" />
+          </div>
         </div>
         <div className="footer-col">
           <h3>Explore</h3>

@@ -1,45 +1,30 @@
-/** Public Cloudinary cloud already used in seed and live delivery URLs. */
-const cloudHost = "https://res.cloudinary.com/hr5xa7o9";
+/**
+ * Photographs are stored in Cloudflare R2 and served from media.rivermindstyle.com.
+ * That domain can resize on request, so ask for the best format (WebP/AVIF) at a
+ * sensible width instead of sending the original. If resizing ever fails,
+ * `onerror=redirect` falls back to the original file.
+ */
+const baseWidth = 2000;
+const resizable =
+  /^https:\/\/media\.rivermindstyle\.com\/(?!cdn-cgi\/)rms\/[A-Za-z0-9_./-]+\.(?:jpe?g|png|webp)$/i;
+const resize = (width) =>
+  `/cdn-cgi/image/width=${width},quality=80,format=auto,onerror=redirect`;
 
-const delivery =
-  /^https:\/\/res\.cloudinary\.com\/[a-z0-9-]+\/(image|video)\/upload\/([A-Za-z0-9][A-Za-z0-9_./-]*)(?:\?.*)?$/i;
-const localMedia =
-  /^\/media\/(image|video)\/([A-Za-z0-9][A-Za-z0-9_.,/-]*)$/i;
-
-/** Deliver photographs and films from Cloudinary. Same-site /media paths expand there. */
-export function toWebsiteMedia(url) {
-  if (typeof url !== "string") return url;
-  if (delivery.test(url)) return url;
-  const local = localMedia.exec(url);
-  if (!local || local[2].includes("..")) return url;
-  return `${cloudHost}/${local[1].toLowerCase()}/upload/${local[2]}`;
+function optimizeImage(url) {
+  if (!resizable.test(url)) return url;
+  const asset = new URL(url);
+  return asset.origin + resize(baseWidth) + asset.pathname + asset.search;
 }
 
-const imageThumb = "c_fill,w_480,h_600,q_auto,f_auto";
-const videoThumb = "so_0,c_fill,w_480,h_600,q_auto,f_jpg";
-
-/** A small preview for library grids. The stored address stays unchanged. */
-export function libraryThumb(url, video = false) {
-  if (typeof url !== "string" || !url) return url;
-  const step = video ? videoThumb : imageThumb;
-  const cloud = /^(https:\/\/res\.cloudinary\.com\/[^/]+\/)(image|video)\/upload\/(.+)$/i.exec(url);
-  if (cloud) {
-    const path = cloud[3];
-    if (path.startsWith("c_fill,") || path.startsWith("so_0,")) return url;
-    const kind = video ? "video" : cloud[2].toLowerCase();
-    return `${cloud[1]}${kind}/upload/${step}/${path}`;
-  }
-  const local = localMedia.exec(url);
-  if (!local || local[2].includes("..")) return url;
-  const path = local[2];
-  if (path.startsWith("c_fill,") || path.startsWith("so_0,"))
-    return `${cloudHost}/${local[1].toLowerCase()}/upload/${path}`;
-  const kind = video ? "video" : local[1].toLowerCase();
-  return `${cloudHost}/${kind}/upload/${step}/${path}`;
+/** A smaller copy of an already optimised storefront photo, for cards and grids. */
+export function optimizedImage(url, width = baseWidth) {
+  if (typeof url !== "string") return url;
+  const from = resize(baseWidth) + "/";
+  return url.includes(from) ? url.replace(from, resize(width) + "/") : url;
 }
 
 export function rewriteMedia(value) {
-  if (typeof value === "string") return toWebsiteMedia(value);
+  if (typeof value === "string") return optimizeImage(value);
   if (Array.isArray(value)) return value.map(rewriteMedia);
   if (value && typeof value === "object") {
     return Object.fromEntries(

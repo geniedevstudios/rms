@@ -175,5 +175,27 @@ export async function downloadDriveFile(id: string, token: string, mimeTypes: st
   }
   const response = await fetch(`${url}?alt=media&supportsAllDrives=true`, options);
   if (!response.ok) throw new Error(`Google Drive could not download ${name}.`);
-  return new File([await response.blob()], name, { type: mimeType });
+  const blob = await response.blob();
+  // Drive reports a type from the file name, which is often wrong (a WebP or PNG
+  // saved as .jpg, for example). Trust the file's own bytes, as the server does.
+  const actual = await sniffMediaType(blob);
+  if (!actual) {
+    throw new Error(
+      `${name} is not a JPG, PNG, WebP, GIF, MP4 or WebM file. If it is a HEIC photo, export it as JPG first.`,
+    );
+  }
+  if (!mimeTypes.split(",").includes(actual)) throw new Error(`${name} is an unsupported file type.`);
+  return new File([blob], name, { type: actual });
+}
+
+async function sniffMediaType(blob: Blob) {
+  const bytes = new Uint8Array(await blob.slice(0, 16).arrayBuffer());
+  const text = (from: number, to: number) => String.fromCharCode(...bytes.slice(from, to));
+  if ([137, 80, 78, 71, 13, 10, 26, 10].every((value, index) => bytes[index] === value)) return "image/png";
+  if (bytes[0] === 255 && bytes[1] === 216 && bytes[2] === 255) return "image/jpeg";
+  if (["GIF87a", "GIF89a"].includes(text(0, 6))) return "image/gif";
+  if (text(0, 4) === "RIFF" && text(8, 12) === "WEBP") return "image/webp";
+  if (text(4, 8) === "ftyp") return "video/mp4";
+  if ([26, 69, 223, 163].every((value, index) => bytes[index] === value)) return "video/webm";
+  return null;
 }

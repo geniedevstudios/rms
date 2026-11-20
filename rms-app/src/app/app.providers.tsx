@@ -5,19 +5,22 @@ import { WishlistProvider } from "../features/wishlist/wishlist.context";
 import { OrdersProvider } from "../features/orders/orders.context";
 import { DialogProvider } from "../components/dialogs/dialogs.context";
 import { ToastProvider } from "../components/toast/toast.context";
+import { CurrencyProvider } from "../features/currency/currency.context";
 
 export function AppProviders({ children }: { children: ReactNode }) {
   return (
     <ToastProvider>
-      <DialogProvider>
-        <AccountProvider>
-        <CartProvider>
-          <WishlistProvider>
-            <OrdersProvider>{children}</OrdersProvider>
-          </WishlistProvider>
-        </CartProvider>
-        </AccountProvider>
-      </DialogProvider>
+      <CurrencyProvider>
+        <DialogProvider>
+          <AccountProvider>
+          <CartProvider>
+            <WishlistProvider>
+              <OrdersProvider>{children}</OrdersProvider>
+            </WishlistProvider>
+          </CartProvider>
+          </AccountProvider>
+        </DialogProvider>
+      </CurrencyProvider>
     </ToastProvider>
   );
 }

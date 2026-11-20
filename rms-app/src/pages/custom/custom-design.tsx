@@ -7,13 +7,14 @@ import { customDesigns, type CustomDesign } from "../../data/custom-designs";
 import { PieceCare } from "../../features/products/care-guide/care-guide";
 import { ProductPurchase } from "../../features/products/product-purchase/product-purchase";
 import { useDialogs } from "../../components/dialogs/dialogs.context";
-import { money } from "../../lib/format-currency";
+import { useMoney } from "../../features/currency/currency.context";
 import { Link } from "../../routing/link";
 import { CustomDesignCard } from "./custom-design-card";
 import { ProductGallery, productFrames } from "../../features/products/product-gallery/product-gallery";
 
 export function CustomDesignPage({ design }: { design: CustomDesign }) {
   const { openDialog } = useDialogs();
+  const money = useMoney();
   const ways = pieceColourways(design);
   const [colourId, setColourId] = useState(ways[0]?.id ?? "");
   useEffect(() => {

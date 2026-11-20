@@ -3,7 +3,6 @@ import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import { forwardReceivedEmail } from "./api/resend-forward.js";
 import { createApi } from "./server/api.mjs";
-import { cloudinaryConfig } from "./server/cloudinary.mjs";
 import { r2Config } from "./server/r2.mjs";
 import { calendarConfig } from "./server/calendar.mjs";
 import { createShippo } from "./server/shippo.mjs";
@@ -21,7 +20,6 @@ export default defineConfig(({ mode }) => {
           let worker;
           server.middlewares.use(
             createApi({
-              cloudinary: cloudinaryConfig(env),
               r2: r2Config(env),
               onWorkerCreated: (timer) => {
                 clearInterval(worker);

@@ -11,38 +11,11 @@ type HotData = {
 
 const hot = import.meta.hot?.data as HotData | undefined;
 const listeners = hot?.listeners ?? new Set<() => void>();
-const blank =
-  "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
-
-function isBuiltInMedia(value: string) {
-  return (
-    value.startsWith("/media/") ||
-    value.startsWith("/uploads/") ||
-    value.startsWith("/images/") ||
-    value.startsWith("/videos/") ||
-    /^https:\/\/res\.cloudinary\.com\//.test(value)
-  );
-}
-
-function withoutBuiltInMedia(value: unknown): unknown {
-  if (typeof value === "string") {
-    if (!isBuiltInMedia(value)) return value;
-    return /\/video\/|\.(mp4|webm)(\?|$)/i.test(value) ? "" : blank;
-  }
-  if (Array.isArray(value)) return value.map(withoutBuiltInMedia);
-  if (value && typeof value === "object") {
-    return Object.fromEntries(
-      Object.entries(value).map(([key, item]) => [key, withoutBuiltInMedia(item)]),
-    );
-  }
-  return value;
-}
-
 export let hasPublishedContent = Boolean(hot?.hasPublishedContent);
 export let siteContent: Content = (
   hot?.hasPublishedContent && hot.siteContent
     ? rewriteMedia(hot.siteContent)
-    : withoutBuiltInMedia(structuredClone(defaults))
+    : structuredClone(defaults)
 ) as Content;
 let liveRevision = -1;
 let liveStamp = "";

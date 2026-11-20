@@ -5,12 +5,13 @@ import { pieceColourways } from "../../../data/size-guide";
 import type { Product } from "../../../types/product";
 import { Link } from "../../../routing/link";
 import { productPath } from "../../../routing/navigation";
-import { money } from "../../../lib/format-currency";
+import { useMoney } from "../../currency/currency.context";
 import { ProductPurchase } from "../product-purchase/product-purchase";
 import { ProductGallery, productFrames } from "../product-gallery/product-gallery";
 import "./quick-view.styles.css";
 
 export function QuickView({ product }: { product: Product }) {
+  const money = useMoney();
   const ways = pieceColourways(product);
   const [colourId, setColourId] = useState(ways[0]?.id ?? "");
   useEffect(() => {

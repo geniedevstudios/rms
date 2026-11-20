@@ -4,7 +4,7 @@ import { randomUUID } from "node:crypto";
 import { validatePromotions } from "./promotions.mjs";
 import { productSizes } from "../shared/product-sizes.mjs";
 import { orderedStock, reduceStock, stockError } from "../shared/stock.mjs";
-import { canRemoveMediaFromLibrary, isDeletableMedia, rewriteMedia } from "../shared/media-url.mjs";
+import { canRemoveMediaFromLibrary, isDeletableMedia } from "../shared/media-url.mjs";
 import { references } from "../shared/references.mjs";
 import { readJsonIfPresent } from "./studio-db.mjs";
 export { references };
@@ -64,7 +64,7 @@ export function publicContent(content) {
         result.products.some((p) => p.id === id),
       ),
     }));
-  return rewriteMedia(result);
+  return result;
 }
 export function validateContent(c, media) {
   check(c && typeof c === "object", "Content is required.");
@@ -139,6 +139,8 @@ export function validateContent(c, media) {
   validatePromotions(c.promotions, media);
   const readyToWear = new Set(c.products);
   const image = (url) => !url || byUrl.get(url)?.type === "image";
+  // A cleared starter field can stay empty until its first library selection.
+  const emptyStarterMedia = (url, starterUrl) => url === "" && starterUrl === "";
   const ids = new Set();
   const sizesOk = (sizes) =>
     sizes === undefined ||
@@ -147,6 +149,8 @@ export function validateContent(c, media) {
       new Set(sizes).size === sizes.length &&
       sizes.every((size) => productSizes.includes(size)));
   for (const p of [...c.products, ...c.customDesigns]) {
+    const starter = (readyToWear.has(p) ? seed.products : seed.customDesigns)
+      .find((item) => item.id === p.id);
     if (p.colourways === undefined) {
       check(sizesOk(p.availableSizes), "Choose valid available sizes for each piece.");
       if (readyToWear.has(p)) {
@@ -246,7 +250,7 @@ export function validateContent(c, media) {
       "Choose whether a piece is featured on the homepage.",
     );
     check(
-      p.image && image(p.image) && image(p.hoverImage),
+      (p.image || emptyStarterMedia(p.image, starter?.image)) && image(p.image) && image(p.hoverImage),
       "Product photography must be images.",
     );
     check(
@@ -289,7 +293,7 @@ export function validateContent(c, media) {
       "Complete the journal title and text.",
     );
     check(
-      j.image && image(j.image) && image(j.hover),
+      (j.image || emptyStarterMedia(j.image, seed.journals.find((item) => item.id === j.id)?.image)) && image(j.image) && image(j.hover),
       "Journal covers must be images.",
     );
     check(
@@ -309,7 +313,7 @@ export function validateContent(c, media) {
       text(col.label) &&
         col.label.trim() &&
         text(col.imageAlt) &&
-        col.image &&
+        (col.image || emptyStarterMedia(col.image, seed.collections.find((item) => item.id === col.id)?.image)) &&
         image(col.image),
       "Complete the collection label and image.",
     );
@@ -376,7 +380,8 @@ export function validateContent(c, media) {
       "Invalid media placement.",
     );
     check(
-      byUrl.get(s.src)?.type === (videoSlots.has(s.id) ? "video" : "image"),
+      emptyStarterMedia(s.src, seed.slots.find((slot) => slot.id === s.id)?.src) ||
+        byUrl.get(s.src)?.type === (videoSlots.has(s.id) ? "video" : "image"),
       "Choose the correct media type for " + s.label + ".",
     );
   }
@@ -384,7 +389,8 @@ export function validateContent(c, media) {
     check(
       text(s.alt) &&
         ["image", "video"].includes(s.type) &&
-        byUrl.get(s.src)?.type === s.type,
+        (byUrl.get(s.src)?.type === s.type ||
+          seed.hero.slides.some((slide) => slide.id === s.id && slide.type === s.type && emptyStarterMedia(s.src, slide.src))),
       "Choose a valid hero image or video.",
     );
   for (const s of c.categoryCards)
@@ -392,7 +398,7 @@ export function validateContent(c, media) {
       text(s.title) &&
         text(s.subtitle) &&
         image(s.image) &&
-        s.image &&
+        (s.image || emptyStarterMedia(s.image, seed.categoryCards.find((item) => item.id === s.id)?.image)) &&
         image(s.hover) &&
         typeof s.to === "string" &&
         /^\/(?!\/)[a-zA-Z0-9/?=&%._#-]*$/.test(s.to),

@@ -23,33 +23,25 @@ export function ProductPurchase({
   const soldOut = availableSizes(colourway).every((item) => !isSizeAvailable(colourway, item));
   const left = size ? quantityCap(colourway, size, Number.MAX_SAFE_INTEGER) : null;
   const counted = size ? Array.isArray(colourway.stock) : false;
-  const colour = colourway.color.trim();
   return (
     <>
-      {(colour || ways.length > 1) && (
+      {ways.length > 1 && (
         <div className="colour-choice">
-          <span>Colour{colour ? ` — ${colour}` : ""}</span>
-          {ways.length > 1 ? (
-            <div className="colour-options" role="group" aria-label="Choose a colour">
-              {ways.map((way) => (
-                <button
-                  key={way.id}
-                  type="button"
-                  aria-pressed={way.id === colourway.id}
-                  aria-label={way.color || "Colour"}
-                  className={way.id === colourway.id ? "selected" : ""}
-                  onClick={() => onColour(way.id)}
-                >
-                  {way.swatch && <i style={{ background: way.swatch }} />}
-                  <span>{way.color}</span>
-                </button>
-              ))}
-            </div>
-          ) : (
-            colourway.swatch && (
-              <span className="colour-dot" style={{ background: colourway.swatch }} />
-            )
-          )}
+          <div className="colour-options" role="group" aria-label="Choose a colour">
+            {ways.map((way) => (
+              <button
+                key={way.id}
+                type="button"
+                aria-pressed={way.id === colourway.id}
+                aria-label={way.color || "Colour"}
+                className={way.id === colourway.id ? "selected" : ""}
+                onClick={() => onColour(way.id)}
+              >
+                {way.swatch && <i style={{ background: way.swatch }} />}
+                <span>{way.color}</span>
+              </button>
+            ))}
+          </div>
         </div>
       )}
       <div className="size-heading">

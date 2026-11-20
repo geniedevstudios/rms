@@ -64,12 +64,15 @@ button:disabled {
 }
 button:focus-visible,
 a:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible,
 summary:focus-visible {
   outline: 2px solid #796150;
   outline-offset: 5px;
+}
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+.select-trigger:focus-visible {
+  outline: none;
 }
 h1,
 h2,

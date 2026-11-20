@@ -1,0 +1,113 @@
+.currency-menu {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+@media (max-width: 760px) {
+  /* Phones use the menu drawer instead. */
+  .currency-menu {
+    display: none;
+  }
+}
+.currency-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 40px;
+  padding: 0 6px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 1px;
+  color: inherit;
+}
+.currency-trigger:hover {
+  opacity: 0.6;
+}
+.currency-list,
+.currency-list button {
+  /* The mobile header forces white text fill; keep the list readable. */
+  -webkit-text-fill-color: var(--ink);
+}
+.currency-list button:disabled {
+  -webkit-text-fill-color: var(--muted);
+  opacity: 0.5;
+}
+.currency-list {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 30;
+  min-width: 210px;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--line);
+}
+.currency-list button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 12px;
+  font-size: 11px;
+  text-align: left;
+  color: var(--ink);
+}
+.currency-list button strong {
+  display: inline-block;
+  min-width: 34px;
+  font-weight: 500;
+  letter-spacing: 0.6px;
+}
+.currency-list button:hover:not(:disabled),
+.currency-list button[aria-selected="true"] {
+  background: #eeeae4;
+}
+.currency-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.currency-pills button {
+  padding: 9px 16px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--ink);
+  font-size: 11px;
+  letter-spacing: 0.6px;
+}
+.currency-pills button[aria-pressed="true"] {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #fff;
+}
+.currency-note {
+  font-size: 11px;
+  line-height: 1.7;
+  color: var(--muted);
+  margin-top: 12px;
+}
+.mobile-menu-currency {
+  margin-top: 28px;
+}
+.mobile-menu-currency .eyebrow {
+  margin-bottom: 12px;
+  color: var(--muted);
+}
+.footer-currency {
+  margin-top: 27px;
+}
+.footer-currency .eyebrow {
+  font-size: 7px;
+  letter-spacing: 1.2px;
+  margin-bottom: 10px;
+  color: #77766d;
+}
+.footer-currency .currency-pills button {
+  padding: 7px 13px;
+  font-size: 10px;
+}

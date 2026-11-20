@@ -6,6 +6,7 @@ import { Link } from "../../routing/link";
 import { shopCategories } from "../../data/products";
 import { collections } from "../../data/collections";
 import { productPath } from "../../routing/navigation";
+import { CurrencySelect } from "../../features/currency/currency-select";
 import {
   collectionMenuPhotos,
   newArrivalPhotos,
@@ -171,6 +172,10 @@ export function MobileMenu() {
           <span>Your RMS</span>
           <ArrowRight size={16} />
         </button>
+      </div>
+      <div className="mobile-menu-currency">
+        <span className="eyebrow">Currency</span>
+        <CurrencySelect variant="pills" />
       </div>
     </div>
   );

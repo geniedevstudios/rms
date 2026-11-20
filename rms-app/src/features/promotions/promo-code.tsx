@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import type { CartItem } from "../../types/cart";
 import { followupRequest } from "../checkout-followup/checkout-followup";
-import { money } from "../../lib/format-currency";
+import { useMoney } from "../currency/currency.context";
 import "./promotions.styles.css";
 
 type Quote = { subtotal: number; discount: number; total: number; promoCode: string };
@@ -33,6 +33,7 @@ export function usePromoCode(items: CartItem[], subtotal: number) {
 }
 
 export function PromoCodeField({ promo, disabled }: { promo: ReturnType<typeof usePromoCode>; disabled: boolean }) {
+  const money = useMoney();
   return <fieldset className="checkout-promo" disabled={disabled || promo.busy}>
     <label htmlFor="promo-code">Promo code</label>
     <div className="checkout-promo-entry"><input id="promo-code" autoComplete="off" maxLength={32} placeholder="Enter your code" value={promo.input}

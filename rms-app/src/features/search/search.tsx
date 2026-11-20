@@ -4,9 +4,10 @@ import { Search, ArrowUpRight } from "lucide-react";
 import { searchProducts } from "../products/product-selectors";
 import { Link } from "../../routing/link";
 import { productPath } from "../../routing/navigation";
-import { money } from "../../lib/format-currency";
+import { useMoney } from "../currency/currency.context";
 import { pieceColour } from "../products/colour";
 export function SearchPanel() {
+  const money = useMoney();
   const [query, setQuery] = useState("");
   const results = searchProducts(query);
   return (

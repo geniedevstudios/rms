@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useDialogs } from "../../components/dialogs/dialogs.context";
 import { pieceColourways } from "../../data/size-guide";
 import { Link } from "../../routing/link";
-import { money } from "../../lib/format-currency";
+import { useMoney } from "../../features/currency/currency.context";
 import { PieceCare } from "../../features/products/care-guide/care-guide";
 import { ProductPurchase } from "../../features/products/product-purchase/product-purchase";
 import { Plus, ArrowUpRight, ArrowRight } from "lucide-react";
@@ -14,6 +14,7 @@ import { ProductCard } from "../../features/products/product-card/product-card";
 import { ProductGallery, productFrames } from "../../features/products/product-gallery/product-gallery";
 export function ProductPage({ product }: { product: Product }) {
   const { openDialog } = useDialogs();
+  const money = useMoney();
   const ways = pieceColourways(product);
   const [colourId, setColourId] = useState(ways[0]?.id ?? "");
   useEffect(() => {

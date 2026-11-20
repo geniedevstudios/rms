@@ -1,6 +1,10 @@
 .custom-designs {
   scroll-margin-top: 90px;
 }
+.collection-hero + .section.custom-designs,
+.collection-hero + .section.custom-booking {
+  padding-top: 18px;
+}
 .custom-designs .page-intro h2,
 .custom-booking .page-intro h2 {
   font-size: 40px;
@@ -105,5 +109,9 @@
   .custom-designs .page-intro h2,
   .custom-booking .page-intro h2 {
     font-size: 32px;
+  }
+  .collection-hero + .section.custom-designs,
+  .collection-hero + .section.custom-booking {
+    padding-top: 20px;
   }
 }

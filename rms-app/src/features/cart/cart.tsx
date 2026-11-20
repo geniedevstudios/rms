@@ -8,12 +8,14 @@ import { resolveColourway } from "../../data/size-guide";
 import { pieceLine } from "../products/colour";
 import { Link } from "../../routing/link";
 import { piecePath } from "../../routing/navigation";
-import { money } from "../../lib/format-currency";
+import { useMoney } from "../currency/currency.context";
+import { CurrencyNote } from "../currency/currency-select";
 import { Minus, Plus, X, ArrowRight, ShoppingBag } from "lucide-react";
 import { EmptyState } from "../../components/empty-state/empty-state";
 export function Cart() {
   const { items, subtotal, updateQuantity, removeItem } = useCart();
   const { closeDialog } = useDialogs();
+  const money = useMoney();
   return items.length ? (
     <>
       <div className="bag-items">
@@ -63,6 +65,7 @@ export function Cart() {
           <strong>{money(subtotal)}</strong>
         </div>
         <p>Delivery is shown at checkout.</p>
+        <CurrencyNote />
         <Link to="/checkout" className="button dark full">
           Continue to checkout <ArrowRight size={17} />
         </Link>

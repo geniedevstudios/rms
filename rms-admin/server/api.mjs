@@ -16,7 +16,6 @@ import {
   createContentStore,
   HttpError,
 } from "./content-store.mjs";
-import { uploadToCloudinary, destroyCloudinary } from "./cloudinary.mjs";
 import { prepareR2Upload, inspectR2Upload, deleteR2Media } from "./r2.mjs";
 import { isR2Media } from "../shared/media-url.mjs";
 import {
@@ -129,7 +128,6 @@ export function createApi({
   password = process.env.RMS_ADMIN_PASSWORD,
   email = process.env.RMS_ADMIN_EMAIL,
   production = false,
-  cloudinary = null,
   r2 = null,
   resend = null,
   notificationsConfig = notificationConfig(),
@@ -326,12 +324,6 @@ export function createApi({
     if (!canGiveAccess(session.email))
       throw new HttpError(403, "Only the studio owner can give access.");
   }
-  function portraitId(address) {
-    if (!address || address === adminEmail) return "admin-portrait";
-    return (
-      "portrait-" + createHash("sha256").update(address).digest("hex").slice(0, 16)
-    );
-  }
   async function profileFor(address) {
     if (!address || address === adminEmail) return readProfile();
     const person = await admins.find(address);
@@ -348,7 +340,6 @@ export function createApi({
       throw new HttpError(400, "Add a name of up to 40 characters.");
     if (
       image &&
-      !image.startsWith("https://res.cloudinary.com/") &&
       !image.startsWith("/uploads/") &&
       !isR2Media(image)
     )
@@ -363,9 +354,8 @@ export function createApi({
     const path = new URL(req.url, "http://localhost").pathname;
     const isApi = path.startsWith("/api/cms/");
     const isUpload = path.startsWith("/uploads/");
-    const isMedia = path.startsWith("/media/");
     const isAsset = path.startsWith("/images/") || path.startsWith("/videos/");
-    if (!isApi && !isUpload && !isMedia && !isAsset) return next();
+    if (!isApi && !isUpload && !isAsset) return next();
     try {
       if (isUpload || isAsset) {
         if (!["GET", "HEAD"].includes(req.method))
@@ -381,31 +371,6 @@ export function createApi({
             ? resolve(directory, path.slice(1))
             : resolve(root, "public", path.slice(1)),
         );
-      }
-      const mediaPath = /^\/media\/(image|video)\/([A-Za-z0-9][A-Za-z0-9_.,/-]*)$/.exec(
-        path,
-      );
-      if (mediaPath) {
-        if (!["GET", "HEAD"].includes(req.method))
-          throw new HttpError(405, "Method not allowed.");
-        const cloudName = cloudinary?.cloudName;
-        const objectPath = mediaPath[2];
-        if (!cloudName || objectPath.includes(".."))
-          throw new HttpError(404, "File not found.");
-        const upstream = await fetch(
-          `https://res.cloudinary.com/${cloudName}/${mediaPath[1]}/upload/${objectPath}`,
-          { method: req.method },
-        );
-        const type = upstream.headers.get("content-type") || "";
-        if (!upstream.ok || !/^(image|video)\//.test(type))
-          throw new HttpError(404, "File not found.");
-        res.writeHead(200, {
-          "Content-Type": type,
-          "Cache-Control": "public, max-age=31536000, immutable",
-          "X-Content-Type-Options": "nosniff",
-        });
-        if (req.method === "HEAD" || !upstream.body) return res.end();
-        return await pipeline(Readable.fromWeb(upstream.body), res);
       }
       if (path === "/api/cms/calendar/callback" && req.method === "GET") {
         const query = new URL(req.url, "http://localhost").searchParams;
@@ -864,19 +829,7 @@ export function createApi({
             throw new HttpError(400, "Choose a JPG, PNG, WebP, or GIF.");
           const stored = resolve(dir, id + "." + extension);
           await rename(temp, stored);
-          let url = "/uploads/" + id + "." + extension;
-          if (cloudinary) {
-            try {
-              url = await uploadToCloudinary(stored, {
-                ...cloudinary,
-                resourceType: "image",
-                publicId: portraitId(session.email),
-                overwrite: true,
-              });
-            } finally {
-              await unlink(stored).catch(() => {});
-            }
-          }
+          const url = "/uploads/" + id + "." + extension;
           return send(res, 201, { url });
         } finally {
           await unlink(temp).catch(() => {});
@@ -936,18 +889,7 @@ export function createApi({
           } catch {
             name = "Upload";
           }
-          let url = "/uploads/" + filename;
-          if (cloudinary) {
-            try {
-              url = await uploadToCloudinary(stored, {
-                ...cloudinary,
-                resourceType: type === "video" ? "video" : "image",
-                publicId: id,
-              });
-            } finally {
-              await unlink(stored).catch(() => {});
-            }
-          }
+          const url = "/uploads/" + filename;
           const asset = {
             id,
             name: basename(name).slice(0, 160),
@@ -961,9 +903,7 @@ export function createApi({
             const state = await store.addMedia(asset);
             return send(res, 201, { asset, state });
           } catch (error) {
-            if (cloudinary)
-              await destroyCloudinary(url, cloudinary).catch(() => {});
-            else await unlink(stored).catch(() => {});
+            await unlink(stored).catch(() => {});
             throw error;
           }
         } finally {
@@ -981,8 +921,6 @@ export function createApi({
           await unlink(resolve(directory, fileToDelete.slice(1))).catch(() => {});
         else if (fileToDelete && isR2Media(fileToDelete))
           await deleteR2Media(r2, fileToDelete).catch(() => {});
-        else if (fileToDelete)
-          await destroyCloudinary(fileToDelete, cloudinary).catch(() => {});
         return send(res, 200, state);
       }
       throw new HttpError(404, "Not found.");

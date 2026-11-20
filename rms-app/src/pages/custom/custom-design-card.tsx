@@ -1,13 +1,14 @@
 import "../../features/products/product-card/product-card.styles.css";
 import { ArrowUpRight } from "lucide-react";
 import type { CustomDesign } from "../../data/custom-designs";
-import { money } from "../../lib/format-currency";
+import { useMoney } from "../../features/currency/currency.context";
 import { Link } from "../../routing/link";
 import { customPath } from "../../routing/navigation";
 import { HoverImage } from "../../components/hover-image/hover-image";
 import { pieceColour } from "../../features/products/colour";
 
 export function CustomDesignCard({ design }: { design: CustomDesign }) {
+  const money = useMoney();
   const to = customPath(design.id);
   const colour = pieceColour(design);
   return (

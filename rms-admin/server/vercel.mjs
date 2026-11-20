@@ -1,7 +1,6 @@
 import { tmpdir } from "node:os";
 import { resolve } from "node:path";
 import { createApi } from "./api.mjs";
-import { cloudinaryConfig } from "./cloudinary.mjs";
 import { r2Config } from "./r2.mjs";
 
 let handler;
@@ -12,7 +11,6 @@ function studio() {
       production: true,
       worker: false,
       directory: resolve(tmpdir(), "rms"),
-      cloudinary: cloudinaryConfig(),
       r2: r2Config(),
       supabase: {
         url: process.env.SUPABASE_URL,

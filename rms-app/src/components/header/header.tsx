@@ -9,6 +9,7 @@ import { Link } from "../../routing/link";
 import { shopCategories } from "../../data/products";
 import { collections } from "../../data/collections";
 import { productPath } from "../../routing/navigation";
+import { CurrencySelect } from "../../features/currency/currency-select";
 import {
   collectionMenuPhotos,
   newArrivalPhotos,
@@ -222,6 +223,7 @@ export function Header() {
             >
               <Search />
             </button>
+            <CurrencySelect variant="header" />
             <button
               className="icon-button desktop-action"
               aria-label={`Saved pieces (${saved.length})`}
