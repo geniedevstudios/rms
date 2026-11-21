@@ -77,6 +77,37 @@ export function Modal({
     </dialog>
   );
 }
+export function ConfirmModal({
+  title,
+  message,
+  confirmLabel,
+  cancelLabel = "Cancel",
+  busy = false,
+  onConfirm,
+  onCancel,
+}: {
+  title: string;
+  message: string;
+  confirmLabel: string;
+  cancelLabel?: string;
+  busy?: boolean;
+  onConfirm: () => void;
+  onCancel: () => void;
+}) {
+  return (
+    <Modal title={title} onClose={onCancel} dismissible={!busy}>
+      <p className="confirm-message">{message}</p>
+      <div className="modal-actions">
+        <button type="button" className="button secondary" disabled={busy} onClick={onCancel}>
+          {cancelLabel}
+        </button>
+        <button type="button" className="button danger-solid" disabled={busy} onClick={onConfirm}>
+          {confirmLabel}
+        </button>
+      </div>
+    </Modal>
+  );
+}
 export function Field({
   label,
   children,

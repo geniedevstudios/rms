@@ -237,19 +237,18 @@ export function Collections() {
             <div>
               <h3>Pieces in this collection</h3>
               <p className="muted">
-                Choose from your saved ready-to-wear products in the order
-                you’d like them to appear. A piece already in another
-                collection stays there. Draft products appear on the
+                Choose from your ready-to-wear and made-to-order pieces in the
+                order you’d like them to appear. A piece already in another
+                collection stays there. Draft pieces appear on the
                 storefront only after they are made active and published.
-                Made-to-order designs are managed separately.
               </p>
-              {!content.products.length && (
+              {!content.products.length && !content.customDesigns.length && (
                 <p className="muted">
-                  Add a ready-to-wear product first, then select it here.
+                  Add a piece first, then select it here.
                 </p>
               )}
               <div className="product-checklist">
-                {content.products.map((p) => {
+                {[...content.products, ...content.customDesigns].map((p) => {
                   const home = content.collections.find(
                     (collection) =>
                       collection.id !== original &&
@@ -280,6 +279,7 @@ export function Collections() {
                         {p.name}
                         <small>
                           {p.category}
+                          {p.leadDays ? " · Made to order" : ""}
                           {p.status === "draft" ? " · Draft" : ""}
                           {taken ? ` · In ${homeName}` : ""}
                         </small>

@@ -3,6 +3,7 @@
   "outputDirectory": "dist",
   "rewrites": [
     { "source": "/api/cms/:path*", "destination": "/api/proxy?forward=/api/cms/:path*" },
+    { "source": "/share/:type/:id", "destination": "/api/share?type=:type&id=:id" },
     { "source": "/((?!api/|assets/).*)", "destination": "/index.html" }
   ]
 }

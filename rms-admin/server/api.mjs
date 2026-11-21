@@ -913,7 +913,7 @@ export function createApi({
       const match = /^\/api\/cms\/media\/([a-z0-9-]+)$/.exec(path);
       if (match && req.method === "PATCH") {
         const b = await jsonBody(req);
-        return send(res, 200, await store.editMedia(match[1], b.alt));
+        return send(res, 200, await store.editMedia(match[1], b.alt, b.name));
       }
       if (match && req.method === "DELETE") {
         const { state, fileToDelete } = await store.removeMedia(match[1]);

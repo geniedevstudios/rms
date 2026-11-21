@@ -5,6 +5,8 @@ import { useContent } from "../../app/content.context";
 import { upload } from "../../lib/api";
 import { chooseDriveFiles, drivePickerConfigured, loadDrivePicker } from "./drive-picker";
 import { DriveImportReview } from "./drive-import-review";
+import { mediaSortOptions, sortMedia, useMediaSort, type MediaSort } from "./media-sort";
+import { SelectMenu } from "../../components/select-menu/select-menu";
 import type { Media } from "../../../shared/content.types";
 export function UploadButton({
   onUploaded,
@@ -23,13 +25,16 @@ export function UploadButton({
   const videos = "video/mp4,video/webm";
   const mimeTypes = kind === "image" ? images : kind === "video" ? videos : images + "," + videos;
 
-  async function uploadFile(file: File) {
+  async function uploadFile(file: File, onFileProgress?: (percent: number) => void) {
     if (kind && !file.type.startsWith(kind + "/")) throw new Error(`Choose a ${kind} file.`);
     if (file.size > (file.type.startsWith("image/") ? 15 : 100) * 1024 * 1024) {
       throw new Error("Images must be under 15 MB and videos under 100 MB.");
     }
     setStatus("Uploading 0%");
-    const state = await upload(file, (progress) => setStatus(`Uploading ${progress}%`));
+    const state = await upload(file, (progress) => {
+      setStatus(`Uploading ${progress}%`);
+      onFileProgress?.(progress);
+    });
     accept(state);
     onUploaded?.(state.media[0]);
   }
@@ -82,9 +87,9 @@ export function UploadButton({
           selection={driveSelection}
           mimeTypes={mimeTypes}
           onClose={() => setDriveSelection(null)}
-          onUpload={async (file) => {
+          onUpload={async (file, onFileProgress) => {
             try {
-              await uploadFile(file);
+              await uploadFile(file, onFileProgress);
             } finally {
               setStatus("");
             }
@@ -147,8 +152,8 @@ export function MediaPicker({
 }) {
   const { state } = useContent();
   const [query, setQuery] = useState("");
-  const assets = [...state.media]
-    .sort((a, b) => (Date.parse(b.createdAt) || 0) - (Date.parse(a.createdAt) || 0))
+  const [sort, setSort] = useMediaSort();
+  const assets = sortMedia(state.media, sort)
     .filter(
     (m) =>
       (!kind || m.type === kind) &&
@@ -162,6 +167,13 @@ export function MediaPicker({
           placeholder="Search files…"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+        />
+        <SelectMenu
+          variant="toolbar"
+          label="Sort media"
+          value={sort}
+          onChange={(value) => setSort(value as MediaSort)}
+          options={mediaSortOptions}
         />
         <UploadButton
           kind={kind}

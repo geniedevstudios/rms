@@ -1,10 +1,11 @@
-import { Ruler, ShoppingBag, Heart } from "lucide-react";
+import { Ruler, ShoppingBag, Heart, Share2 } from "lucide-react";
 import type { Colourway, Product } from "../../../types/product";
 import { sizes } from "../../../data/products";
 import { sizeLabel, availableSizes, isSizeAvailable, pieceColourways } from "../../../data/size-guide";
 import { quantityCap } from "../../../shared/stock.mjs";
 import { useProductSelection } from "../use-product-selection";
 import { useDialogs } from "../../../components/dialogs/dialogs.context";
+import { useToast } from "../../../components/toast/toast.context";
 import "./product-purchase.styles.css";
 
 export function ProductPurchase({
@@ -19,6 +20,25 @@ export function ProductPurchase({
   const { size, sizeError, selectSize, addToCart, isSaved, toggleSaved } =
     useProductSelection(product, colourway);
   const { openDialog } = useDialogs();
+  const { notify } = useToast();
+  // The share link shows the piece's photo, name and price in WhatsApp, Instagram and similar apps.
+  const share = async () => {
+    const link = `${window.location.origin}/share/${product.leadDays ? "custom" : "product"}/${encodeURIComponent(product.id)}`;
+    try {
+      if (navigator.share) {
+        await navigator.share({ title: product.name, url: link });
+        return;
+      }
+    } catch (error) {
+      if ((error as Error).name === "AbortError") return;
+    }
+    try {
+      await navigator.clipboard.writeText(link);
+      notify("Link copied.");
+    } catch {
+      notify("Could not copy the link.");
+    }
+  };
   const ways = pieceColourways(product);
   const soldOut = availableSizes(colourway).every((item) => !isSizeAvailable(colourway, item));
   const left = size ? quantityCap(colourway, size, Number.MAX_SAFE_INTEGER) : null;
@@ -89,6 +109,14 @@ export function ProductPurchase({
           onClick={toggleSaved}
         >
           <Heart size={19} fill={isSaved ? "currentColor" : "none"} />
+        </button>
+        <button
+          type="button"
+          className="button outline product-save"
+          aria-label={`Share ${product.name}`}
+          onClick={share}
+        >
+          <Share2 size={19} />
         </button>
       </div>
     </>

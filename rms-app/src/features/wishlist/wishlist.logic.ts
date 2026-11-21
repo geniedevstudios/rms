@@ -1,4 +1,10 @@
-import { findPiece } from "../../data/catalog.ts";
+import { canonicalPieceId, findPiece } from "../../data/catalog.ts";
+
+/** Swaps handles of renamed pieces for their current ones, dropping duplicates. */
+export function moveWishlistIds(ids: string[]): string[] {
+  const moved = ids.map(canonicalPieceId);
+  return moved.every((id, index) => id === ids[index]) ? ids : [...new Set(moved)];
+}
 
 export function isWishlist(value: unknown): value is string[] {
   return (

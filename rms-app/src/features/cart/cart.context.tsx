@@ -1,6 +1,7 @@
 import { useCartFollowup } from "../checkout-followup/checkout-followup";
 import { useAccount } from "../account/account.context";
-import { createContext, useContext, useEffect, useRef, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useRef, useSyncExternalStore, type ReactNode } from "react";
+import { siteContent, subscribeContent } from "../../content/content";
 import { usePersistentState } from "../../hooks/use-persistent-state";
 import type { CartItem, CartItemKey } from "../../types/cart";
 import {
@@ -10,6 +11,7 @@ import {
   cartCount,
   cartSubtotal,
   isCart,
+  moveCartIds,
 } from "./cart.logic";
 
 type CartContextValue = {
@@ -33,6 +35,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
   );
   const itemsRef = useRef(items);
   itemsRef.current = items;
+  // A renamed piece keeps working in saved bags: move its lines to the new handle.
+  const catalogue = useSyncExternalStore(subscribeContent, () => siteContent);
+  useEffect(() => {
+    setItems((current) => moveCartIds(current));
+  }, [catalogue, items, setItems]);
   const synced = useRef("");
   useEffect(() => {
     if (!ready || !customer) {

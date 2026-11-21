@@ -5,11 +5,14 @@ import {
   PageHeading,
   Thumb,
   Modal,
+  ConfirmModal,
   Field,
   Empty,
   formatDate,
 } from "../../components/ui";
 import { UploadButton } from "./media-picker";
+import { mediaSortOptions, sortMedia, useMediaSort, type MediaSort } from "./media-sort";
+import { SelectMenu } from "../../components/select-menu/select-menu";
 import { canRemoveMediaFromLibrary, isDeletableMedia } from "../../../shared/media-url.mjs";
 import { api } from "../../lib/api";
 import { references } from "../../../shared/references.mjs";
@@ -20,10 +23,11 @@ export function MediaLibrary() {
   const [filter, setFilter] = useState("all");
   const [selected, setSelected] = useState<Media | null>(null);
   const [alt, setAlt] = useState("");
+  const [name, setName] = useState("");
+  const [sort, setSort] = useMediaSort();
   const [busy, setBusy] = useState(false);
   const [confirm, setConfirm] = useState(false);
-  const assets = [...state.media]
-    .sort((a, b) => (Date.parse(b.createdAt) || 0) - (Date.parse(a.createdAt) || 0))
+  const assets = sortMedia(state.media, sort)
     .filter(
     (m) =>
       (filter === "all" || m.type === filter) &&
@@ -31,15 +35,19 @@ export function MediaLibrary() {
   );
   async function edit() {
     if (!selected) return;
+    if (!name.trim()) {
+      setError("Give this file a name.");
+      return;
+    }
     setBusy(true);
     try {
       accept(
         await api<AdminState>("media/" + selected.id, {
           method: "PATCH",
-          body: JSON.stringify({ alt }),
+          body: JSON.stringify({ name: name.trim(), alt }),
         }),
       );
-      notify("Media description saved.");
+      notify("Media details saved.");
       setSelected(null);
     } catch (e) {
       setError((e as Error).message);
@@ -131,6 +139,13 @@ export function MediaLibrary() {
             onChange={(e) => setQuery(e.target.value)}
           />
         </div>
+        <SelectMenu
+          variant="toolbar"
+          label="Sort media"
+          value={sort}
+          onChange={(value) => setSort(value as MediaSort)}
+          options={mediaSortOptions}
+        />
       </div>
       <div className="media-grid">
         {assets.map((m) => (
@@ -140,6 +155,7 @@ export function MediaLibrary() {
             onClick={() => {
               setSelected(m);
               setAlt(m.alt);
+              setName(m.name);
               setConfirm(false);
             }}
           >
@@ -181,6 +197,16 @@ export function MediaLibrary() {
             <span>{formatDate(selected.createdAt)}</span>
           </div>
           <Field
+            label="Name"
+            hint="Only changes how this file is listed in your library. Its web address stays the same."
+          >
+            <input
+              value={name}
+              maxLength={160}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </Field>
+          <Field
             label="Default alternative text"
             hint="Describe the image for people using a screen reader. This is copied when you next place this file."
           >
@@ -209,30 +235,28 @@ export function MediaLibrary() {
             </button>
             <button
               className="button"
-              disabled={busy}
+              disabled={busy || !name.trim()}
               onClick={() => void edit()}
             >
-              Save description
+              Save changes
             </button>
           </div>
-          {confirm && (
-            <div className="delete-confirm">
-              <p>{keepFile
-                ? "Remove this entry from the media library? The stored file will stay available."
-                : "Permanently delete this uploaded file?"}</p>
-              <button className="text-button" onClick={() => setConfirm(false)}>
-                Keep file
-              </button>
-              <button
-                className="button"
-                disabled={busy}
-                onClick={() => void remove()}
-              >
-                {keepFile ? "Remove entry" : "Delete file"}
-              </button>
-            </div>
-          )}
         </Modal>
+      )}
+      {selected && confirm && (
+        <ConfirmModal
+          title={keepFile ? "Remove from library?" : "Delete this file?"}
+          message={
+            keepFile
+              ? `Remove “${selected.name}” from the media library? The stored file will stay available.`
+              : `Permanently delete “${selected.name}”? This cannot be undone.`
+          }
+          confirmLabel={keepFile ? "Remove entry" : "Delete file"}
+          cancelLabel="Keep file"
+          busy={busy}
+          onCancel={() => setConfirm(false)}
+          onConfirm={() => void remove()}
+        />
       )}
     </>
   );

@@ -2,7 +2,9 @@ import "../../components/editorial/editorial.styles.css";
 import "./collection.styles.css";
 import { ArrowDown } from "lucide-react";
 import { collections } from "../../data/collections";
-import { products } from "../../data/products";
+import { findPiece } from "../../data/catalog";
+import type { CustomDesign } from "../../data/custom-designs";
+import { CustomDesignCard } from "../custom/custom-design-card";
 import { ProductCard } from "../../features/products/product-card/product-card";
 import { Link } from "../../routing/link";
 
@@ -13,8 +15,8 @@ export function Collection({ id }: { id?: string }) {
     <>
       {selected.map((collection) => {
         const pieces = collection.productIds.flatMap((id) => {
-          const product = products.find((item) => item.id === id);
-          return product ? [product] : [];
+          const piece = findPiece(id);
+          return piece ? [piece] : [];
         });
         return (
           <div key={collection.id}>
@@ -67,9 +69,13 @@ export function Collection({ id }: { id?: string }) {
             )}
             <section id={`${collection.id}-pieces`} className="section">
               <div className="product-grid">
-                {pieces.map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
+                {pieces.map((piece) =>
+                  piece.leadDays ? (
+                    <CustomDesignCard key={piece.id} design={piece as CustomDesign} />
+                  ) : (
+                    <ProductCard key={piece.id} product={piece} />
+                  ),
+                )}
               </div>
             </section>
           </div>

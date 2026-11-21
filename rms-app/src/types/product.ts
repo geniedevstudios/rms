@@ -13,6 +13,7 @@ export type Product = {
   stock?: { size: string; left: number }[];
   colourways?: Colourway[];
   id: string;
+  previousIds?: string[];
   name: string;
   category: "Pants" | "Tops" | "Two piece" | "Skirts" | "Dresses";
   price: number;

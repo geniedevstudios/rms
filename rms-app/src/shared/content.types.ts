@@ -23,6 +23,8 @@ export type Product = {
   stock?: SizeStock[];
   colourways?: Colourway[];
   id: string;
+  /** Earlier handles of a renamed piece; the storefront redirects them to `id`. */
+  previousIds?: string[];
   name: string;
   category: "Pants" | "Tops" | "Two piece" | "Skirts" | "Dresses";
   price: number;

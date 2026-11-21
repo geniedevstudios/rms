@@ -60,8 +60,10 @@ export function publicContent(content) {
     .filter((c) => c.status === "published")
     .map((c) => ({
       ...c,
-      productIds: c.productIds.filter((id) =>
-        result.products.some((p) => p.id === id),
+      productIds: c.productIds.filter(
+        (id) =>
+          result.products.some((p) => p.id === id) ||
+          result.customDesigns.some((p) => p.id === id),
       ),
     }));
   return result;
@@ -209,6 +211,14 @@ export function validateContent(c, media) {
     }
     check(slug(p.id) && !ids.has(p.id), "Product handles must be unique.");
     ids.add(p.id);
+    check(
+      p.previousIds === undefined ||
+        (Array.isArray(p.previousIds) &&
+          p.previousIds.length <= 25 &&
+          new Set(p.previousIds).size === p.previousIds.length &&
+          p.previousIds.every((old) => slug(old) && old !== p.id)),
+      "A product's earlier handles are invalid.",
+    );
     check(text(p.name) && p.name.trim(), "Every product needs a name.");
     check(
       ["Pants", "Tops", "Two piece", "Skirts", "Dresses"].includes(p.category),
@@ -265,6 +275,16 @@ export function validateContent(c, media) {
         (Number.isInteger(p.leadDays) && p.leadDays >= 1 && p.leadDays <= 365),
       "Lead time must be 1–365 days.",
     );
+  }
+  const retired = new Set();
+  for (const p of [...c.products, ...c.customDesigns]) {
+    for (const old of p.previousIds ?? []) {
+      check(
+        !ids.has(old) && !retired.has(old),
+        "A product handle clashes with an older product link.",
+      );
+      retired.add(old);
+    }
   }
   for (const list of [
     c.journals,
@@ -332,7 +352,11 @@ export function validateContent(c, media) {
     );
     check(
       Array.isArray(col.productIds) &&
-        col.productIds.every((id) => c.products.some((p) => p.id === id)),
+        col.productIds.every(
+          (id) =>
+            c.products.some((p) => p.id === id) ||
+            c.customDesigns.some((p) => p.id === id),
+        ),
       "A collection references a missing product.",
     );
     check(
@@ -517,13 +541,20 @@ export function createContentStore(directory, { sync = null, remote = null } = {
         if (!s.media.some((item) => item.id === asset.id)) s.media.unshift(asset);
         return "Uploaded " + asset.name;
       }),
-    editMedia: (id, alt) =>
+    editMedia: (id, alt, name) =>
       transact((s) => {
-        check(text(alt), "Alternative text must be under 500 characters.");
         const asset = s.media.find((m) => m.id === id);
         if (!asset) throw new HttpError(404, "Media not found.");
-        asset.alt = alt;
-        return "Updated media description";
+        const nextAlt = alt === undefined ? asset.alt : alt;
+        check(text(nextAlt), "Alternative text must be under 500 characters.");
+        const nextName = name === undefined ? asset.name : String(name).trim();
+        check(
+          nextName.length > 0 && nextName.length <= 160,
+          "A file name must be between 1 and 160 characters.",
+        );
+        asset.alt = nextAlt;
+        asset.name = nextName;
+        return "Updated media details";
       }),
     takeStock: async (orderId, items) => {
       const state = await transact((s) => {

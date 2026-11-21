@@ -1,7 +1,8 @@
-import { createContext, useContext, useEffect, useRef, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useRef, useSyncExternalStore, type ReactNode } from "react";
+import { siteContent, subscribeContent } from "../../content/content";
 import { usePersistentState } from "../../hooks/use-persistent-state";
 import { useAccount } from "../account/account.context";
-import { isWishlist, toggleWishlistItem } from "./wishlist.logic";
+import { isWishlist, moveWishlistIds, toggleWishlistItem } from "./wishlist.logic";
 
 type WishlistContextValue = {
   saved: string[];
@@ -17,6 +18,11 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
   );
   const savedRef = useRef(saved);
   savedRef.current = saved;
+  // A renamed piece stays saved: move its id to the new handle.
+  const catalogue = useSyncExternalStore(subscribeContent, () => siteContent);
+  useEffect(() => {
+    setSaved((current) => moveWishlistIds(current));
+  }, [catalogue, saved, setSaved]);
   const synced = useRef("");
   useEffect(() => {
     if (!ready || !customer) {

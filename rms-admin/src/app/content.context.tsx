@@ -2,6 +2,7 @@ import {
   createContext,
   useContext,
   useEffect,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -45,6 +46,15 @@ export function ContentProvider({
   children: ReactNode;
 }) {
   const [state, setState] = useState(initial);
+  // The newest state from the server, so a manual save never uses a revision that an
+  // automatic save has just replaced.
+  const latest = useRef(initial);
+  const inFlight = useRef<Promise<void>>(Promise.resolve());
+  const failed = useRef<Content | null>(null);
+  function adopt(next: AdminState) {
+    latest.current = next;
+    setState(next);
+  }
   const [content, setContent] = useState<Content>(() =>
     structuredClone(initial.draft),
   );
@@ -62,6 +72,31 @@ export function ContentProvider({
     window.addEventListener("beforeunload", handler);
     return () => window.removeEventListener("beforeunload", handler);
   }, [dirty]);
+  // Edits are saved to the draft by themselves a moment after you stop, so a refresh
+  // or a closed tab never loses them. A failed save is not retried until you edit again.
+  useEffect(() => {
+    if (!dirty || busy || failed.current === content) return;
+    const snapshot = content;
+    const timer = window.setTimeout(() => {
+      inFlight.current = (async () => {
+        try {
+          const next = await api<AdminState>("draft", {
+            method: "PUT",
+            body: JSON.stringify({ content: snapshot, revision: latest.current.revision }),
+          });
+          failed.current = null;
+          adopt(next);
+          // Keep anything typed while the save was in flight.
+          setContent((current) => (current === snapshot ? structuredClone(next.draft) : current));
+          notify("Draft saved automatically. Publish when you’re ready.");
+        } catch (e) {
+          failed.current = snapshot;
+          setError(`Your latest change is not saved yet. ${(e as Error).message}`);
+        }
+      })();
+    }, 1200);
+    return () => window.clearTimeout(timer);
+  }, [content, dirty, busy, state.revision]);
   useEffect(() => {
     if (!message) return;
     const t = setTimeout(() => notify(""), 5000);
@@ -79,11 +114,12 @@ export function ContentProvider({
     setBusy(true);
     setError("");
     try {
+      await inFlight.current;
       const next = await api<AdminState>("draft", {
         method: "PUT",
-        body: JSON.stringify({ content, revision: state.revision }),
+        body: JSON.stringify({ content, revision: latest.current.revision }),
       });
-      setState(next);
+      adopt(next);
       setContent(structuredClone(next.draft));
       notify("Draft saved. Publish when you’re ready.");
       return next;
@@ -97,19 +133,20 @@ export function ContentProvider({
     setBusy(true);
     setError("");
     try {
+      await inFlight.current;
       const saved = dirty
         ? await api<AdminState>("draft", {
             method: "PUT",
-            body: JSON.stringify({ content, revision: state.revision }),
+            body: JSON.stringify({ content, revision: latest.current.revision }),
           })
-        : state;
-      setState(saved);
+        : latest.current;
+      adopt(saved);
       setContent(structuredClone(saved.draft));
       const next = await api<AdminState>("publish", {
         method: "POST",
         body: JSON.stringify({ revision: saved.revision }),
       });
-      setState(next);
+      adopt(next);
       setContent(structuredClone(next.draft));
       notify("Published. Your storefront is up to date.");
       return true;
@@ -123,11 +160,12 @@ export function ContentProvider({
   async function discard() {
     setBusy(true);
     try {
+      await inFlight.current;
       const next = await api<AdminState>("discard", {
         method: "POST",
-        body: JSON.stringify({ revision: state.revision }),
+        body: JSON.stringify({ revision: latest.current.revision }),
       });
-      setState(next);
+      adopt(next);
       setContent(structuredClone(next.draft));
       setError("");
       notify("Restored the published version.");
@@ -141,7 +179,7 @@ export function ContentProvider({
     setBusy(true);
     try {
       const next = await api<AdminState>("state");
-      setState(next);
+      adopt(next);
       setContent(structuredClone(next.draft));
       setError("");
       notify("Loaded the latest saved draft.");
@@ -164,7 +202,7 @@ export function ContentProvider({
         setError,
         notify,
         update,
-        accept: setState,
+        accept: adopt,
         save,
         publish,
         discard,

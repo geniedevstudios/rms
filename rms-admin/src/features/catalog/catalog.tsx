@@ -8,6 +8,27 @@ import { SelectMenu } from "../../components/select-menu/select-menu";
 import { Collections } from "../collections/collections";
 import { ColourwaysField, colourwaysFrom, commitColourways } from "./colourways-field";
 const categories = ["Pants", "Tops", "Two piece", "Skirts", "Dresses"] as const;
+
+/** Point draft links (banners, buttons, collections) at a piece's new storefront link. */
+function moveLinks(value: unknown, links: [from: string, to: string][]) {
+  const rewrite = (text: string) => {
+    for (const [oldLink, newLink] of links) {
+      if (text === oldLink) return newLink;
+      if (text.startsWith(oldLink + "?") || text.startsWith(oldLink + "#")) return newLink + text.slice(oldLink.length);
+    }
+    return text;
+  };
+  const walk = (node: unknown) => {
+    if (!node || typeof node !== "object") return;
+    const record = node as Record<string, unknown>;
+    for (const key of Object.keys(record)) {
+      const item = record[key];
+      if (typeof item === "string") record[key] = rewrite(item);
+      else walk(item);
+    }
+  };
+  walk(value);
+}
 export function Catalog({
   section = "products",
   onSection,
@@ -15,17 +36,23 @@ export function Catalog({
   section?: "products" | "collections";
   onSection?: (section: "products" | "collections") => void;
 }) {
-  const { content, update } = useContent();
+  const { content, update, state } = useContent();
   const [custom, setCustom] = useState(false);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All categories");
   const [editing, setEditing] = useState<Product | null>(null);
   const [original, setOriginal] = useState<string | null>(null);
+  // What the open piece will be when applied. It differs from the tab while it is being moved.
+  const [pieceCustom, setPieceCustom] = useState(false);
+  const [source, setSource] = useState<Product | null>(null);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [error, setError] = useState("");
   const list = custom ? content.customDesigns : content.products;
+  const moving = pieceCustom !== custom;
   function open(product?: Product) {
     setOriginal(product?.id || null);
+    setPieceCustom(custom);
+    setSource(product ? structuredClone(product) : null);
     setConfirmDelete(false);
     setError("");
     setEditing(
@@ -51,6 +78,27 @@ export function Catalog({
   function patch(next: Partial<Product>) {
     setEditing((p) => (p ? { ...p, ...next } : p));
   }
+  function movePiece() {
+    const toCustom = !pieceCustom;
+    setPieceCustom(toCustom);
+    setError("");
+    setEditing((p) => {
+      if (!p) return p;
+      const next = { ...p };
+      if (toCustom) {
+        next.leadDays = source?.leadDays ?? p.leadDays ?? 21;
+        delete next.newArrival;
+        delete next.bestSeller;
+        delete next.featured;
+      } else {
+        delete next.leadDays;
+        next.newArrival = Boolean(source?.newArrival);
+        next.bestSeller = Boolean(source?.bestSeller);
+        next.featured = Boolean(source?.featured);
+      }
+      return next;
+    });
+  }
   function save() {
     if (!editing) return;
     if (!editing.name.trim()) {
@@ -61,7 +109,11 @@ export function Catalog({
       setError("Enter a valid price.");
       return;
     }
-    const committed = commitColourways(colourwaysFrom(editing), custom);
+    if (pieceCustom && !(Number.isInteger(editing.leadDays) && editing.leadDays! >= 1 && editing.leadDays! <= 365)) {
+      setError("Making time must be a whole number of days from 1 to 365.");
+      return;
+    }
+    const committed = commitColourways(colourwaysFrom(editing), pieceCustom);
     if ("error" in committed) {
       setError(committed.error);
       return;
@@ -74,10 +126,30 @@ export function Catalog({
     }
     update((c) => {
       const key = custom ? "customDesigns" : "products";
-      const id = original ?? createContentHandle(editing.name, [...c.products, ...c.customDesigns].map(p => p.id), "piece");
+      const targetKey = pieceCustom ? "customDesigns" : "products";
+      const handles = (skip?: Product) =>
+        [...c.products, ...c.customDesigns].flatMap((p) => (p === skip ? [] : [p.id, ...(p.previousIds ?? [])]));
+      let id = original ?? createContentHandle(editing.name, handles(), "piece");
+      // The link name follows the name, including pieces renamed before this was added. A piece that was ever published keeps its old
+      // link as a redirect, so shared links, saved bags and wishlists still work.
+      const before = original ? c[key].find((p) => p.id === original) : undefined;
+      let previousIds = before?.previousIds ?? [];
+      if (original && before) {
+        const next = createContentHandle(editing.name, handles(before), "piece");
+        if (next !== original) {
+          const everPublished = [...state.published.products, ...state.published.customDesigns].some((p) => p.id === original);
+          id = next;
+          previousIds = [...new Set(everPublished ? [...previousIds, original] : previousIds)].filter((old) => old !== next);
+          for (const collection of c.collections) {
+            collection.productIds = collection.productIds.map((productId) => (productId === original ? next : productId));
+          }
+          moveLinks(c, [[`/product/${original}`, `/product/${next}`], [`/custom/${original}`, `/custom/${next}`]]);
+        }
+      }
       const saved: Product = {
         ...editing,
         id,
+        previousIds: previousIds.length ? previousIds : undefined,
         careInstructions: editing.careInstructions?.trim() || undefined,
         colourways,
         color: lead.color,
@@ -88,17 +160,24 @@ export function Catalog({
         availableSizes: lead.availableSizes,
         stock: lead.stock,
       };
-      if (custom) {
+      if (pieceCustom) {
         delete saved.newArrival;
         delete saved.bestSeller;
         delete saved.featured;
       } else {
+        delete saved.leadDays;
         saved.newArrival = Boolean(editing.newArrival);
         saved.bestSeller = Boolean(editing.bestSeller);
         saved.featured = Boolean(editing.featured);
       }
-      if (original) c[key] = c[key].map(p => p.id === original ? saved : p);
-      else c[key].push(saved);
+      if (original && key === targetKey) c[key] = c[key].map(p => p.id === original ? saved : p);
+      else if (original) {
+        // Moving between ready to wear and made to order: the piece keeps its link name.
+        c[key] = c[key].filter((p) => p.id !== original);
+        c[targetKey].push(saved);
+        const [from, to] = pieceCustom ? ["product", "custom"] : ["custom", "product"];
+        moveLinks(c, [[`/${from}/${id}`, `/${to}/${id}`]]);
+      } else c[targetKey].push(saved);
     });
     setEditing(null);
   }
@@ -109,9 +188,9 @@ export function Catalog({
         draft.customDesigns = draft.customDesigns.filter((piece) => piece.id !== original);
       } else {
         draft.products = draft.products.filter((piece) => piece.id !== original);
-        for (const collection of draft.collections) {
-          collection.productIds = collection.productIds.filter((id) => id !== original);
-        }
+      }
+      for (const collection of draft.collections) {
+        collection.productIds = collection.productIds.filter((id) => id !== original);
       }
     });
     setEditing(null);
@@ -351,7 +430,7 @@ export function Catalog({
                   onChange={(e) => patch({ tag: e.target.value })}
                 />
               </Field>
-              {custom && (
+              {pieceCustom && !moving && (
                 <Field label="Making time · days">
                   <input
                     type="number"
@@ -364,7 +443,7 @@ export function Catalog({
                   />
                 </Field>
               )}
-              {!custom && (
+              {!pieceCustom && (
                 <div className="piece-flags">
                   <label className="checkbox">
                     <input
@@ -418,9 +497,9 @@ export function Catalog({
             </div>
           </div>
           <ColourwaysField
-            key={original ?? "new"}
+            key={`${original ?? "new"}-${pieceCustom ? "custom" : "ready"}`}
             product={editing}
-            trackStock={!custom}
+            trackStock={!pieceCustom}
             onChange={(colourways) => {
               const lead = colourways[0];
               patch({
@@ -435,6 +514,26 @@ export function Catalog({
               });
             }}
           />
+          {moving && (
+            <div className="move-piece">
+              <p className="inline-note">
+                {pieceCustom
+                  ? "This piece will move to Made to order when you apply to the draft. Stock counts are dropped. Set its making time:"
+                  : "This piece will move to Ready to wear when you apply to the draft. Enter how many you made and how many are left for each size in the Colours section above."}
+              </p>
+              {pieceCustom && (
+                <Field label="Making time · days">
+                  <input
+                    type="number"
+                    min="1"
+                    max="365"
+                    value={editing.leadDays ?? ""}
+                    onChange={(e) => patch({ leadDays: Number(e.target.value) })}
+                  />
+                </Field>
+              )}
+            </div>
+          )}
           {error && (
             <p className="error" role="alert">
               {error}
@@ -455,6 +554,11 @@ export function Catalog({
               {original && (
                 <button type="button" className="button secondary danger" onClick={() => setConfirmDelete(true)}>
                   Delete {custom ? "design" : "product"}
+                </button>
+              )}
+              {original && (
+                <button type="button" className="button secondary" onClick={movePiece}>
+                  {moving ? "Undo move" : pieceCustom ? "Move to ready to wear" : "Move to made to order"}
                 </button>
               )}
               <button type="button" className="button secondary" onClick={() => setEditing(null)}>

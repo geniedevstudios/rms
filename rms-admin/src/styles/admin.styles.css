@@ -1007,6 +1007,104 @@ textarea::placeholder {
   color: #8b3439;
   font-size: 13px;
 }
+
+/* Per-file import progress */
+.drive-review-list li {
+  flex-wrap: wrap;
+}
+.drive-review-status {
+  display: flex;
+  flex: 1 0 100%;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  padding: 0 8px 6px;
+}
+.drive-review-status small {
+  color: var(--muted);
+  font-size: 11.5px;
+  line-height: 1.3;
+}
+.drive-review-list li.has-error .drive-review-status small {
+  flex: 1;
+  color: #8b3439;
+}
+.drive-ring {
+  position: relative;
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  margin-right: 2px;
+  color: var(--green);
+}
+.drive-ring-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+.drive-ring circle {
+  fill: none;
+  stroke-width: 3;
+}
+.drive-ring-track {
+  stroke: var(--line);
+}
+.drive-ring-arc {
+  stroke: var(--green);
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.25s ease;
+}
+.drive-ring.is-downloading .drive-ring-svg {
+  animation: drive-ring-spin 1s linear infinite;
+}
+@keyframes drive-ring-spin {
+  to { transform: rotate(270deg); }
+}
+.drive-ring.is-error {
+  color: #8b3439;
+}
+.drive-ring.is-error .drive-ring-arc {
+  stroke: #8b3439;
+}
+.drive-ring-check {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  flex: none;
+}
+.drive-ring em {
+  position: relative;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.drive-ring b {
+  font-size: 15px;
+  line-height: 1;
+}
+.drive-review-more {
+  margin-right: auto;
+}
+.drive-review-summary {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 12.5px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .drive-ring-arc {
+    transition: none;
+  }
+  .drive-ring.is-downloading .drive-ring-svg {
+    animation: none;
+  }
+}
 .drive-review-actions .button {
   border-radius: 999px;
 }
@@ -1698,6 +1796,29 @@ html.drive-picker-open {
   border-radius: 4px;
   font-size: 10px;
   color: #92717e;
+}
+.modal:has(.confirm-message) {
+  width: min(440px, calc(100vw - 30px));
+}
+.move-piece {
+  display: grid;
+  gap: 8px;
+  justify-items: start;
+  margin: 0 0 18px;
+}
+.move-piece .inline-note {
+  margin: 0;
+}
+.confirm-message {
+  margin: 4px 0 0;
+  line-height: 1.55;
+}
+.button.danger-solid {
+  background: #8b3439;
+  border-color: #8b3439;
+}
+.button.danger-solid:hover:not(:disabled) {
+  background: #732b2f;
 }
 .delete-confirm {
   padding: 20px;

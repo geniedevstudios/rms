@@ -1,4 +1,4 @@
-import { findPiece } from "../../data/catalog.ts";
+import { canonicalPieceId, findPiece } from "../../data/catalog.ts";
 import { sizes } from "../../data/products.ts";
 import { isSizeAvailable, pieceColourways, resolveColourway } from "../../data/size-guide";
 import { quantityCap } from "../../shared/stock.mjs";
@@ -12,6 +12,19 @@ export const cartItemKey = (item: CartItemKey) => {
 };
 const matches = (item: CartItemKey, target: CartItemKey) =>
   cartItemKey(item) === cartItemKey(target);
+
+/** Swaps handles of renamed pieces for their current ones, merging lines that now match. */
+export function moveCartIds(items: CartItem[]): CartItem[] {
+  if (!items.some((item) => canonicalPieceId(item.productId) !== item.productId)) return items;
+  const moved: CartItem[] = [];
+  for (const item of items) {
+    const line = { ...item, productId: canonicalPieceId(item.productId) };
+    const existing = moved.find((current) => matches(current, line));
+    if (existing) existing.quantity = Math.min(MAX_ITEM_QUANTITY, existing.quantity + line.quantity);
+    else moved.push(line);
+  }
+  return moved;
+}
 
 export function isCartItemKey(item: CartItemKey): boolean {
   const piece = findPiece(item.productId);

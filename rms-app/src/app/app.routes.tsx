@@ -3,10 +3,11 @@ import { showRouteIntro } from "../intro";
 import { ArrowRight } from "lucide-react";
 import { useRoute } from "../routing/use-route";
 import { Link } from "../routing/link";
-import { customPath, productPath } from "../routing/navigation";
+import { customPath, piecePath, productPath } from "../routing/navigation";
 import { siteContent } from "../content/content";
 import { collections, collectionTitle } from "../data/collections";
 import { products } from "../data/products";
+import { findPiece } from "../data/catalog";
 import { customDesigns } from "../data/custom-designs";
 import { useOrders } from "../features/orders/orders.context";
 import { Home } from "../pages/home/home";
@@ -82,6 +83,25 @@ export function AppRoutes() {
   useEffect(() => {
     document.title = `${pageTitle} | RIVERMINDSTYLE`;
   }, [pageTitle]);
+
+  // A renamed piece keeps its old link: send visitors on to the new one.
+  const movedTo =
+    !product && !customDesign && /^\/(product|custom)\//.test(pathname)
+      ? (() => {
+          try {
+            const old = decodeURIComponent(pathname.slice(pathname.indexOf("/", 1) + 1));
+            const piece = findPiece(old);
+            // A renamed piece, or one that moved between ready to wear and made to order.
+            const wrongKind = piece && Boolean(piece.leadDays) !== pathname.startsWith("/custom/");
+            return piece && (piece.id !== old || wrongKind) ? piecePath(piece) : undefined;
+          } catch {
+            return undefined;
+          }
+        })()
+      : undefined;
+  useEffect(() => {
+    if (movedTo) window.location.replace(`#${movedTo}`);
+  }, [movedTo]);
 
   if (pathname === "/") return <Home />;
   if (pathname === "/shop")

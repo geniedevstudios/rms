@@ -101,10 +101,11 @@ function getAccessToken() {
   });
 }
 
-export async function chooseDriveFiles(mimeTypes: string, multiple: boolean) {
+export async function chooseDriveFiles(mimeTypes: string, multiple: boolean, existingToken?: string) {
   const picker = googleWindow.google?.picker;
   if (!picker || !apiKey || !projectNumber) throw new Error("Google Drive is still loading.");
-  const token = await getAccessToken();
+  // Adding more files to a running import reuses the sign-in instead of asking again.
+  const token = existingToken ?? await getAccessToken();
   if (!token) return null;
 
   const view = new picker.DocsView()

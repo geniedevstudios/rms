@@ -53,7 +53,9 @@ export function reduceStock(products, items) {
   }
   for (const [key, quantity] of demand) {
     const [productId, colourwayId, size] = key.split("\0");
-    const product = products.find((entry) => entry.id === productId);
+    const product =
+      products.find((entry) => entry.id === productId) ??
+      products.find((entry) => entry.previousIds?.includes(productId));
     if (!product) continue;
     const way = resolveColourway(product, colourwayId);
     if (!way) continue;
